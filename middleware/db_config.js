@@ -6,7 +6,7 @@ module.exports = {
 	USER: "root",
 	PASSWORD: process.env.DB_PASSWORD,
 	DB: "dbGroupomania",
-	dialect: "mysql2",
+	DIALECT: "mysql",
 	/*pool: {
 		max: 5,
 		min: 0,
