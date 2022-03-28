@@ -5,6 +5,7 @@ dotenv.config();
 const Sequelize = require("sequelize");
 const sequelize = require("sequelize");
 const userRoutes = require("./routes/user");
+const postRoutes = require("./routes/post");
 const db = require("./models/index");
 
 // Initialize express app
@@ -29,7 +30,8 @@ app.use((req, res, next) => {
 });
 
 // routes importation
-app.use("/api/auth", userRoutes);
+app.use("/api", userRoutes);
+app.use("/api/posts", postRoutes);
 
 // module exportation
 module.exports = app;

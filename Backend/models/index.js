@@ -28,6 +28,25 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 db.users = require("./user.js")(sequelize, Sequelize);
+db.posts = require("./post.js")(sequelize, Sequelize);
+db.comments = require("./comment.js")(sequelize, Sequelize);
+
+// belongsTo() indicates that one Post only belongs to one User
+db.posts.belongsTo(db.users, {
+	foreignKey: "UserId",
+	as: "user",
+});
+//hasMany() indicates that one Post can have many Comments
+db.users.hasMany(db.posts, { as: "posts" });
+
+// belongsTo() indicates that one Comment only belongs to one Post
+db.comments.belongsTo(db.posts, {
+	foreignKey: "PostId",
+	as: "post",
+});
+
+//hasMany() indicates that one User can have many Posts
+db.posts.hasMany(db.comments, { as: "comments" });
 
 // This will run .sync()
 db.sequelize.sync().then(() => {

@@ -5,42 +5,17 @@ const { DataTypes } = require("sequelize");
 const db = require("./index");
 
 module.exports = (sequelize, DataTypes) => {
-	const User = sequelize.define(
-		"User",
+	const Comment = sequelize.define(
+		"Comment",
 		{
 			id: {
 				type: DataTypes.INTEGER,
 				autoIncrement: true,
 				primaryKey: true,
 			},
-			email: {
-				type: DataTypes.STRING,
+			content: {
+				type: DataTypes.TEXT,
 				allowNull: false,
-				unique: true,
-			},
-			password: {
-				type: DataTypes.STRING,
-				allowNull: false,
-			},
-			firstname: {
-				type: DataTypes.STRING,
-			},
-			lastname: {
-				type: DataTypes.STRING,
-			},
-			username: {
-				type: DataTypes.VIRTUAL,
-				get() {
-					return `${this.firstName} ${this.lastName}`;
-				},
-			},
-			isAdmin: {
-				type: DataTypes.BOOLEAN,
-				defaultValue: false,
-			},
-			isActive: {
-				type: DataTypes.BOOLEAN,
-				defaultValue: true,
 			},
 		},
 		{
@@ -49,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
 			updatedAt: false,
 		}
 	);
-	return User;
+	return Comment;
 };
 
 // export the model to be used when a user is created
