@@ -36,3 +36,8 @@
 	height: 45px;
 	width: 45px;
 }
+
+.navbar-expand {
+	flex-wrap: nowrap;
+	justify-content: flex-end;
+}

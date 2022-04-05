@@ -65,43 +65,65 @@ const LoginForm = ({ submitForm }) => {
 	} */
 
 	return (
-		<div className="container">
-			<div className="wrapper">
-				<form className="loginForm">
-					<div>
-						<h2 className="title"> Please Log in </h2>
+		<div className="mask d-flex align-items-center h-100 gradient-custom-3">
+			<div className="container h-100">
+				<div className="row d-flex justify-content-center align-items-center h-100">
+					<div className="col-12 col-md-9 col-lg-7 col-xl-6">
+						<div className="card card-border">
+							<div className="card-body p-5">
+								<form className="loginForm">
+									<div>
+										<h2 className="text-uppercase text-center mb-5">
+											{" "}
+											Please Log in{" "}
+										</h2>
+									</div>
+									<div className="form-outline mb-4">
+										<label className="form-label"> Email </label>
+										<input
+											className="form-control form-control-lg"
+											type="email"
+											name="email"
+											value={values.email}
+											onChange={changeHandler}
+											placeholder="Email"
+										/>
+										{errors.email && <p className="error">{errors.email} </p>}
+									</div>
+									<div className="form-outline mb-4">
+										<label className="form-label"> Password </label>
+										<input
+											className="form-control form-control-lg"
+											type="password"
+											name="password"
+											value={values.password}
+											onChange={changeHandler}
+											placeholder="Password"
+										/>
+										{errors.password && (
+											<p className="error">{errors.password} </p>
+										)}
+									</div>
+									<div>
+										<button
+											className="btn btn-primary btn-block btn-lg"
+											onClick={submitHandler}
+										>
+											Login
+										</button>
+									</div>
+
+									<Link
+										to="/signup"
+										className="text-center text-muted mt-5 mb-0"
+									>
+										Don't have an account?
+									</Link>
+								</form>
+							</div>
+						</div>
 					</div>
-					<div className="email">
-						<label className="label"> Email </label>
-						<input
-							className="input"
-							type="email"
-							name="email"
-							value={values.email}
-							onChange={changeHandler}
-							placeholder="Email"
-						/>
-						{errors.email && <p className="error">{errors.email} </p>}
-					</div>
-					<div className="password">
-						<label className="label"> Password </label>
-						<input
-							className="input"
-							type="password"
-							name="password"
-							value={values.password}
-							onChange={changeHandler}
-							placeholder="Password"
-						/>
-						{errors.password && <p className="error">{errors.password} </p>}
-					</div>
-					<div>
-						<button className="submit" onClick={submitHandler}>
-							Login
-						</button>
-					</div>
-				</form>
-				<Link to="/signup">Don't have an account?</Link>
+				</div>
 			</div>
 		</div>
 	);

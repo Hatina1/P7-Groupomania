@@ -13,6 +13,8 @@ import { useState, useEffect } from "react";
 //import { createContext, useContext } from "react";
 import AuthService from "./Components/AuthService";
 import "./styles/bootstrap.min.css";
+import "./styles/headers.css";
+import icon from "./assets/icon.png";
 
 function App() {
 	const [currentUser, setCurrentUser] = useState(undefined);
@@ -28,14 +30,24 @@ function App() {
 	const logOut = () => {
 		AuthService.logout();
 	};
-
+	//mr-auto div 1 et ms-auto div 2 et 3
 	return (
 		<Router>
 			<div>
-				<nav className="navbar navbar-expand navbar-dark bg-dark">
+				<nav className="navbar navbar-expand navbar-light bg-light">
 					<div className="navbar-nav mr-auto">
 						<li className="nav-item">
-							<Link to={"/home"} className="nav-link">
+							<Link
+								to={"/home"}
+								className="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none"
+							>
+								<img src={icon} alt="Groupomania" className="gpnia-logo" />
+							</Link>
+						</li>
+					</div>
+					<div className="navbar-nav">
+						<li className="nav-item">
+							<Link to={"/"} className="nav-link">
 								Home
 							</Link>
 						</li>
@@ -50,7 +62,7 @@ function App() {
 					</div>
 
 					{currentUser ? (
-						<div className="navbar-nav ms-auto">
+						<div className="navbar-nav">
 							<li className="nav-item">
 								<a href="/login" className="nav-link" onClick={logOut}>
 									Logout
@@ -58,7 +70,7 @@ function App() {
 							</li>
 						</div>
 					) : (
-						<div className="navbar-nav ms-auto">
+						<div className="navbar-nav">
 							<li className="nav-item">
 								<Link to={"/login"} className="nav-link">
 									Login
@@ -78,12 +90,13 @@ function App() {
 					<Routes>
 						<Route exact path="/home" element={<Home />} />
 						<Route path="/admin" element={<Admin />} />
+						<Route path="/login" element={<LoginForm />} />
+						<Route path="/signup" element={<SignupForm />} />
 					</Routes>
 				</div>
 			</div>
 		</Router>
 	);
 }
-// <Route path="/login" element={LoginForm} />
-// <Route path="/signup" element={SignupForm} />
+
 export default App;
