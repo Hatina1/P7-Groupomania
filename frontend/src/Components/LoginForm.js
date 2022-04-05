@@ -2,11 +2,12 @@ import React from "react";
 import "../App.css";
 import validation from "./validation";
 import AuthService from "./AuthService";
-//  import useForm from "./useForm"; custom hook (methods and initial values)
+//  import useForm from "./useForm"; // custom hook (methods and initial values)
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+//import { useAuth } from "../auth";
 
-const SignupForm = ({ submitForm }) => {
+const LoginForm = ({ submitForm }) => {
 	//const { changeHandler, submitHandler, values, errors } = useForm(submitForm);
 
 	const [values, setValues] = useState({
@@ -29,6 +30,7 @@ const SignupForm = ({ submitForm }) => {
 			[e.target.name]: e.target.value,
 		});
 	};
+
 	const navigate = useNavigate();
 
 	const submitHandler = async (e) => {
@@ -37,10 +39,8 @@ const SignupForm = ({ submitForm }) => {
 		setErrors(validation(values));
 		//setdataIsChecked(true);
 		try {
-			await AuthService.signup(values).then(
-				(response) => {
-					// check for token and user already exists with 200
-					console.log("Sign up successfully", response);
+			await AuthService.login(values).then(
+				() => {
 					navigate("/");
 					window.location.reload();
 				},
@@ -53,7 +53,7 @@ const SignupForm = ({ submitForm }) => {
 		}
 	};
 
-	/* useEffect(() => {
+	/* 	useEffect(() => {
 		if (Object.keys(errors).length === 0 && dataIsChecked) {
 			submitForm(true);
 		}
@@ -67,34 +67,9 @@ const SignupForm = ({ submitForm }) => {
 	return (
 		<div className="container">
 			<div className="wrapper">
-				<form className="signupForm">
+				<form className="loginForm">
 					<div>
-						<h2 className="title"> Create an account </h2>
-					</div>
-
-					<div className="firstname">
-						<label className="label"> Firstname </label>
-						<input
-							className="input"
-							type="text"
-							name="firstname"
-							value={values.firstname}
-							onChange={changeHandler}
-							placeholder="Firstname"
-						/>
-						{errors.firstname && <p className="error">{errors.firstname} </p>}
-					</div>
-					<div className="lastname">
-						<label className="label"> Lastname </label>
-						<input
-							className="input"
-							type="text"
-							name="lastname"
-							value={values.lastname}
-							onChange={changeHandler}
-							placeholder="Lastname"
-						/>
-						{errors.lastname && <p className="error">{errors.lastname} </p>}
+						<h2 className="title"> Please Log in </h2>
 					</div>
 					<div className="email">
 						<label className="label"> Email </label>
@@ -122,14 +97,14 @@ const SignupForm = ({ submitForm }) => {
 					</div>
 					<div>
 						<button className="submit" onClick={submitHandler}>
-							Sign Up
+							Login
 						</button>
 					</div>
 				</form>
-				<Link to="/login">Already have an account?</Link>
+				<Link to="/signup">Don't have an account?</Link>
 			</div>
 		</div>
 	);
 };
 
-export default SignupForm;
+export default LoginForm;

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import SignupForm from "./SignupForm";
-import SignupFormSuccess from "./SignupFormSuccess";
 
 const Form = () => {
 	//const isUserExist = false; check if user exists
