@@ -6,12 +6,6 @@ const signup = (values) => {
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify(values),
-	}).then((response) => {
-		if (response.data.accessToken) {
-			localStorage.setItem("user", JSON.stringify(response.data));
-		}
-
-		return response.data;
 	});
 };
 
@@ -24,11 +18,11 @@ const login = (values) => {
 		},
 		body: JSON.stringify(values),
 	}).then((response) => {
-		if (response.data.accessToken) {
-			localStorage.setItem("user", JSON.stringify(response.data));
+		if (response.token) {
+			localStorage.setItem("user", JSON.stringify(response.token));
 		}
 
-		return response.data;
+		return response.token;
 	});
 };
 

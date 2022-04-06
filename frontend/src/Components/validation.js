@@ -1,6 +1,6 @@
 const validation = (values) => {
 	let errors = {};
-	let reg = /.+\@.+\..+/g; // /\D+@\D+.{2,}/
+	let reg = /.+@.+\..+/g; // /\D+@\D+.{2,}/
 	if (!values.firstname) {
 		errors.firstname = "Firstname is required";
 	}
