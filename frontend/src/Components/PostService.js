@@ -1,5 +1,5 @@
 const getAllPublicPosts = () => {
-	fetch("http://localhost:3000/api/auth/")
+	fetch("http://localhost:3000/api/posts/")
 		.then((res) => res.json())
 		.catch((err) => console.log("What's happening ?", err));
 };

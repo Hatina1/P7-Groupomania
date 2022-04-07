@@ -36,7 +36,7 @@ const SignupForm = ({ submitForm }) => {
 
 		setErrors(validation(values));
 		//setdataIsChecked(true);
-		try {
+		/* try {
 			await AuthService.signup(values).then(
 				(response) => {
 					// check for token and user already exists with 200
@@ -47,10 +47,20 @@ const SignupForm = ({ submitForm }) => {
 				(error) => {
 					console.log(error);
 				}
-			);
-		} catch (err) {
-			console.log(err);
-		}
+			); */
+		fetch("http://localhost:3000/api/auth/signup", {
+			method: "POST",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(values),
+		})
+			.then((res) => console.log("Sign up successfully", res))
+			.catch((err) => console.log("What's happening ?", err));
+
+		navigate("/");
+		//window.location.reload();
 	};
 
 	/* useEffect(() => {
@@ -71,7 +81,7 @@ const SignupForm = ({ submitForm }) => {
 					<div className="col-12 col-md-9 col-lg-7 col-xl-6">
 						<div className="card card-border">
 							<div className="card-body p-5">
-								<form className="signupForm">
+								<form className="signupForm" onSubmit={submitHandler}>
 									<div>
 										<h2 className="text-uppercase text-center mb-5">
 											Create an account
@@ -135,7 +145,7 @@ const SignupForm = ({ submitForm }) => {
 									<div className="d-flex justify-content-center">
 										<button
 											className="btn btn-primary btn-block btn-lg"
-											onClick={submitHandler}
+											type="submit"
 										>
 											Sign Up
 										</button>

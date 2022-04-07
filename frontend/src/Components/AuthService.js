@@ -6,7 +6,9 @@ const signup = (values) => {
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify(values),
-	});
+	})
+		.then((res) => res.json())
+		.catch((err) => console.log("What's happening ?", err));
 };
 
 const login = (values) => {

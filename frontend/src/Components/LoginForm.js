@@ -38,19 +38,26 @@ const LoginForm = ({ submitForm }) => {
 
 		setErrors(validation(values));
 		//setdataIsChecked(true);
-		try {
-			await AuthService.login(values).then(
-				() => {
-					navigate("/");
-					window.location.reload();
-				},
-				(error) => {
-					console.log(error);
+
+		fetch("http://localhost:3000/api/auth/login", {
+			method: "POST",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(values),
+		})
+			.then((res) => res.json())
+			.then((response) => {
+				//console.log(response);
+				//console.log(response.token);
+				if (response.token) {
+					localStorage.setItem("user", JSON.stringify(response.token));
 				}
-			);
-		} catch (err) {
-			console.log(err);
-		}
+			})
+			//.then((res) => console.log("Log in successfully", res.token))
+			.catch((err) => console.log("What's happening ?", err));
+		navigate("/");
 	};
 
 	/* 	useEffect(() => {
@@ -71,11 +78,10 @@ const LoginForm = ({ submitForm }) => {
 					<div className="col-12 col-md-9 col-lg-7 col-xl-6">
 						<div className="card card-border">
 							<div className="card-body p-5">
-								<form className="loginForm">
+								<form className="loginForm" onSubmit={submitHandler}>
 									<div>
 										<h2 className="text-uppercase text-center mb-5">
-											{" "}
-											Please Log in{" "}
+											Please Log in
 										</h2>
 									</div>
 									<div className="form-outline mb-4">
@@ -87,6 +93,7 @@ const LoginForm = ({ submitForm }) => {
 											value={values.email}
 											onChange={changeHandler}
 											placeholder="Email"
+											autoComplete="current-email"
 										/>
 										{errors.email && <p className="error">{errors.email} </p>}
 									</div>
@@ -99,6 +106,7 @@ const LoginForm = ({ submitForm }) => {
 											value={values.password}
 											onChange={changeHandler}
 											placeholder="Password"
+											autoComplete="current-password"
 										/>
 										{errors.password && (
 											<p className="error">{errors.password} </p>
@@ -107,7 +115,7 @@ const LoginForm = ({ submitForm }) => {
 									<div>
 										<button
 											className="btn btn-primary btn-block btn-lg"
-											onClick={submitHandler}
+											type="submit"
 										>
 											Login
 										</button>

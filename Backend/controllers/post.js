@@ -5,7 +5,8 @@ const Comment = require("../models/comment")(sequelize, DataTypes);
 
 exports.createPost = (req, res, next) => {
 	Post.create({
-		...req.body,
+		title: req.body.title,
+		content: req.body.content,
 	})
 		.then(() => res.status(201).json({ message: "Post created !" }))
 		.catch((error) => res.status(400).json({ error }));
@@ -44,7 +45,7 @@ exports.deletePost = (req, res, next) => {
 };
 
 exports.getAllPosts = (req, res, next) => {
-	Post.findAll({ include: ["comments"] })
+	Post.findAll() //{ include: ["comments"] }
 		.then((posts) => {
 			res.status(200).json(posts);
 		})
