@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 const Home = () => {
 	const [posts, setPosts] = useState([]);
 	const user = JSON.parse(localStorage.getItem("user"));
+	const [comment, setComment] = useState("");
 
 	useEffect(() => {
 		const retrievePosts = () =>
@@ -46,15 +47,32 @@ const Home = () => {
 		.catch((err) => console.log("What's happening ?", err)); */
 
 	return (
-		<div>
-			<h1> Welcome to Groupomania social app ! </h1>
-			<h3>
-				{posts.map((post) => (
-					<div>post : {post.title}</div>
-				))}
-			</h3>
+		<div className="px-5">
+			<h1 className="my-5"> Welcome to Groupomania social app ! </h1>
 			{posts.map((post) => (
-				<p>{post.content}</p>
+				<div className="card">
+					<div className="card-header">
+						<div>Hata Coulibaly a écrit :</div>
+						<div>il y a 10 min</div>
+					</div>
+					<div className="card-body">
+						<h3>
+							<div>{post.title}</div>
+						</h3>
+						<p>{post.content}</p>
+					</div>
+					<div className="card-footer">
+						<input
+							className="form-control form-control-change"
+							type="text"
+							name="comment"
+							value={comment}
+							onChange={(e) => setComment(e.target.value)}
+							placeholder="Ecrire un commentaire"
+						/>
+						<button className="btn btn-primary btn-sm btn-change">Send</button>
+					</div>
+				</div>
 			))}
 		</div>
 	);

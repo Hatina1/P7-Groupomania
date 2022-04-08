@@ -6,6 +6,7 @@ import AuthService from "./AuthService";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 //import { useAuth } from "../auth";
+import icon from "../assets/icon.png";
 
 const LoginForm = ({ submitForm }) => {
 	//const { changeHandler, submitHandler, values, errors } = useForm(submitForm);
@@ -80,6 +81,7 @@ const LoginForm = ({ submitForm }) => {
 							<div className="card-body p-5">
 								<form className="loginForm" onSubmit={submitHandler}>
 									<div>
+										<img src={icon} alt="Groupomania" className="gpnia-logo" />
 										<h2 className="text-uppercase text-center mb-5">
 											Please Log in
 										</h2>

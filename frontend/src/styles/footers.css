@@ -16,3 +16,10 @@
 	height: 45px;
 	width: 45px;
 }
+
+.footer {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}

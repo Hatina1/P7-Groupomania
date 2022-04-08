@@ -60,6 +60,18 @@ CSS .gradient-custom-3 {
 	border-radius: 15px;
 }
 
+.card-footer {
+	display: flex;
+}
+
+.form-control-change {
+	border-radius: 1rem;
+}
+
+.btn-change {
+	border-radius: 0.5rem !important;
+}
+
 @media (prefers-reduced-motion: no-preference) {
 	.App-logo {
 		animation: App-logo-spin infinite 20s linear;
