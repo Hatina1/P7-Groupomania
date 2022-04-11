@@ -72,6 +72,11 @@ CSS .gradient-custom-3 {
 	border-radius: 0.5rem !important;
 }
 
+.img-animated-gif {
+	width: auto;
+	height: 120px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
 	.App-logo {
 		animation: App-logo-spin infinite 20s linear;

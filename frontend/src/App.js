@@ -9,6 +9,7 @@ import SignupForm from "./Components/SignupForm";
 import LoginForm from "./Components/LoginForm";
 import "./styles/bootstrap.min.css";
 import "./styles/headers.css";
+import { ErrorBoundary } from "react-error-boundary";
 
 function App() {
 	return (
@@ -18,7 +19,7 @@ function App() {
 				<div className="container mt-3">
 					<Routes>
 						<Route exact path="/" element={<Home />} />
-						<Route path="/admin" element={<Admin />} />
+						<Route element={<Admin />} />
 						<Route path="/login" element={<LoginForm />} />
 						<Route path="/signup" element={<SignupForm />} />
 					</Routes>

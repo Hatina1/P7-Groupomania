@@ -26,7 +26,7 @@ function Navbar() {
 	return (
 		<div>
 			<nav className="navbar navbar-expand navbar-light bg-light border-bottom border-warning">
-				<div class="container-fluid">
+				<div className="container-fluid">
 					<div className="navbar-nav mr-auto">
 						<li className="nav-item">
 							<Link
