@@ -17,6 +17,16 @@ module.exports = (sequelize, DataTypes) => {
 				type: DataTypes.TEXT,
 				allowNull: false,
 			},
+			imageUrl: {
+				type: DataTypes.STRING,
+			},
+			/* postId: {
+				type: DataTypes.INTEGER,
+				references: {
+					model: "Posts",
+					key: "id",
+				},
+			}, */
 		},
 		{
 			timestamps: true,

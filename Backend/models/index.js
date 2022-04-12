@@ -37,8 +37,24 @@ db.posts.belongsTo(db.users, {
 	foreignKey: "UserId",
 	as: "user",
 });
-//hasMany() indicates that one Post can have many Comments
-db.users.hasMany(db.posts, { as: "posts" });
+// belongsTo() indicates that one Comment only belongs to one User
+db.comments.belongsTo(db.users, {
+	foreignKey: "UserId",
+	as: "user",
+});
+//hasMany() indicates that one User can have many Posts
+db.users.hasMany(db.posts, {
+	as: "posts",
+	onDelete: "SET NULL",
+	onUpdate: "CASCADE",
+});
+
+//hasMany() indicates that one User can have many Posts
+db.users.hasMany(db.comments, {
+	as: "posts",
+	onDelete: "SET NULL",
+	onUpdate: "CASCADE",
+});
 
 // belongsTo() indicates that one Comment only belongs to one Post
 db.comments.belongsTo(db.posts, {
@@ -46,12 +62,22 @@ db.comments.belongsTo(db.posts, {
 	as: "post",
 });
 
-//hasMany() indicates that one User can have many Posts
-db.posts.hasMany(db.comments, { as: "comments" });
+//hasMany() indicates that one Post can have many Comments
+db.posts.hasMany(db.comments, {
+	as: "comments",
+	onDelete: "SET NULL",
+	onUpdate: "CASCADE",
+});
 
 // This will run .sync()
-db.sequelize.sync().then(() => {
+db.sequelize.sync({ force: true }).then(() => {
 	console.log(`Database & tables created!`);
+});
+
+db.users.sync({ alter: true }).then(() => {
+	db.posts.sync({ alter: true }).then(() => {
+		db.comments.sync({ alter: true });
+	});
 });
 
 module.exports = db;

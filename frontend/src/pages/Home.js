@@ -4,14 +4,13 @@ import { useState, useEffect } from "react";
 //import authHeader from "../auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceLaugh } from "@fortawesome/free-solid-svg-icons";
-//XGXQg99XQE20h5jO0n8WcNKYc3jyvyN6
 
 const Home = () => {
 	const [posts, setPosts] = useState([]);
 	const user = JSON.parse(localStorage.getItem("user"));
 	const [comment, setComment] = useState("");
 	const [gifs, setGifs] = useState([]);
-	//const gf = new GiphyFetch("XGXQg99XQE20h5jO0n8WcNKYc3jyvyN6");
+	const [selectedGif, setSelectedGif] = useState("");
 
 	useEffect(() => {
 		const retrievePosts = () =>
@@ -101,17 +100,23 @@ const Home = () => {
 						<button className="btn btn-primary btn-sm btn-change">Send</button>
 					</div>
 					<div className="d-flex flex-wrap flex-row justify-content-between align-items-center">
-						{gifs.map((gif) => (
+						{gifs.map((gif, index) => (
 							<div key={gif.id}>
 								<a href="/" className="text-decoration-none lh-1">
 									<img
+										key={"gif-" + index}
 										className="img-animated-gif flex-nowrap"
 										src={gif.images.downsized.url}
+										onClick={() => setSelectedGif(gif.images.downsized.url)}
 									/>
 								</a>
 							</div>
 						))}
 					</div>
+					<div> 3 comments : </div>
+					<div> Comment 1</div>
+					<div> Comment 2</div>
+					<div> Comment 3</div>
 				</div>
 			))}
 		</div>

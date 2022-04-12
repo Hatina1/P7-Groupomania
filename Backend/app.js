@@ -13,7 +13,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-//const path = require("path");
+const path = require("path");
 
 // headers implementation
 app.use((req, res, next) => {
@@ -32,6 +32,7 @@ app.use((req, res, next) => {
 // routes importation
 app.use("/api", userRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 // module exportation
 module.exports = app;

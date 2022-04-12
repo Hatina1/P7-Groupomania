@@ -7,14 +7,23 @@ exports.createPost = (req, res, next) => {
 	Post.create({
 		title: req.body.title,
 		content: req.body.content,
+		userId: req.body.userId,
+		likes: 0,
+		dislikes: 0,
+		usersLiked: [],
+		usersDisliked: [],
 	})
 		.then(() => res.status(201).json({ message: "Post created !" }))
 		.catch((error) => res.status(400).json({ error }));
 };
 
 exports.createComment = (req, res, next) => {
+	const commentObj = JSON.parse(req.body.comment);
 	Comment.create({
-		...req.body,
+		...commentObj,
+		imageUrl: `${req.protocol}://${req.get("host")}/images/${
+			req.file.filename
+		}`,
 	})
 		.then(() => res.status(201).json({ message: "Comment created !" }))
 		.catch((error) => res.status(400).json({ error }));

@@ -21,6 +21,27 @@ module.exports = (sequelize, DataTypes) => {
 				type: DataTypes.STRING,
 				allowNull: false,
 			},
+			likes: {
+				type: DataTypes.INTEGER,
+			},
+			dislikes: {
+				type: DataTypes.INTEGER,
+			},
+			usersLiked: {
+				type: DataTypes.STRING,
+				defaultValue: "",
+			},
+			usersDisliked: {
+				type: DataTypes.STRING,
+				defaultValue: "",
+			},
+			/* userId: {
+				type: DataTypes.INTEGER,
+				references: {
+					model: "Users",
+					key: "id",
+				},
+			}, */
 		},
 		{
 			timestamps: true,
