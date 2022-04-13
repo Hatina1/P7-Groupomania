@@ -1,6 +1,6 @@
 //const { DataTypes } = require("sequelize"); Import the built-in data types
 const sequelize = require("sequelize");
-//const Sequelize = require("sequelize");
+const Sequelize = require("sequelize");
 const { DataTypes } = require("sequelize");
 const db = require("./index");
 
@@ -20,13 +20,24 @@ module.exports = (sequelize, DataTypes) => {
 			imageUrl: {
 				type: DataTypes.STRING,
 			},
-			/* postId: {
+			userId: {
 				type: DataTypes.INTEGER,
+				allowNull: false,
+				foreignKey: true,
+				references: {
+					model: "Users",
+					key: "id",
+				},
+			},
+			postId: {
+				type: DataTypes.INTEGER,
+				allowNull: false,
+				foreignKey: true,
 				references: {
 					model: "Posts",
 					key: "id",
 				},
-			}, */
+			},
 		},
 		{
 			timestamps: true,
@@ -34,6 +45,7 @@ module.exports = (sequelize, DataTypes) => {
 			updatedAt: false,
 		}
 	);
+
 	return Comment;
 };
 

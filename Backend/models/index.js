@@ -28,56 +28,78 @@ sequelize
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
+
 db.users = require("./user.js")(sequelize, Sequelize);
 db.posts = require("./post.js")(sequelize, Sequelize);
 db.comments = require("./comment.js")(sequelize, Sequelize);
 
+/* db.sequelize.sync({ force: true }).then(() => {
+	//console.log(`Database & tables created!`);
+}); */
+
+// This will run .sync()
+/* db.users.sync({ force: true }).then(() => {
+	db.posts.sync({ force: true }).then(() => {
+		db.comments.sync({ force: true });
+	});
+}); */
+
+/* db.users.sync({ alter: true }).then(() => {
+	db.posts.sync({ alter: true }).then(() => {
+		db.comments.sync({ alter: true });
+	});
+}); */
+
 // belongsTo() indicates that one Post only belongs to one User
 db.posts.belongsTo(db.users, {
-	foreignKey: "UserId",
-	as: "user",
+	foreignKey: {
+		name: "userId",
+		allowNull: false,
+	},
+	onDelete: "CASCADE",
+	onUpdate: "NO ACTION",
 });
 // belongsTo() indicates that one Comment only belongs to one User
 db.comments.belongsTo(db.users, {
-	foreignKey: "UserId",
-	as: "user",
+	foreignKey: {
+		name: "userId",
+		allowNull: false,
+	},
+	onDelete: "CASCADE",
+	onUpdate: "NO ACTION",
 });
 //hasMany() indicates that one User can have many Posts
 db.users.hasMany(db.posts, {
-	as: "posts",
-	onDelete: "SET NULL",
-	onUpdate: "CASCADE",
+	foreignKey: {
+		name: "userId",
+		allowNull: false,
+	},
 });
 
 //hasMany() indicates that one User can have many Posts
 db.users.hasMany(db.comments, {
-	as: "posts",
-	onDelete: "SET NULL",
-	onUpdate: "CASCADE",
+	foreignKey: {
+		name: "userId",
+		allowNull: false,
+	},
 });
 
 // belongsTo() indicates that one Comment only belongs to one Post
 db.comments.belongsTo(db.posts, {
-	foreignKey: "PostId",
-	as: "post",
+	foreignKey: {
+		name: "postId",
+		allowNull: false,
+	},
+	onDelete: "CASCADE",
+	onUpdate: "NO ACTION",
 });
 
 //hasMany() indicates that one Post can have many Comments
 db.posts.hasMany(db.comments, {
-	as: "comments",
-	onDelete: "SET NULL",
-	onUpdate: "CASCADE",
-});
-
-// This will run .sync()
-db.sequelize.sync({ force: true }).then(() => {
-	console.log(`Database & tables created!`);
-});
-
-db.users.sync({ alter: true }).then(() => {
-	db.posts.sync({ alter: true }).then(() => {
-		db.comments.sync({ alter: true });
-	});
+	foreignKey: {
+		name: "postId",
+		allowNull: false,
+	},
 });
 
 module.exports = db;

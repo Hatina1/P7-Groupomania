@@ -1,4 +1,5 @@
 const sequelize = require("sequelize");
+const Sequelize = require("sequelize");
 const { DataTypes } = require("sequelize"); // Import the built-in data types
 const db = require("./index");
 
@@ -47,6 +48,7 @@ module.exports = (sequelize, DataTypes) => {
 			updatedAt: false,
 		}
 	);
+
 	return User;
 };
 
