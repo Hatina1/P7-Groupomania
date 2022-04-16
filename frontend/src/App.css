@@ -62,10 +62,11 @@ CSS .gradient-custom-3 {
 
 .card-footer {
 	display: flex;
+	background-color: white;
 }
 
 .form-control-change {
-	border-radius: 1rem;
+	border-radius: 0.8rem !important;
 }
 
 .btn-change {
@@ -75,6 +76,76 @@ CSS .gradient-custom-3 {
 .img-animated-gif {
 	width: auto;
 	height: 120px;
+}
+.card-body-header {
+	line-height: 1px;
+	/*color: #5d5f60;*/
+	color: #c91a60;
+	font-weight: 500;
+	font-size: 12px;
+}
+
+.h3-change {
+	font-size: calc(0.8rem + 0.6vw);
+	margin-top: 0;
+	margin-bottom: 0;
+	font-weight: 500;
+	line-height: 1;
+}
+
+.p-change {
+	margin-top: 1rem;
+	margin-bottom: 0.5rem;
+	font-size: 1rem;
+}
+p em {
+	font-weight: 500;
+	font-style: normal;
+}
+#comments-button-enabled {
+	color: #fff;
+	background-color: #0d6efd;
+	border-color: #0d6efd;
+}
+
+#comments-button-disabled {
+	color: #000;
+	background-color: #e4e8ed;
+	border-color: #979ba0;
+}
+.bg-color {
+	background-color: rgba(17, 55, 93, 1); /*#11375d !important*/
+}
+
+.card-body-comment {
+	padding: 0.5rem 1rem;
+	background-color: rgba(0, 0, 0, 0.03);
+	border-top: 1px solid rgba(0, 0, 0, 0.125);
+}
+.card-p-comment-num {
+	padding: 0.5rem 1rem 0rem 1rem;
+	margin-bottom: 0.5rem;
+
+	font-size: 0.8rem;
+	color: rgb(37, 40, 122);
+}
+.card-p-comment-num em {
+	text-decoration: underline;
+}
+
+.card-p-comment {
+	padding: 0.5rem 1rem;
+	border-top: 1px solid rgba(0, 0, 0, 0.125);
+	margin-bottom: 0;
+	font-size: 0.8rem;
+}
+.card-article-comment {
+	/*background-color: rgba(245, 126, 126, 0.968);
+	background-color: rgba(243, 216, 216, 0.968);*/
+	background-color: rgba(246, 236, 236, 0.968);
+	border: 1px solid rgba(0, 0, 0, 0.125);
+	border-radius: 15px;
+	padding: 1rem 1rem 0.5rem 1rem;
 }
 
 @media (prefers-reduced-motion: no-preference) {

@@ -12,8 +12,6 @@ const LoginForm = ({ submitForm }) => {
 	//const { changeHandler, submitHandler, values, errors } = useForm(submitForm);
 
 	const [values, setValues] = useState({
-		firstname: "",
-		lastname: "",
 		email: "",
 		password: "",
 	});
@@ -50,10 +48,10 @@ const LoginForm = ({ submitForm }) => {
 		})
 			.then((res) => res.json())
 			.then((response) => {
-				//console.log(response);
+				console.log(response);
 				//console.log(response.token);
-				if (response.token) {
-					localStorage.setItem("user", JSON.stringify(response.token));
+				if (response) {
+					localStorage.setItem("user", JSON.stringify(response));
 				}
 			})
 			//.then((res) => console.log("Log in successfully", res.token))

@@ -26,7 +26,9 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-	User.findOne({ where: { email: req.body.email } })
+	User.findOne({
+		where: { email: req.body.email },
+	})
 		.then((user) => {
 			if (!user) {
 				return res.status(401).json({ error: "Utilisateur non trouvé !" });
@@ -43,6 +45,11 @@ exports.login = (req, res, next) => {
 					//  if check is valid, results set an userId and a token is given for a limited period
 					res.status(200).json({
 						id: user.id,
+						firstname: user.firstname,
+						lastname: user.lastname,
+						isAdmin: user.isAdmin,
+						isActive: user.isActive,
+						createdAt: user.createdAt,
 						token: jwt.sign({ id: user.id }, process.env.APP_SECRET, {
 							expiresIn: "24h",
 						}),

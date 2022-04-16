@@ -11,7 +11,7 @@ import {
 function Footer() {
 	return (
 		<div className="container">
-			<footer className="footer footer-change d-flex flex-wrap justify-content-between align-items-center py-3 my-4 px-4 border-top">
+			<footer className="footer footer-change d-flex flex-wrap justify-content-evenly align-items-center py-3 my-4 px-4 border-top">
 				<div className="col-md-4 d-flex align-items-center">
 					<a
 						href="/"
@@ -19,10 +19,10 @@ function Footer() {
 					>
 						<img src={icon} alt="Groupomania" className="gpnia-logo" />
 					</a>
-					<span className="text-muted">2021 Groupomania</span>
+					<span className="text-white">2021 Groupomania</span>
 				</div>
 
-				<ul className="nav col-md-4 justify-content-end list-unstyled d-flex">
+				<ul className="nav col-md-4 justify-content-end list-unstyled d-flex text-white">
 					<li className="ms-3">
 						<FontAwesomeIcon icon={faFacebook} />
 					</li>
