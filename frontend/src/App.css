@@ -148,6 +148,20 @@ p em {
 	padding: 1rem 1rem 0.5rem 1rem;
 }
 
+.grid-add {
+	--bs-columns: 10;
+	--bs-gap: 1rem;
+}
+
+.picture-change {
+	width: 50px;
+	height: 50px;
+}
+
+.font-change {
+	font-weight: 600;
+}
+
 @media (prefers-reduced-motion: no-preference) {
 	.App-logo {
 		animation: App-logo-spin infinite 20s linear;
