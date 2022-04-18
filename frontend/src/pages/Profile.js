@@ -1,73 +1,82 @@
 import React from "react";
-import { useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFaceLaugh } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
 import moment from "moment";
+import AuthService from "../Components/AuthService";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-	const [posts, setPosts] = useState([]);
-	const [comments, setComments] = useState([]);
 	const user = JSON.parse(localStorage.getItem("user"));
-	const [newComment, setNewComment] = useState({});
-	const handleNewComment = (e) => {
-		setNewComment({
-			...newComment,
-			[e.target.name]: e.target.value,
-		});
-		//e.target.value);
-		//console.log(e);
-	};
-
-	// Button send enable
-	const enableCommentButton = () => {
-		return newComment ? false : true;
-	};
-	// Button send enable
-	const changeCommentButtonStyle = () => {
-		return newComment ? "comments-button-enabled" : "comments-button-disabled";
-	};
-
-	useEffect(() => {
-		const retrievePosts = () =>
-			fetch("http://localhost:3000/api/posts/", {
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: "Bearer " + user.token,
-				},
-			})
-				.then((res) => res.json())
-				.catch((err) => console.log("What's happening ?", err));
-
-		const getAllPosts = async () => {
-			const allPosts = await retrievePosts();
-			setPosts(allPosts);
-		};
-
-		getAllPosts().catch(console.error);
-	}, []);
-
+	const navigate = useNavigate();
 	const date = (sqlDate) => {
 		var dateCreation = moment(sqlDate).format("DD/MM/YYYY");
 		return dateCreation;
 	};
 
+	const [boolActive, setBoolActive] = useState({
+		isActive: "",
+	});
+	const onClickHandler = async (e) => {
+		if (e.target.id === "activate") {
+			e.preventDefault();
+
+			user.isActive === true
+				? setBoolActive({
+						isActive: false,
+				  })
+				: setBoolActive({
+						isActive: true,
+				  });
+
+			AuthService.activeUser(user.id, boolActive);
+			AuthService.logout();
+			navigate("/login");
+		} else if (e.target.id === "suppression") {
+			e.preventDefault();
+			AuthService.deleteUser(user.id);
+			AuthService.logout();
+			navigate("/signup");
+		}
+
+		//window.location.reload();
+	};
+
+	const logOut = () => {
+		AuthService.logout();
+	};
+
+	const initiales =
+		user.firstname.charAt(0).toUpperCase() +
+		user.lastname.charAt(0).toUpperCase();
+
+	//chartAt
+
 	return (
 		<div className="px-2">
-			<h1 className="my-3 text-white">Détails du compte</h1>
 			<br />
+			<h1 className="my-3 text-white">Détails du compte</h1>
+
+			<br />
+			{!user.isActive && (
+				<button
+					id="activate"
+					className="btn btn-sm btn btn-warning btn-change me-3 my-3"
+					onClick={onClickHandler}
+				>
+					Réactiver le compte
+				</button>
+			)}
 
 			<div className="row">
 				<div className="col-sm-4">
 					<div className="card d-flex align-items-center pt-4">
 						<div className=" pt-2 text-center align-middle border border-3 border-secondary bg-light  rounded-circle picture-change ">
-							<span className="text-center fw-bold">HC</span>
+							<span className="text-center fw-bold">{initiales}</span>
 						</div>
 						<p className="pt-3 fw-bold">
 							{user.firstname} {user.lastname}
 						</p>
 						<p className="border-bottom border-2 pt-1 pb-3">
-							Utilisateur / Admin
+							{user.isAdmin ? "Admin" : "Utilisateur"}
 						</p>
 						<a href="/" target="_blank" className="link-dark pt-3">
 							Paramètres du compte
@@ -75,7 +84,12 @@ const Home = () => {
 						<a href="/" target="_blank" className="link-dark pt-3">
 							Modifier le profil
 						</a>
-						<a href="/" target="_blank" className="link-dark pt-3 pb-4">
+						<a
+							href="/login"
+							target="_blank"
+							className="link-dark pt-3 pb-4"
+							onClick={logOut}
+						>
 							Deconnexion
 						</a>
 					</div>
@@ -103,14 +117,34 @@ const Home = () => {
 						<p className="">{date(user.createdAt)}</p>
 					</article>
 
-					<button className="btn btn-sm btn btn-danger btn-change me-3 my-3">
-						Désactiver le compte
-					</button>
-					<button className="btn btn-sm btn btn-danger btn-change me-3 my-3">
-						Deconnexion
+					{user.isActive ? (
+						<button
+							id="activate"
+							className="btn btn-sm btn btn-danger btn-change me-3 my-3"
+							onClick={onClickHandler}
+						>
+							Désactiver le compte
+						</button>
+					) : (
+						<button
+							id="activate"
+							className="btn btn-sm btn btn-warning btn-change me-3 my-3"
+							onClick={onClickHandler}
+						>
+							Réactiver le compte
+						</button>
+					)}
+
+					<button
+						id="suppression"
+						className="btn btn-sm btn btn-danger btn-change me-3 my-3"
+						onClick={onClickHandler}
+					>
+						Supprimer le compte
 					</button>
 				</div>
 			</div>
+			<br />
 		</div>
 	);
 };

@@ -32,9 +32,8 @@ exports.login = (req, res, next) => {
 		.then((user) => {
 			if (!user) {
 				return res.status(401).json({ error: "Utilisateur non trouvé !" });
-			} else if (user && user.isActive === false) {
-				return res.status(401).json({ error: "Utilisateur à réactiver ?" });
 			}
+
 			bcrypt
 				.compare(req.body.password, user.password)
 				.then((valid) => {

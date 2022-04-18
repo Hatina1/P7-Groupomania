@@ -17,7 +17,7 @@ const LoginForm = ({ submitForm }) => {
 	});
 
 	const [errors, setErrors] = useState({});
-
+	const user = JSON.parse(localStorage.getItem("user"));
 	//const [dataIsChecked, setdataIsChecked] = useState(false);
 
 	//const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -56,7 +56,10 @@ const LoginForm = ({ submitForm }) => {
 			})
 			//.then((res) => console.log("Log in successfully", res.token))
 			.catch((err) => console.log("What's happening ?", err));
-		navigate("/");
+
+		user.isActive ? navigate("/") : navigate("/profile");
+
+		//window.location.reload();
 	};
 
 	/* 	useEffect(() => {

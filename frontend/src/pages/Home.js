@@ -10,7 +10,7 @@ const Home = () => {
 	const [posts, setPosts] = useState([]);
 	const [comments, setComments] = useState([]);
 	const user = JSON.parse(localStorage.getItem("user"));
-	const [newComment, setNewComment] = useState("");
+	const [newComment, setNewComment] = useState({});
 	const [commentSend, setCommentSend] = useState({
 		commentId: "",
 		sent: "",
@@ -18,25 +18,42 @@ const Home = () => {
 	const [gifs, setGifs] = useState([]);
 	const [selectedGif, setSelectedGif] = useState("");
 	const [selectedFile, setSelectedFile] = useState(null);
-	const [showGifs, setShowGifs] = useState(false);
+	const [showGifs, setShowGifs] = useState(true);
+	const [keyId, setKeyId] = useState({ id: "" });
+	const [commPostId, setCommPostId] = useState({ id: "" });
 	const divStyle = {
 		display: "none",
 	};
 
-	const handleClickDisplayGifs = () => {
-		setShowGifs(!showGifs);
+	const handleClickDisplayGifs = (postId) => {
+		if (keyId.id == postId) {
+			setShowGifs(!showGifs);
+		} else {
+			setKeyId({ ...keyId, id: postId });
+			setShowGifs(!showGifs);
+		}
+
+		console.log(showGifs);
 		console.log("ouvrir la div des gifs");
 	};
 
-	const handleSelectedFile = (event) => {
-		setSelectedFile(event.target.files[0]);
-	};
+	//const handleNewComment = (e) => {
+	//console.log(name);
+	//setCommPostId({ ...commPostId, id: name });
+	//console.log(commPostId.id == name);
+	//if (commPostId.id == name) {}
+	//	setNewComment(e.target.value);
+	//setNewComment({ [e.target.name]: e.target.value });
+	//};
 
-	const handleNewComment = (e) => {
-		setNewComment(e.target.value);
-		//e.target.value);
-		//console.log(e);
-		console.log(e.target.value);
+	const handleChange = (event) => {
+		const { name, value } = event.target;
+		setNewComment((prevState) => {
+			return {
+				...prevState,
+				[name]: value,
+			};
+		});
 	};
 
 	const handleCommentSend = (e) => {
@@ -44,11 +61,15 @@ const Home = () => {
 		setNewComment("");
 	};
 
-	const submitComment = (e) => {
+	const handleSelectedFile = (event) => {
+		setSelectedFile(event.target.files[0]);
+	};
+
+	const submitNewComment = (e, index) => {
 		e.preventDefault();
 		//setCommentLine(comment);
 
-		const formData = new FormData();
+		/* const formData = new FormData();
 		//formData.append(...array);
 		formData.append("content", newComment);
 		formData.append("postId", posts.id);
@@ -65,9 +86,15 @@ const Home = () => {
 			body: JSON.stringify(formData),
 		})
 			.then((res) => res.json())
-			.catch((err) => console.log("comment was not sent to db", err));
+			.catch((err) => console.log("comment was not sent to db", err)); */
 
-		//setComment("");
+		//
+
+		console.log(newComment);
+
+		setNewComment({ [index]: "" });
+		e.target.reset();
+		console.log(newComment[index]);
 	};
 	//	https://media.giphy.com/media/NEvPzZ8bd1V4Y/giphy.gif
 
@@ -78,17 +105,19 @@ const Home = () => {
 		var jYear = sqlDateFormat.getFullYear();
 		var jMonth = sqlDateFormat.getMonth();
 		var jDay = sqlDateFormat.getDate();
-		var sentDelay = moment([jYear, jMonth, jDay + 1]).fromNow(true);
+		var sentDelay = moment([jYear, jMonth, jDay + 1]).fromNow();
 		return sentDelay;
 	};
 
 	// Button send enable
-	const enableCommentButton = () => {
-		return newComment ? false : true;
+	const enableCommentButton = (id) => {
+		return newComment[id] ? false : true;
 	};
 	// Button send enable
-	const changeCommentButtonStyle = () => {
-		return newComment ? "comments-button-enabled" : "comments-button-disabled";
+	const changeCommentButtonStyle = (id) => {
+		return newComment[id]
+			? "comments-button-enabled"
+			: "comments-button-disabled";
 	};
 
 	useEffect(() => {
@@ -172,55 +201,30 @@ const Home = () => {
 				to Groupomania social app !
 			</h1>
 			<br />
-
 			<h2 className="my-2 text-white">
 				{" "}
 				Envie d'écrire ou de partager une info, c'est par ici 👇{" "}
 			</h2>
-			<form className="d-flex">
-				<textarea
-					className="form-control form-control-change"
-					type="text"
-					name="text"
-					onChange={(e) => setNewComment(e.target.value)}
-					//value={newComment}
-					placeholder="Comment allez-vous aujourd'hui ?"
-				/>
-
-				<FontAwesomeIcon
-					icon={faFaceLaugh}
-					className="px-1 py-2 text-white"
-					onClick={handleClickDisplayGifs}
-				/>
-
-				<button
-					className="btn btn-primary btn-sm btn-change"
-					id={changeCommentButtonStyle()}
-					disabled={enableCommentButton()}
-				>
-					Créer un post
-				</button>
-			</form>
 			<br />
+			user.isActive ? (
 			<h2 className="my-2 text-white"> Les derniers posts : </h2>
 			{posts.map((post, index) => (
 				<div key={index} className="card my-4">
 					<div className="card-body py-4">
-						<div className="card-body-header">
+						<div className="card-body-header d-flex justify-content-between">
 							<p>
-								<em>
-									{post.firstname} {post.lastname}
-								</em>{" "}
-								a écrit, il y a {sqlToJsDate(post.createdAt)} :
+								Posté par {post.firstname} {post.lastname}
 							</p>
+							<p>il y a {sqlToJsDate(post.createdAt)}</p>
 						</div>
 						<h3 className="h3-change">{post.title}</h3>
 						<p className="p-change">{post.content}</p>
 					</div>
+
 					{comments
 						.filter((col) => col.postId == post.id)
-						.map((comment) => (
-							<div key={comment.id} className="">
+						.map((comment, index) => (
+							<div className="" key={index}>
 								<p className="card-p-comment-num">
 									<em>Voir les commentaires</em> (
 									{checkCommExists(comments, post)} commentaires) :
@@ -233,7 +237,7 @@ const Home = () => {
 											<em>
 												{comment.firstname} {comment.lastname}
 											</em>
-											, il y a {sqlToJsDate(comment.createdAt)}
+											{sqlToJsDate(comment.createdAt)}
 										</p>
 										<p className="p-change">
 											{comment.imageUrl} {comment.content}
@@ -242,46 +246,46 @@ const Home = () => {
 								</section>
 							</div>
 						))}
-					<div className="card-footer" key={index}>
-						<form className="d-flex" key={index}>
+
+					<div className="card-footer">
+						<form
+							className="d-flex"
+							key={index}
+							onSubmit={(e) => submitNewComment(e, index)}
+						>
 							<input
 								className="form-control form-control-change"
 								type="text"
-								//name={`comment-${comments.length + 1}`}
-								name={`comment-${index}`}
-								id={`comment-${index}`}
-								onChange={(e) => setNewComment(e.target.value)}
-								value={newComment}
+								name={index}
+								id={index}
+								onChange={handleChange}
 								placeholder="Ecrire un commentaire"
+								//name={`comment-${numberOfComm(comments) + 1}`}
+								//id={`comment-${index}`}
+								//onChange={(e) => setNewComment(e.target.value)}
 							/>
 
 							<FontAwesomeIcon
 								icon={faFaceLaugh}
 								className="px-1 py-2"
-								onClick={handleClickDisplayGifs}
+								onClick={() => handleClickDisplayGifs(post.id)}
 							/>
-							{/* <input
-								type="file"
-								name="file"
-								onChange={handleSelectedFile}
-								style={divStyle}
-								multiple
-								accept="image/*"
-							/> */}
-
 							<button
-								className="btn btn-primary btn-sm btn-change"
-								id={changeCommentButtonStyle()}
-								disabled={enableCommentButton()}
+								className={`btn btn-primary btn-sm btn-change ${changeCommentButtonStyle(
+									index
+								)}`}
+								id={index}
+								disabled={enableCommentButton(index)}
+								type="submit"
 							>
 								Send
 							</button>
 						</form>
 					</div>
 
-					{showGifs && (
+					{keyId.id === post.id && showGifs && (
 						<div className="d-flex flex-wrap flex-row justify-content-between align-items-center">
-							{gifs.map((gif, index) => (
+							{gifs.map((gif) => (
 								<div key={gif.id}>
 									<a
 										target="_blank"
@@ -289,7 +293,7 @@ const Home = () => {
 										className="text-decoration-none lh-1"
 									>
 										<img
-											key={"gif-" + index}
+											key={"gif-" + gif.id}
 											className="img-animated-gif flex-nowrap"
 											src={gif.images.downsized.url}
 										/>
@@ -300,6 +304,12 @@ const Home = () => {
 					)}
 				</div>
 			))}
+			) : (
+			<h2 className="my-2 text-white">
+				{" "}
+				Go to the profile to activate again your account{" "}
+			</h2>
+			)
 		</div>
 	);
 };

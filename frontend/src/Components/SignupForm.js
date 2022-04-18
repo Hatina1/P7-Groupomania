@@ -60,7 +60,7 @@ const SignupForm = ({ submitForm }) => {
 			.catch((err) => console.log("What's happening ?", err));
 
 		navigate("/");
-		//window.location.reload();
+		window.location.reload();
 	};
 
 	/* useEffect(() => {

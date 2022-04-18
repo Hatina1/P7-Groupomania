@@ -149,7 +149,7 @@ exports.deletePost = (req, res, next) => {
 exports.getAllPosts = (req, res, next) => {
 	sequelize
 		.query(
-			"SELECT  `Post`.`id`,  `Post`.`title`,`Post`.`content`,`Post`.`createdAt`,`Post`.`userId`,`User`.`firstname`,`User`.`lastname` FROM `Posts` AS `Post` LEFT OUTER JOIN `Users` AS `User`  ON `Post`.`userId` = `User`.`id` ORDER BY `createdAt` `DESC`",
+			"SELECT  `Post`.`id`,  `Post`.`title`,`Post`.`content`,`Post`.`createdAt`,`Post`.`userId`,`User`.`firstname`,`User`.`lastname` FROM `Posts` AS `Post` LEFT OUTER JOIN `Users` AS `User`  ON `Post`.`userId` = `User`.`id` ORDER BY `createdAt` DESC",
 			{
 				//replacements: [`createdAt`, `DESC`],
 				type: QueryTypes.SELECT,
