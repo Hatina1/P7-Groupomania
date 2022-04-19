@@ -12,7 +12,7 @@ const postCtrl = require("../controllers/post");
 // differents routes of the api
 router.get("/", auth, postCtrl.getAllPosts);
 router.post("/", auth, multer, postCtrl.createPost);
-router.get("/comments", auth, postCtrl.getAllCommentsbyPost);
+router.get("/comments", auth, postCtrl.getAllComments);
 router.post("/:postId/comments", auth, postCtrl.createComment);
 router.get("/:postId", auth, postCtrl.getOnePost);
 router.put("/:postId", auth, multer, postCtrl.modifyPost);

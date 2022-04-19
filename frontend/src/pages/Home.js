@@ -10,13 +10,14 @@ const Home = () => {
 	const [posts, setPosts] = useState([]);
 	const [comments, setComments] = useState([]);
 	const user = JSON.parse(localStorage.getItem("user"));
+	const [newPost, setNewPost] = useState({});
 	const [newComment, setNewComment] = useState({});
 	const [commentSend, setCommentSend] = useState({
 		commentId: "",
 		sent: "",
 	});
 	const [gifs, setGifs] = useState([]);
-	const [selectedGif, setSelectedGif] = useState("");
+	const [selectedGif, setSelectedGif] = useState({});
 	const [selectedFile, setSelectedFile] = useState(null);
 	const [showGifs, setShowGifs] = useState(true);
 	const [keyId, setKeyId] = useState({ id: "" });
@@ -46,8 +47,9 @@ const Home = () => {
 	//setNewComment({ [e.target.name]: e.target.value });
 	//};
 
-	const handleChange = (event) => {
+	const handleChangeInput = (event) => {
 		const { name, value } = event.target;
+
 		setNewComment((prevState) => {
 			return {
 				...prevState,
@@ -56,49 +58,65 @@ const Home = () => {
 		});
 	};
 
-	const handleCommentSend = (e) => {
+	/* const handleCommentSend = (e) => {
 		setCommentSend({ commentId: numberOfComm++, sent: newComment });
 		setNewComment("");
-	};
+	}; */
 
-	const handleSelectedFile = (event) => {
+	/* const handleSelectedFile = (event) => {
 		setSelectedFile(event.target.files[0]);
-	};
+	}; */
 
-	const submitNewComment = (e, index) => {
+	const submitNewPost = (e, index) => {
 		e.preventDefault();
-		//setCommentLine(comment);
 
-		/* const formData = new FormData();
-		//formData.append(...array);
-		formData.append("content", newComment);
-		formData.append("postId", posts.id);
-		formData.append("userId", user.id);
-		//formData.append("imageUrl", selectedFile, selectedFile.name);
-		formData.append("imageUrl", selectedGif);
+		const postSent = {};
+		postSent.content = postSent.hasOwnProperty("newPost") && newPost["newPost"];
+		postSent.userId = user.id;
 
-		fetch(`http://localhost:3000/api/posts/{postId}/comment`, {
+		fetch(`http://localhost:3000/api/posts`, {
 			method: "POST",
 			headers: {
 				Accept: "application/json",
 				"Content-Type": "application/json",
+				Authorization: "Bearer " + user.token,
 			},
-			body: JSON.stringify(formData),
+			body: JSON.stringify(postSent),
 		})
 			.then((res) => res.json())
-			.catch((err) => console.log("comment was not sent to db", err)); */
+			.catch((err) => console.log("Post was not sent", err));
 
-		//
+		setNewPost({ [index]: "" });
+		e.target.reset();
+	};
 
-		console.log(newComment);
+	const submitNewComment = (e, index, postId) => {
+		e.preventDefault();
+
+		const commentSent = {};
+		commentSent.content = newComment.hasOwnProperty(index) && newComment[index];
+		commentSent.postId = postId;
+		commentSent.userId = user.id;
+		commentSent.imageUrl = selectedGif.hasOwnProperty(index)
+			? selectedGif[index]
+			: null;
+
+		fetch(`http://localhost:3000/api/posts/${postId}/comments`, {
+			method: "POST",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+				Authorization: "Bearer " + user.token,
+			},
+			body: JSON.stringify(commentSent),
+		})
+			.then((res) => res.json())
+			.catch((err) => console.log("Comment was not sent", err));
 
 		setNewComment({ [index]: "" });
+		setSelectedGif({ [index]: "" });
 		e.target.reset();
-		console.log(newComment[index]);
 	};
-	//	https://media.giphy.com/media/NEvPzZ8bd1V4Y/giphy.gif
-
-	//moment("20111031", "YYYYMMDD").fromNow();
 
 	const sqlToJsDate = (sqlDate) => {
 		var sqlDateFormat = new Date(sqlDate);
@@ -109,13 +127,13 @@ const Home = () => {
 		return sentDelay;
 	};
 
-	// Button send enable
+	// Button send enable - AJOUTER UNE CONDITION OU POUR INCLURE LES GIFS
 	const enableCommentButton = (id) => {
-		return newComment[id] ? false : true;
+		return newComment[id] || selectedGif[id] || newPost[id] ? false : true;
 	};
 	// Button send enable
 	const changeCommentButtonStyle = (id) => {
-		return newComment[id]
+		return newComment[id] || selectedGif[id] || newPost[id]
 			? "comments-button-enabled"
 			: "comments-button-disabled";
 	};
@@ -187,6 +205,29 @@ const Home = () => {
 		fetchGifs().catch(console.error);
 	}, []);
 
+	const handleSelectGif = (e) => {
+		e.preventDefault();
+
+		const { name, src } = e.target;
+		setSelectedGif((prevState) => {
+			return {
+				...prevState,
+				[name]: src,
+			};
+		});
+		setShowGifs(false);
+	};
+
+	const handleChangeInputPost = (e) => {
+		const { name, value } = e.target;
+		setNewPost((prevState) => {
+			return {
+				...prevState,
+				[name]: value,
+			};
+		});
+	};
+
 	//:onSubmit={submitComment} enctype="multipart/form-data"
 	//<input type="hidden" id="postId" name="postId" value={post.id} />
 	//onClick={() => setSelectedGif(gif.images.downsized.url)}
@@ -206,11 +247,32 @@ const Home = () => {
 				Envie d'écrire ou de partager une info, c'est par ici 👇{" "}
 			</h2>
 			<br />
+			<form className="d-flex" onSubmit={submitNewPost}>
+				<textarea
+					className="form-control form-control-change me-3"
+					type="text"
+					name="newPost"
+					onChange={handleChangeInputPost}
+					placeholder="Comment allez-vous aujourd'hui ?"
+				/>
+
+				<button
+					className={`btn btn-primary btn-sm btn-change ${changeCommentButtonStyle(
+						"newPost"
+					)}`}
+					id="newPost"
+					disabled={enableCommentButton("newPost")}
+					type="submit"
+				>
+					Créer un post
+				</button>
+			</form>
+			<br />
 			user.isActive ? (
 			<h2 className="my-2 text-white"> Les derniers posts : </h2>
 			{posts.map((post, index) => (
 				<div key={index} className="card my-4">
-					<div className="card-body py-4">
+					<div className="card-body pt-4">
 						<div className="card-body-header d-flex justify-content-between">
 							<p>
 								Posté par {post.firstname} {post.lastname}
@@ -219,29 +281,33 @@ const Home = () => {
 						</div>
 						<h3 className="h3-change">{post.title}</h3>
 						<p className="p-change">{post.content}</p>
+						<p className="card-p-comment-num">
+							<em>Voir les commentaires</em> ({checkCommExists(comments, post)}{" "}
+							commentaires) : (Cacher les commentaires)
+						</p>
 					</div>
 
 					{comments
 						.filter((col) => col.postId == post.id)
 						.map((comment, index) => (
 							<div className="" key={index}>
-								<p className="card-p-comment-num">
-									<em>Voir les commentaires</em> (
-									{checkCommExists(comments, post)} commentaires) :
-								</p>
-
-								<section className="card-body card-body-comment">
+								<section className="card-body-comment">
 									<article className="card-article-comment">
-										<p className="card-body-header">
-											par{" "}
-											<em>
-												{comment.firstname} {comment.lastname}
-											</em>
-											{sqlToJsDate(comment.createdAt)}
-										</p>
-										<p className="p-change">
-											{comment.imageUrl} {comment.content}
-										</p>
+										<div className="card-body-header d-flex justify-content-between">
+											<p>
+												Réponse de {comment.firstname} {comment.lastname}
+											</p>
+											<p>il y a {sqlToJsDate(comment.createdAt)}</p>
+										</div>
+
+										{comment.imageUrl && (
+											<img
+												className="img-animated-gif flex-nowrap"
+												src={comment.imageUrl}
+											/>
+										)}
+
+										<p className="p-change">{comment.content}</p>
 									</article>
 								</section>
 							</div>
@@ -251,14 +317,14 @@ const Home = () => {
 						<form
 							className="d-flex"
 							key={index}
-							onSubmit={(e) => submitNewComment(e, index)}
+							onSubmit={(e) => submitNewComment(e, index, post.id)}
 						>
 							<input
 								className="form-control form-control-change"
 								type="text"
 								name={index}
 								id={index}
-								onChange={handleChange}
+								onChange={handleChangeInput}
 								placeholder="Ecrire un commentaire"
 								//name={`comment-${numberOfComm(comments) + 1}`}
 								//id={`comment-${index}`}
@@ -291,9 +357,11 @@ const Home = () => {
 										target="_blank"
 										href="/"
 										className="text-decoration-none lh-1"
+										onClick={handleSelectGif}
 									>
 										<img
 											key={"gif-" + gif.id}
+											name={index}
 											className="img-animated-gif flex-nowrap"
 											src={gif.images.downsized.url}
 										/>

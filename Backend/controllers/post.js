@@ -37,7 +37,7 @@ exports.createComment = (req, res, next) => {
 		content: req.body.content,
 		userId: req.body.userId,
 		postId: req.body.postId,
-		imageUrl: null,
+		imageUrl: req.body.imageUrl,
 	})
 		.then(() => res.status(201).json({ message: "Comment created !" }))
 		.catch((error) => res.status(400).json({ error }));
@@ -169,7 +169,7 @@ exports.getAllPosts = (req, res, next) => {
 		.catch((error) => res.status(404).json({ error }));
 }; */
 
-exports.getAllCommentsbyPost = (req, res, next) => {
+exports.getAllComments = (req, res, next) => {
 	sequelize
 		.query(
 			"SELECT  `Comment`.`id`, `Comment`.`content`, `Comment`.`imageUrl`,`Comment`.`createdAt`,`Comment`.`postId`,`Comment`.`userId`,`User`.`firstname`,`User`.`lastname` FROM `Comments` AS `Comment` LEFT OUTER JOIN `Users` AS `User`  ON `Comment`.`userId` = `User`.`id` ORDER BY ? ?",

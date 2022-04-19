@@ -1,3 +1,4 @@
+import React from "react";
 import "../styles/bootstrap.min.css";
 import "../styles/footers.css";
 import icon from "../assets/icon.png";

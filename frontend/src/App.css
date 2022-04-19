@@ -77,6 +77,12 @@ CSS .gradient-custom-3 {
 	width: auto;
 	height: 120px;
 }
+
+.card-body {
+	padding: 0.5rem 1rem 0.5rem 1rem;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
 .card-body-header {
 	line-height: 1px;
 	/*color: #5d5f60;*/
@@ -120,11 +126,10 @@ p em {
 .card-body-comment {
 	padding: 0.5rem 1rem;
 	background-color: rgba(0, 0, 0, 0.03);
-	border-top: 1px solid rgba(0, 0, 0, 0.125);
 }
 .card-p-comment-num {
-	padding: 0.5rem 1rem 0rem 1rem;
-	margin-bottom: 0.5rem;
+	margin-top: 3rem;
+	margin-bottom: 0;
 
 	font-size: 0.8rem;
 	color: rgb(37, 40, 122);
