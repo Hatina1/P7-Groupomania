@@ -25,29 +25,9 @@ module.exports = (sequelize, DataTypes) => {
 				type: DataTypes.INTEGER,
 				defaultValue: 0,
 			},
-			dislikes: {
-				type: DataTypes.INTEGER,
-				defaultValue: 0,
-			},
 			usersLiked: {
-				type: DataTypes.STRING,
+				type: DataTypes.JSON,
 				defaultValue: "",
-				get() {
-					return this.getDataValue("usersLiked").split(",");
-				},
-				set(val) {
-					this.setDataValue("usersLiked", val.join(","));
-				},
-			},
-			usersDisliked: {
-				type: DataTypes.STRING,
-				defaultValue: "",
-				get() {
-					return this.getDataValue("usersDisliked").split(",");
-				},
-				set(val) {
-					this.setDataValue("usersDisliked", val.join(","));
-				},
 			},
 			userId: {
 				type: DataTypes.INTEGER,

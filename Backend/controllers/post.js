@@ -44,79 +44,12 @@ exports.createComment = (req, res, next) => {
 };
 
 exports.likePost = (req, res, next) => {
-	Post.findOne({ _id: req.params.id })
-		.then((post) => {
-			if (req.body.like === 1 && !post.usersLiked.includes(req.body.userId)) {
-				// user likes the post and his userId doesn't appear in the arrray usersLiked
-				Post.updateOne(
-					{
-						_id: req.params.id,
-					},
-					{
-						$push: { usersLiked: req.body.userId },
-						$inc: { likes: 1 },
-					}
-				)
-					.then(() => {
-						res.status(200).json({ message: "post liked !" });
-					})
-					.catch((error) => res.status(400).json({ error }));
-			} else if (
-				req.body.like === -1 &&
-				!post.usersDisliked.includes(req.body.userId)
-			) {
-				// userId dislikes the post and his userId doesn't appear in the arrray usersDisliked
-				Post.updateOne(
-					{
-						_id: req.params.id,
-					},
-					{
-						$push: { usersDisliked: req.body.userId },
-						$inc: { dislikes: 1 },
-					}
-				)
-					.then(() => {
-						res.status(200).json({ message: "Post disliked !" });
-					})
-					.catch((error) => res.status(400).json({ error }));
-				// userId modified his like/dislike preference
-			} else if (
-				req.body.like === 0 &&
-				post.usersLiked.includes(req.body.userId)
-				// if the userId is in the usersLiked array
-			) {
-				Post.updateOne(
-					{
-						_id: req.params.id,
-					},
-					{
-						$pull: { usersLiked: req.body.userId },
-						$inc: { likes: -1 },
-					}
-				)
-					.then(() => {
-						res.status(200).json({ message: "Like removed !" });
-					})
-					.catch((error) => res.status(400).json({ error }));
-			} else if (
-				req.body.like === 0 &&
-				Post.usersDisliked.includes(req.body.userId)
-				// if the userId is in the usersDisliked array
-			) {
-				Post.updateOne(
-					{
-						_id: req.params.id,
-					},
-					{
-						$pull: { usersDisliked: req.body.userId },
-						$inc: { dislikes: -1 },
-					}
-				)
-					.then(() => {
-						res.status(200).json({ message: "Dislike removed!" });
-					})
-					.catch((error) => res.status(400).json({ error }));
-			}
+	Post.update(
+		{ likes: req.body.likes, usersLiked: req.body.usersLiked },
+		{ where: { id: req.params.id } }
+	)
+		.then(() => {
+			res.status(200).json({ message: "post like status changed !" });
 		})
 		.catch((error) => res.status(400).json({ error }));
 };
@@ -149,7 +82,7 @@ exports.deletePost = (req, res, next) => {
 exports.getAllPosts = (req, res, next) => {
 	sequelize
 		.query(
-			"SELECT  `Post`.`id`,  `Post`.`title`,`Post`.`content`,`Post`.`createdAt`,`Post`.`userId`,`User`.`firstname`,`User`.`lastname` FROM `Posts` AS `Post` LEFT OUTER JOIN `Users` AS `User`  ON `Post`.`userId` = `User`.`id` ORDER BY `createdAt` DESC",
+			"SELECT  `Post`.`id`,  `Post`.`title`,`Post`.`content`,`Post`.`createdAt`,`Post`.`userId`,`Post`.`likes`,`Post`.`usersLiked`,`User`.`firstname`,`User`.`lastname` FROM `Posts` AS `Post` LEFT OUTER JOIN `Users` AS `User`  ON `Post`.`userId` = `User`.`id` ORDER BY `createdAt` DESC",
 			{
 				//replacements: [`createdAt`, `DESC`],
 				type: QueryTypes.SELECT,

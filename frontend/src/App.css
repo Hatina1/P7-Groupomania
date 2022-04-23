@@ -56,14 +56,18 @@ CSS .gradient-custom-3 {
 	);
 }
 
+.ul-margin-change {
+	margin-bottom: 0;
+}
+
 .card-border {
 	border-radius: 15px;
 }
 
-.card-footer {
+/* .card-footer {
 	display: flex;
 	background-color: white;
-}
+} */
 
 .form-control-change {
 	border-radius: 0.8rem !important;
@@ -78,29 +82,37 @@ CSS .gradient-custom-3 {
 	height: 120px;
 }
 
-.card-body {
+.card-body-change {
 	padding: 0.5rem 1rem 0.5rem 1rem;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+	/*border-bottom: 1px solid rgba(0, 0, 0, 0.125);*/
 }
 
 .card-body-header {
+	/*
 	line-height: 1px;
-	/*color: #5d5f60;*/
-	color: #c91a60;
+	color: #5d5f60;*/
+	color: rgba(17, 55, 93, 1);
 	font-weight: 500;
 	font-size: 12px;
 }
 
 .h3-change {
-	font-size: calc(0.8rem + 0.6vw);
+	font-size: 1rem;
 	margin-top: 0;
 	margin-bottom: 0;
 	font-weight: 500;
-	line-height: 1;
+	border-radius: 0.25rem;
+	color: rgba(17, 55, 93, 1);
+	color: #c91a60;
+	background-color: rgb(212, 233, 255);
+	background-color: rgb(200 193 199 / 41%);
 }
 
+.padding-col {
+	padding-left: 0 !important;
+}
 .p-change {
-	margin-top: 1rem;
+	margin-top: 0.5rem;
 	margin-bottom: 0.5rem;
 	font-size: 1rem;
 }
@@ -125,15 +137,20 @@ p em {
 
 .card-body-comment {
 	padding: 0.5rem 1rem;
-	background-color: rgba(0, 0, 0, 0.03);
 }
-.card-p-comment-num {
-	margin-top: 3rem;
-	margin-bottom: 0;
 
+.card-p-comment-num {
+	margin-top: 0;
+	margin-bottom: 0;
+	padding: 0rem 1rem;
 	font-size: 0.8rem;
 	color: rgb(37, 40, 122);
 }
+.card-section-actions {
+	border-top: 1px solid rgba(0, 0, 0, 0.125);
+	color: #dee2e6;
+}
+
 .card-p-comment-num em {
 	text-decoration: underline;
 }
@@ -144,13 +161,23 @@ p em {
 	margin-bottom: 0;
 	font-size: 0.8rem;
 }
+
 .card-article-comment {
 	/*background-color: rgba(245, 126, 126, 0.968);
 	background-color: rgba(243, 216, 216, 0.968);*/
 	background-color: rgba(246, 236, 236, 0.968);
+	background-color: rgb(238 238 238);
 	border: 1px solid rgba(0, 0, 0, 0.125);
 	border-radius: 15px;
-	padding: 1rem 1rem 0.5rem 1rem;
+	padding: 0.5rem 1rem 0.5rem 1rem;
+}
+
+.card-article-post {
+	background-color: rgb(212, 233, 255);
+	background-color: rgb(238 238 238);
+	border: 1px solid rgba(0, 0, 0, 0.125);
+	border-radius: 15px;
+	padding: 0.5rem 1rem 0.5rem 1rem;
 }
 
 .grid-add {

@@ -57,7 +57,7 @@ const LoginForm = ({ submitForm }) => {
 			//.then((res) => console.log("Log in successfully", res.token))
 			.catch((err) => console.log("What's happening ?", err));
 
-		user.isActive ? navigate("/") : navigate("/profile");
+		navigate("/");
 
 		//window.location.reload();
 	};

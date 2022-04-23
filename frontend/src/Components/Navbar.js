@@ -25,7 +25,7 @@ function Navbar() {
 	//mr-auto div 1 et ms-auto div 2 et 3
 	return (
 		<div>
-			<nav className="navbar navbar-expand navbar-light bg-light border-bottom border-dark">
+			<nav className="navbar navbar-expand navbar-light bg-white border-bottom border-dark">
 				<div className="container-fluid">
 					<div className="navbar-nav mr-auto">
 						<li className="nav-item">
@@ -49,7 +49,7 @@ function Navbar() {
 
 					{currentUser ? (
 						<div className="navbar-nav">
-							<ul className="list-inline d-flex">
+							<ul className="list-inline d-flex ul-margin-change">
 								<li className="nav-item">
 									<a href="/login" className="nav-link" onClick={logOut}>
 										Logout

@@ -1,42 +1,40 @@
-function MyComponent() {
-	const [error, setError] = useState(null);
-	const [isLoaded, setIsLoaded] = useState(false);
-	const [items, setItems] = useState([]);
+import React from "react";
+import ReactDOM from "react-dom";
+import "../styles/bootstrap.min.css";
+import "../styles/headers.css";
+import moment from "moment";
 
-	// Note: the empty deps array [] means
-	// this useEffect will run once
-	// similar to componentDidMount()
-	useEffect(() => {
-		fetch("https://api.example.com/items")
-			.then((res) => res.json())
-			.then(
-				(result) => {
-					setIsLoaded(true);
-					setItems(result);
-				},
-				// Note: it's important to handle errors here
-				// instead of a catch() block so that we don't swallow
-				// exceptions from actual bugs in components.
-				(error) => {
-					setIsLoaded(true);
-					setError(error);
-				}
-			);
-	}, []);
+function Comments({ comment }) {
+	const sqlToJsDate = (sqlDate) => {
+		var sqlDateFormat = new Date(sqlDate);
+		var jYear = sqlDateFormat.getFullYear();
+		var jMonth = sqlDateFormat.getMonth();
+		var jDay = sqlDateFormat.getDate();
+		var sentDelay = moment([jYear, jMonth, jDay + 1]).fromNow();
+		return sentDelay;
+	};
+	return (
+		<section className="card-body-comment">
+			<article className="card-article-comment">
+				<div className="card-body-header d-flex justify-content-between">
+					<p>
+						Réponse de {comment.firstname} {comment.lastname}
+					</p>
+					<p>il y a {sqlToJsDate(comment.createdAt)}</p>
+				</div>
 
-	if (error) {
-		return <div>Error: {error.message}</div>;
-	} else if (!isLoaded) {
-		return <div>Loading...</div>;
-	} else {
-		return (
-			<ul>
-				{items.map((item) => (
-					<li key={item.id}>
-						{item.name} {item.price}
-					</li>
-				))}
-			</ul>
-		);
-	}
+				{comment.imageUrl && (
+					<img
+						className="img-animated-gif flex-nowrap"
+						src={comment.imageUrl}
+						alt="gif"
+					/>
+				)}
+
+				<p className="p-change">{comment.content}</p>
+			</article>
+		</section>
+	);
 }
+
+export default Comments;

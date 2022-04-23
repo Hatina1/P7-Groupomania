@@ -4,49 +4,164 @@ import { useState, useEffect } from "react";
 //import authHeader from "../auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceLaugh } from "@fortawesome/free-solid-svg-icons";
-import moment from "moment";
+import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import postService from "../Components/PostService";
+import Gifs from "../Components/Gif";
+import Comments from "../Components/Comments";
+import Post from "../Components/Post";
+import PostModal from "../Components/PostModal";
 
 const Home = () => {
 	const [posts, setPosts] = useState([]);
 	const [comments, setComments] = useState([]);
 	const user = JSON.parse(localStorage.getItem("user"));
 	const [newPost, setNewPost] = useState({});
+	const [postModal, setPostModal] = useState({});
 	const [newComment, setNewComment] = useState({});
-	const [commentSend, setCommentSend] = useState({
-		commentId: "",
-		sent: "",
-	});
 	const [gifs, setGifs] = useState([]);
 	const [selectedGif, setSelectedGif] = useState({});
-	const [selectedFile, setSelectedFile] = useState(null);
-	const [showGifs, setShowGifs] = useState(true);
-	const [keyId, setKeyId] = useState({ id: "" });
-	const [commPostId, setCommPostId] = useState({ id: "" });
-	const divStyle = {
-		display: "none",
+	const [showGifs, setShowGifs] = useState({});
+	//const [keyId, setKeyId] = useState({ id: "" });
+	const [showCommNum, setShowCommNum] = useState({});
+	const [showPostForm, setShowPostForm] = useState(false);
+	const [showCommentForm, setShowCommentForm] = useState({});
+	const [showPostModal, setShowPostModal] = useState({});
+	const [likes, setLikes] = useState(0);
+	const [usersLiked, setUsersLiked] = useState("");
+
+	const handleDisplayCommNum = (e, postId) => {
+		e.preventDefault();
+		if (showCommNum.hasOwnProperty(postId)) {
+			setShowCommNum({
+				...showCommNum,
+				[postId]: !showCommNum[postId],
+			});
+		} else {
+			setShowCommNum((prevState) => {
+				return {
+					...prevState,
+					[postId]: true,
+				};
+			});
+		}
+	};
+
+	const handleDisplayPostModal = (e, postId) => {
+		e.preventDefault();
+		if (showPostModal.hasOwnProperty(postId)) {
+			setShowPostModal({
+				...showPostModal,
+				[postId]: !showPostModal[postId],
+			});
+		} else {
+			setShowPostModal((prevState) => {
+				return {
+					...prevState,
+					[postId]: true,
+				};
+			});
+		}
+	};
+
+	const handleDisplayCommentForm = (e, postId) => {
+		e.preventDefault();
+		if (showCommentForm.hasOwnProperty(postId)) {
+			setShowCommentForm({
+				...showCommentForm,
+				[postId]: !showCommentForm[postId],
+			});
+		} else {
+			setShowCommentForm((prevState) => {
+				return {
+					...prevState,
+					[postId]: true,
+				};
+			});
+		}
+	};
+	function arrayRemove(arr, value) {
+		return arr.filter(function (ele) {
+			return ele !== value;
+		});
+	}
+
+	const handleLikes = (e, likesNum, usersList, postId) => {
+		e.preventDefault();
+		const checkListLiked = (user) => user === user.id;
+
+		const usersListArr = usersList === "" ? [] : usersList;
+
+		if (usersListArr.some(checkListLiked)) {
+			setLikes(likesNum - 1);
+			setUsersLiked(arrayRemove(usersListArr, user.id));
+		} else {
+			setLikes(likesNum + 1);
+			setUsersLiked(usersListArr.push(user.id));
+		}
+
+		const likeSent = {};
+		likeSent.likes = likes;
+		likeSent.usersLiked = usersLiked;
+		postService.fetchLikePost(user.token, user.id, postId, likeSent);
+		setLikes(0);
+		setUsersLiked("");
 	};
 
 	const handleClickDisplayGifs = (postId) => {
-		if (keyId.id == postId) {
+		/* 	if (keyId.id === postId) {
 			setShowGifs(!showGifs);
 		} else {
 			setKeyId({ ...keyId, id: postId });
 			setShowGifs(!showGifs);
 		}
+ */
 
-		console.log(showGifs);
-		console.log("ouvrir la div des gifs");
+		if (showGifs.hasOwnProperty(postId)) {
+			setShowGifs({
+				...showGifs,
+				[postId]: !showGifs[postId],
+			});
+		} else {
+			setShowGifs((prevState) => {
+				return {
+					...prevState,
+					[postId]: true,
+				};
+			});
+		}
 	};
 
-	//const handleNewComment = (e) => {
-	//console.log(name);
-	//setCommPostId({ ...commPostId, id: name });
-	//console.log(commPostId.id == name);
-	//if (commPostId.id == name) {}
-	//	setNewComment(e.target.value);
-	//setNewComment({ [e.target.name]: e.target.value });
-	//};
+	useEffect(() => {
+		if (showCommNum) {
+			console.log(showCommNum);
+		}
+	}, [showCommNum]);
 
+	useEffect(() => {
+		if (showCommentForm) {
+			console.log(showCommentForm);
+		}
+	}, [showCommentForm]);
+
+	useEffect(() => {
+		if (showGifs) {
+			console.log(showGifs);
+		}
+	}, [showGifs]);
+
+	useEffect(() => {
+		if (showPostModal) {
+			console.log(showPostModal);
+		}
+	}, [showPostModal]);
+
+	const enableItemToShow = (postId, itemToShow) => {
+		if (itemToShow.hasOwnProperty(postId)) {
+			return itemToShow[postId];
+		} else {
+			return false;
+		}
+	};
 	const handleChangeInput = (event) => {
 		const { name, value } = event.target;
 
@@ -58,154 +173,73 @@ const Home = () => {
 		});
 	};
 
-	/* const handleCommentSend = (e) => {
-		setCommentSend({ commentId: numberOfComm++, sent: newComment });
-		setNewComment("");
-	}; */
-
-	/* const handleSelectedFile = (event) => {
-		setSelectedFile(event.target.files[0]);
-	}; */
-
-	const submitNewPost = (e, index) => {
+	const submitNewPost = (e) => {
 		e.preventDefault();
 
 		const postSent = {};
-		postSent.content = postSent.hasOwnProperty("newPost") && newPost["newPost"];
+
+		postSent.title = newPost["newPostTitle"];
+
+		console.log(postSent);
+		postSent.content = newPost["newPostMessage"];
 		postSent.userId = user.id;
+		postService.fetchCreatePosts(user.token, postSent);
+		setNewPost({});
 
-		fetch(`http://localhost:3000/api/posts`, {
-			method: "POST",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-				Authorization: "Bearer " + user.token,
-			},
-			body: JSON.stringify(postSent),
-		})
-			.then((res) => res.json())
-			.catch((err) => console.log("Post was not sent", err));
-
-		setNewPost({ [index]: "" });
 		e.target.reset();
+		console.log(newPost);
+	};
+
+	const submitUpdatePost = (e, postId) => {
+		e.preventDefault();
+
+		const postUpdateSent = {};
+
+		postUpdateSent.title = postModal["newPostTitle"];
+		postUpdateSent.content = postModal["newPostMessage"];
+		postUpdateSent.userId = user.id;
+		postService.fetchModifyPost(user.token, postId, postUpdateSent);
+		setPostModal({});
+	};
+
+	const deletePost = (e, postId) => {
+		e.preventDefault();
+
+		postService.fetchDeletePost(user.token, postId);
 	};
 
 	const submitNewComment = (e, index, postId) => {
 		e.preventDefault();
 
 		const commentSent = {};
-		commentSent.content = newComment.hasOwnProperty(index) && newComment[index];
+		commentSent.content = newComment.hasOwnProperty(index)
+			? newComment[index]
+			: null;
 		commentSent.postId = postId;
 		commentSent.userId = user.id;
 		commentSent.imageUrl = selectedGif.hasOwnProperty(index)
 			? selectedGif[index]
 			: null;
-
-		fetch(`http://localhost:3000/api/posts/${postId}/comments`, {
-			method: "POST",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-				Authorization: "Bearer " + user.token,
-			},
-			body: JSON.stringify(commentSent),
-		})
-			.then((res) => res.json())
-			.catch((err) => console.log("Comment was not sent", err));
+		postService.fetchCreateComments(user.token, postId, commentSent);
 
 		setNewComment({ [index]: "" });
 		setSelectedGif({ [index]: "" });
 		e.target.reset();
 	};
-
-	const sqlToJsDate = (sqlDate) => {
-		var sqlDateFormat = new Date(sqlDate);
-		var jYear = sqlDateFormat.getFullYear();
-		var jMonth = sqlDateFormat.getMonth();
-		var jDay = sqlDateFormat.getDate();
-		var sentDelay = moment([jYear, jMonth, jDay + 1]).fromNow();
-		return sentDelay;
-	};
-
-	// Button send enable - AJOUTER UNE CONDITION OU POUR INCLURE LES GIFS
-	const enableCommentButton = (id) => {
-		return newComment[id] || selectedGif[id] || newPost[id] ? false : true;
-	};
-	// Button send enable
-	const changeCommentButtonStyle = (id) => {
-		return newComment[id] || selectedGif[id] || newPost[id]
-			? "comments-button-enabled"
-			: "comments-button-disabled";
-	};
-
+	//get gifs
 	useEffect(() => {
-		const retrievePosts = () =>
-			fetch("http://localhost:3000/api/posts/", {
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: "Bearer " + user.token,
-				},
-			})
-				.then((res) => res.json())
-				.catch((err) => console.log("What's happening ?", err));
-
-		const getAllPosts = async () => {
-			const allPosts = await retrievePosts();
-			setPosts(allPosts);
+		const getGifs = async () => {
+			const resultGifs = await postService.fetchGifs(
+				process.env.REACT_APP_GIF_PASSWORD
+			);
+			console.log(resultGifs);
+			setGifs(resultGifs.data);
 		};
 
-		getAllPosts().catch(console.error);
+		getGifs().catch(console.error);
 	}, []);
 
-	useEffect(() => {
-		const retrieveComments = () =>
-			fetch("http://localhost:3000/api/posts/comments", {
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: "Bearer " + user.token,
-				},
-			})
-				.then((res) => res.json())
-				.catch((err) => console.log("What's happening ?", err));
-
-		const getAllComments = async () => {
-			const allComments = await retrieveComments();
-			setComments(allComments);
-		};
-
-		getAllComments().catch(console.error);
-	}, []);
-
-	const checkCommExists = (commList, postsList) => {
-		let checkComm = [];
-		let checkCommLen = 0;
-		checkComm = commList.filter((comm) => comm.postId == postsList.id);
-		checkCommLen = checkComm.length;
-		return checkCommLen;
-	};
-
-	const numberOfComm = (commList) => {
-		let numComm = 0;
-		numComm = commList.length;
-		return numComm;
-	};
-
-	useEffect(() => {
-		const fetchGifs = async () => {
-			const result = await fetch(
-				`https://api.giphy.com/v1/gifs/trending?api_key=${process.env.REACT_APP_GIF_PASSWORD}&limit=6&rating=g`
-			)
-				.then((res) => res.json())
-				.catch((err) => console.log("What's happening ?", err));
-			console.log(result);
-			setGifs(result.data);
-		};
-		fetchGifs().catch(console.error);
-	}, []);
-
-	const handleSelectGif = (e) => {
+	const handleSelectGif = (e, postId) => {
 		e.preventDefault();
 
 		const { name, src } = e.target;
@@ -215,22 +249,118 @@ const Home = () => {
 				[name]: src,
 			};
 		});
-		setShowGifs(false);
-	};
 
-	const handleChangeInputPost = (e) => {
-		const { name, value } = e.target;
-		setNewPost((prevState) => {
+		setShowGifs((prevState) => {
 			return {
 				...prevState,
-				[name]: value,
+				[postId]: false,
 			};
 		});
 	};
 
-	//:onSubmit={submitComment} enctype="multipart/form-data"
-	//<input type="hidden" id="postId" name="postId" value={post.id} />
-	//onClick={() => setSelectedGif(gif.images.downsized.url)}
+	const checkCommExists = (commList, postsList) => {
+		let checkComm = [];
+		let checkCommLen = 0;
+		checkComm = commList.filter((comm) => comm.postId === postsList.id);
+		checkCommLen = checkComm.length;
+		return checkCommLen;
+	};
+
+	// Button send enable
+	const enableCommentButton = (id) => {
+		return newComment[id] || selectedGif[id] ? false : true;
+	};
+
+	const handleChangeInputPost = (e) => {
+		const { id, value } = e.target;
+		setNewPost((prevState) => {
+			return {
+				...prevState,
+				[id]: value,
+			};
+		});
+	};
+
+	const handleInputUpdatePost = (e) => {
+		const { id, value } = e.target;
+		setPostModal((prevState) => {
+			return {
+				...prevState,
+				[id]: value,
+			};
+		});
+	};
+
+	const getValueInputPost = (e, title, content) => {
+		setPostModal((prevState) => {
+			return {
+				...prevState,
+				["updateTitle"]: title,
+			};
+		});
+		setPostModal((prevState) => {
+			return {
+				...prevState,
+				["updateMessage"]: content,
+			};
+		});
+	};
+
+	const enablePostButton = (id1, id2) => {
+		if (newPost.hasOwnProperty(id1) && newPost.hasOwnProperty(id2)) {
+			return false;
+		} else {
+			return true;
+		}
+	};
+
+	// Button send enable
+	const changeCommentButtonStyle = (id) => {
+		return newComment[id] || selectedGif[id]
+			? "comments-button-enabled"
+			: "comments-button-disabled";
+	};
+
+	const changePostButtonStyle = (id1, id2) => {
+		if (newPost.hasOwnProperty(id1) && newPost.hasOwnProperty(id2)) {
+			return "comments-button-enabled";
+		} else {
+			return "comments-button-disabled";
+		}
+	};
+
+	/* 	useEffect(() => {
+		if (newPost) {
+			console.log(newPost);
+		}
+	}, [newPost]);
+ */
+	//get all posts
+	useEffect(() => {
+		const getAllPosts = async () => {
+			const allPosts = await postService.fetchAllPosts(user.token);
+			setPosts(allPosts);
+		};
+		getAllPosts().catch(console.error);
+	}, []);
+
+	//get all comments
+	useEffect(() => {
+		const getAllComments = async () => {
+			const allComments = await postService.fetchAllComments(user.token);
+			setComments(allComments);
+		};
+
+		getAllComments().catch(console.error);
+	}, []);
+
+	const handleShowPostForm = () => {
+		setShowPostForm(!showPostForm);
+	};
+
+	/* const initiales = (firstname, lastname) => {
+		firstname.charAt(0).toUpperCase() + lastname.charAt(0).toUpperCase();
+	}; */
 
 	return (
 		<div className="px-2">
@@ -247,137 +377,248 @@ const Home = () => {
 				Envie d'écrire ou de partager une info, c'est par ici 👇{" "}
 			</h2>
 			<br />
-			<form className="d-flex" onSubmit={submitNewPost}>
-				<textarea
-					className="form-control form-control-change me-3"
-					type="text"
-					name="newPost"
-					onChange={handleChangeInputPost}
-					placeholder="Comment allez-vous aujourd'hui ?"
-				/>
-
-				<button
-					className={`btn btn-primary btn-sm btn-change ${changeCommentButtonStyle(
-						"newPost"
-					)}`}
-					id="newPost"
-					disabled={enableCommentButton("newPost")}
-					type="submit"
-				>
-					Créer un post
-				</button>
-			</form>
-			<br />
-			user.isActive ? (
-			<h2 className="my-2 text-white"> Les derniers posts : </h2>
-			{posts.map((post, index) => (
-				<div key={index} className="card my-4">
-					<div className="card-body pt-4">
-						<div className="card-body-header d-flex justify-content-between">
-							<p>
-								Posté par {post.firstname} {post.lastname}
-							</p>
-							<p>il y a {sqlToJsDate(post.createdAt)}</p>
-						</div>
-						<h3 className="h3-change">{post.title}</h3>
-						<p className="p-change">{post.content}</p>
-						<p className="card-p-comment-num">
-							<em>Voir les commentaires</em> ({checkCommExists(comments, post)}{" "}
-							commentaires) : (Cacher les commentaires)
-						</p>
-					</div>
-
-					{comments
-						.filter((col) => col.postId == post.id)
-						.map((comment, index) => (
-							<div className="" key={index}>
-								<section className="card-body-comment">
-									<article className="card-article-comment">
-										<div className="card-body-header d-flex justify-content-between">
-											<p>
-												Réponse de {comment.firstname} {comment.lastname}
-											</p>
-											<p>il y a {sqlToJsDate(comment.createdAt)}</p>
-										</div>
-
-										{comment.imageUrl && (
-											<img
-												className="img-animated-gif flex-nowrap"
-												src={comment.imageUrl}
-											/>
-										)}
-
-										<p className="p-change">{comment.content}</p>
-									</article>
-								</section>
-							</div>
-						))}
-
-					<div className="card-footer">
-						<form
-							className="d-flex"
-							key={index}
-							onSubmit={(e) => submitNewComment(e, index, post.id)}
-						>
-							<input
-								className="form-control form-control-change"
-								type="text"
-								name={index}
-								id={index}
-								onChange={handleChangeInput}
-								placeholder="Ecrire un commentaire"
-								//name={`comment-${numberOfComm(comments) + 1}`}
-								//id={`comment-${index}`}
-								//onChange={(e) => setNewComment(e.target.value)}
-							/>
-
-							<FontAwesomeIcon
-								icon={faFaceLaugh}
-								className="px-1 py-2"
-								onClick={() => handleClickDisplayGifs(post.id)}
-							/>
-							<button
-								className={`btn btn-primary btn-sm btn-change ${changeCommentButtonStyle(
-									index
-								)}`}
-								id={index}
-								disabled={enableCommentButton(index)}
-								type="submit"
-							>
-								Send
-							</button>
-						</form>
-					</div>
-
-					{keyId.id === post.id && showGifs && (
-						<div className="d-flex flex-wrap flex-row justify-content-between align-items-center">
-							{gifs.map((gif) => (
-								<div key={gif.id}>
-									<a
-										target="_blank"
-										href="/"
-										className="text-decoration-none lh-1"
-										onClick={handleSelectGif}
-									>
-										<img
-											key={"gif-" + gif.id}
-											name={index}
-											className="img-animated-gif flex-nowrap"
-											src={gif.images.downsized.url}
-										/>
-									</a>
-								</div>
-							))}
-						</div>
-					)}
+			{!showPostForm && (
+				<div className="d-grid gap-2 col-3 mx-auto">
+					<button
+						type="button"
+						className="btn btn-primary rounded-pill"
+						onClick={handleShowPostForm}
+					>
+						Publier un message
+					</button>
 				</div>
-			))}
-			) : (
-			<h2 className="my-2 text-white">
-				{" "}
-				Go to the profile to activate again your account{" "}
-			</h2>
-			)
+			)}
+
+			{showPostForm && (
+				<div>
+					<form className="card px-4 py-4" onSubmit={submitNewPost}>
+						<div className="form-group row">
+							<label htmlFor="newPostTitle" className="col-sm-2 col-form-label">
+								Titre de votre post
+							</label>
+							<div className="col-sm-10">
+								<input
+									type="text"
+									className="form-control"
+									id="newPostTitle"
+									onChange={handleChangeInputPost}
+									placeholder="Titre de votre post"
+								/>
+							</div>
+						</div>
+						<div className="form-group row">
+							<label
+								htmlFor="newPostMessage"
+								className="col-sm-2 col-form-label"
+							>
+								Votre message
+							</label>
+							<div className="col-sm-10">
+								<textarea
+									type="text"
+									className="form-control"
+									id="newPostMessage"
+									onChange={handleChangeInputPost}
+									placeholder="Votre message"
+								/>
+							</div>
+						</div>
+
+						<button
+							className={`btn btn-primary btn-sm btn-change ${changePostButtonStyle(
+								"newPostTitle",
+								"newPostMessage"
+							)}`}
+							id="newPost"
+							disabled={enablePostButton("newPostTitle", "newPostMessage")}
+							type="submit"
+						>
+							Créer un post
+						</button>
+					</form>
+					<div className="d-grid gap-2 d-md-flex justify-content-md-end mt-2">
+						<button
+							type="button"
+							className="btn btn-secondary me-md-2"
+							onClick={handleShowPostForm}
+						>
+							Fermer
+						</button>
+					</div>
+				</div>
+			)}
+
+			<br />
+			{user.isActive === false && (
+				<h2 className="my-2 text-white">
+					{" "}
+					Go to the profile to activate again your account{" "}
+				</h2>
+			)}
+			{user.isActive === true && (
+				<div className="container">
+					<h2 className="my-2 text-white"> Les derniers posts : </h2>
+					<br />
+
+					{posts.map((post, index) => (
+						<div key={index} className="card my-4 ">
+							<div className="container">
+								<div className="row">
+									<h3 className="h3-change py-1">{`Message : ${post.title}`}</h3>
+									<div className="col-sm-2 card d-flex align-items-center pt-4">
+										<div className=" pt-2 text-center align-middle border border-3 border-secondary bg-light  rounded-circle picture-change ">
+											<span className="text-center fw-bold">
+												{post.firstname.charAt(0).toUpperCase() +
+													post.lastname.charAt(0).toUpperCase()}
+											</span>
+										</div>
+										<p className="pt-3 fw-bold">
+											{post.firstname} {post.lastname}
+										</p>
+									</div>
+									<div className="col-sm-10 padding-col">
+										<Post post={post} />
+										<section className="card-section-actions d-flex justify-content-evenly align-items-center flex-wrap fw-bold">
+											{enableItemToShow(post.id, showCommNum) === false && (
+												<a
+													className="card-p-comment-num text-secondary text-decoration-none"
+													href="/"
+													target="_blank"
+													onClick={(e) => handleDisplayCommNum(e, post.id)}
+												>
+													Afficher les commentaires (
+													{checkCommExists(comments, post)})
+												</a>
+											)}
+											{enableItemToShow(post.id, showCommNum) === true && (
+												<a
+													className="card-p-comment-num text-secondary text-decoration-none"
+													href="/"
+													target="_blank"
+													onClick={(e) => handleDisplayCommNum(e, post.id)}
+												>
+													Masquer les commentaires (
+													{checkCommExists(comments, post)})
+												</a>
+											)}
+
+											<a
+												className="card-p-comment-num text-secondary  text-decoration-none"
+												href="/"
+												target="_blank"
+												onClick={(e) => handleDisplayCommentForm(e, post.id)}
+											>
+												Commenter
+											</a>
+											<a
+												className="card-p-comment-num text-secondary  text-decoration-none"
+												href="/"
+												target="_blank"
+												onClick={(e) =>
+													handleLikes(e, post.likes, post.usersLiked, post.id)
+												}
+												//onClick={(e) => handleDisplayCommNum(e, post.id)}
+											>
+												<div>
+													<FontAwesomeIcon
+														icon={faThumbsUp}
+														className="px-1 py-2"
+													/>
+													<span>{post.likes === 0 ? null : post.likes}</span>
+												</div>
+											</a>
+											<a
+												className="card-p-comment-num text-secondary  text-decoration-none"
+												href="/"
+												target="_blank"
+												onClick={(e) => {
+													handleDisplayPostModal(e, post.id);
+													getValueInputPost(e, post.title, post.content);
+												}}
+											>
+												Modifier
+											</a>
+											{enableItemToShow(post.id, showPostModal) === true && (
+												<PostModal
+													post={post}
+													handleInputUpdatePost={handleInputUpdatePost}
+													submitUpdatePost={submitUpdatePost}
+													handleDisplayPostModal={handleDisplayPostModal}
+													postModal={postModal}
+												/>
+											)}
+											<a
+												className="card-p-comment-num text-secondary  text-decoration-none"
+												href="/"
+												target="_blank"
+												onClick={(e) => deletePost(e, post.id)}
+											>
+												Supprimer
+											</a>
+										</section>
+										{enableItemToShow(post.id, showCommNum) === true &&
+											comments
+												.filter((col) => col.postId === post.id)
+												.map((comment, index) => (
+													<div className="" key={index}>
+														<Comments comment={comment} />
+													</div>
+												))}
+										{enableItemToShow(post.id, showCommentForm) === true && (
+											<div className="card-footer">
+												<form
+													className="d-flex"
+													key={index}
+													onSubmit={(e) => submitNewComment(e, index, post.id)}
+												>
+													<input
+														className="form-control form-control-change"
+														type="text"
+														name={index}
+														id={index}
+														onChange={handleChangeInput}
+														placeholder="Ecrire un commentaire"
+													/>
+
+													<FontAwesomeIcon
+														icon={faFaceLaugh}
+														className="px-1 py-2"
+														onClick={() => handleClickDisplayGifs(post.id)}
+													/>
+													<button
+														className={`btn btn-primary btn-sm btn-change ${changeCommentButtonStyle(
+															index
+														)}`}
+														id={index}
+														disabled={enableCommentButton(index)}
+														type="submit"
+													>
+														Send
+													</button>
+												</form>
+											</div>
+										)}
+										{enableItemToShow(post.id, showGifs) === true && (
+											<div className="d-flex flex-wrap flex-row justify-content-between align-items-center">
+												{gifs.map((gif, idx) => (
+													<div key={idx}>
+														<Gifs
+															postId={post.id}
+															gif={gif}
+															index={index}
+															handleSelectGif={handleSelectGif}
+														/>
+													</div>
+												))}
+											</div>
+										)}
+									</div>
+								</div>
+							</div>
+						</div>
+					))}
+				</div>
+			)}
 		</div>
 	);
 };
