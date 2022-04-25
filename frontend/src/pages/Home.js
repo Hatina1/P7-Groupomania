@@ -1,6 +1,8 @@
 import React from "react";
 //import PostService from "../Components/PostService";
 import { useState, useEffect } from "react";
+import Modal from "react-bootstrap/Modal";
+import { useQuery } from "react-query";
 //import authHeader from "../auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceLaugh } from "@fortawesome/free-solid-svg-icons";
@@ -10,9 +12,15 @@ import Gifs from "../Components/Gif";
 import Comments from "../Components/Comments";
 import Post from "../Components/Post";
 import PostModal from "../Components/PostModal";
+import {
+	ShowPostFormButton,
+	ClosePostFormButton,
+	SubmitCommentButton,
+} from "../Components/Buttons";
+import { NewPostForm, NewCommentForm } from "../Components/Forms";
 
 const Home = () => {
-	const [posts, setPosts] = useState([]);
+	//const [posts, setPosts] = useState([]);
 	const [comments, setComments] = useState([]);
 	const user = JSON.parse(localStorage.getItem("user"));
 	const [newPost, setNewPost] = useState({});
@@ -154,6 +162,22 @@ const Home = () => {
 			console.log(showPostModal);
 		}
 	}, [showPostModal]);
+
+	const classOverlay = (itemToShow) => {
+		if (itemToShow.length > 0) {
+			return "px-2 overlay";
+		} else {
+			return "px-2";
+		}
+	};
+	// {classOverlay(showPostModal)}
+	const wrapper = (itemToShow) => {
+		if (itemToShow.length > 0) {
+			return "wrapper";
+		} else {
+			return false;
+		}
+	};
 
 	const enableItemToShow = (postId, itemToShow) => {
 		if (itemToShow.hasOwnProperty(postId)) {
@@ -336,14 +360,13 @@ const Home = () => {
 	}, [newPost]);
  */
 	//get all posts
-	useEffect(() => {
+	/* useEffect(() => {
 		const getAllPosts = async () => {
 			const allPosts = await postService.fetchAllPosts(user.token);
 			setPosts(allPosts);
 		};
 		getAllPosts().catch(console.error);
-	}, []);
-
+	}, []); */
 	//get all comments
 	useEffect(() => {
 		const getAllComments = async () => {
@@ -354,6 +377,14 @@ const Home = () => {
 		getAllComments().catch(console.error);
 	}, []);
 
+	const { isLoading, error, data } = useQuery("posts", () =>
+		postService.fetchAllPosts(user.token)
+	);
+
+	const posts = data || [];
+	if (isLoading) return "Loading...";
+	if (error) return "An error has occurred: " + error.message;
+
 	const handleShowPostForm = () => {
 		setShowPostForm(!showPostForm);
 	};
@@ -362,263 +393,193 @@ const Home = () => {
 		firstname.charAt(0).toUpperCase() + lastname.charAt(0).toUpperCase();
 	}; */
 
+	//
+
 	return (
-		<div className="px-2">
-			<h1 className="my-3 text-white">
-				Welcome{" "}
-				<em className="font-weight-bold fst-normal text-capitalize">
-					{user.firstname}{" "}
-				</em>
-				to Groupomania social app !
-			</h1>
-			<br />
-			<h2 className="my-2 text-white">
-				{" "}
-				Envie d'écrire ou de partager une info, c'est par ici 👇{" "}
-			</h2>
-			<br />
-			{!showPostForm && (
-				<div className="d-grid gap-2 col-3 mx-auto">
-					<button
-						type="button"
-						className="btn btn-primary rounded-pill"
-						onClick={handleShowPostForm}
-					>
-						Publier un message
-					</button>
-				</div>
-			)}
-
-			{showPostForm && (
-				<div>
-					<form className="card px-4 py-4" onSubmit={submitNewPost}>
-						<div className="form-group row">
-							<label htmlFor="newPostTitle" className="col-sm-2 col-form-label">
-								Titre de votre post
-							</label>
-							<div className="col-sm-10">
-								<input
-									type="text"
-									className="form-control"
-									id="newPostTitle"
-									onChange={handleChangeInputPost}
-									placeholder="Titre de votre post"
-								/>
-							</div>
-						</div>
-						<div className="form-group row">
-							<label
-								htmlFor="newPostMessage"
-								className="col-sm-2 col-form-label"
-							>
-								Votre message
-							</label>
-							<div className="col-sm-10">
-								<textarea
-									type="text"
-									className="form-control"
-									id="newPostMessage"
-									onChange={handleChangeInputPost}
-									placeholder="Votre message"
-								/>
-							</div>
-						</div>
-
-						<button
-							className={`btn btn-primary btn-sm btn-change ${changePostButtonStyle(
-								"newPostTitle",
-								"newPostMessage"
-							)}`}
-							id="newPost"
-							disabled={enablePostButton("newPostTitle", "newPostMessage")}
-							type="submit"
-						>
-							Créer un post
-						</button>
-					</form>
-					<div className="d-grid gap-2 d-md-flex justify-content-md-end mt-2">
-						<button
-							type="button"
-							className="btn btn-secondary me-md-2"
-							onClick={handleShowPostForm}
-						>
-							Fermer
-						</button>
-					</div>
-				</div>
-			)}
-
-			<br />
-			{user.isActive === false && (
+		<div className={classOverlay(showPostModal)}>
+			<div className="px-2">
+				<h1 className="my-3 text-white">
+					Welcome <em className="fw-bold text-capitalize">{user.firstname} </em>
+					to Groupomania social app !
+				</h1>
+				<br />
 				<h2 className="my-2 text-white">
 					{" "}
-					Go to the profile to activate again your account{" "}
+					Envie d'écrire ou de partager une info, c'est par ici 👇{" "}
 				</h2>
-			)}
-			{user.isActive === true && (
-				<div className="container">
-					<h2 className="my-2 text-white"> Les derniers posts : </h2>
-					<br />
+				<br />
+				{!showPostForm && (
+					<ShowPostFormButton
+						handleShowPostForm={handleShowPostForm}
+						msgToShow="Publier un message"
+					/>
+				)}
+				{showPostForm && (
+					<div>
+						<NewPostForm
+							enablePostButton={enablePostButton}
+							changePostButtonStyle={changePostButtonStyle}
+							handleChangeInputPost={handleChangeInputPost}
+							submitNewPost={submitNewPost}
+						/>
 
-					{posts.map((post, index) => (
-						<div key={index} className="card my-4 ">
-							<div className="container">
-								<div className="row">
-									<h3 className="h3-change py-1">{`Message : ${post.title}`}</h3>
-									<div className="col-sm-2 card d-flex align-items-center pt-4">
-										<div className=" pt-2 text-center align-middle border border-3 border-secondary bg-light  rounded-circle picture-change ">
-											<span className="text-center fw-bold">
-												{post.firstname.charAt(0).toUpperCase() +
-													post.lastname.charAt(0).toUpperCase()}
-											</span>
+						<ClosePostFormButton
+							handleShowPostForm={handleShowPostForm}
+							msgToShow="Fermer"
+						/>
+					</div>
+				)}
+				<br />
+				{user.isActive === false && (
+					<h2 className="my-2 text-white">
+						Go to the profile to activate again your account
+					</h2>
+				)}
+				{user.isActive === true && (
+					<div className="container">
+						<h2 className="my-2 text-white"> Les derniers posts : </h2>
+						<br />
+
+						{posts.map((post, index) => (
+							<div key={index} className="card my-4 ">
+								<div className="container">
+									<div className="row">
+										<h3 className="h3-change py-1">{`Message : ${post.title}`}</h3>
+										<div className="col-sm-2 card d-flex align-items-center pt-4">
+											<div className=" pt-2 text-center align-middle border border-3 border-secondary bg-light  rounded-circle picture-change ">
+												<span className="text-center fw-bold">
+													{post.firstname.charAt(0).toUpperCase() +
+														post.lastname.charAt(0).toUpperCase()}
+												</span>
+											</div>
+											<p className="pt-3 fw-bold">
+												{post.firstname} {post.lastname}
+											</p>
 										</div>
-										<p className="pt-3 fw-bold">
-											{post.firstname} {post.lastname}
-										</p>
-									</div>
-									<div className="col-sm-10 padding-col">
-										<Post post={post} />
-										<section className="card-section-actions d-flex justify-content-evenly align-items-center flex-wrap fw-bold">
-											{enableItemToShow(post.id, showCommNum) === false && (
-												<a
-													className="card-p-comment-num text-secondary text-decoration-none"
-													href="/"
-													target="_blank"
-													onClick={(e) => handleDisplayCommNum(e, post.id)}
-												>
-													Afficher les commentaires (
-													{checkCommExists(comments, post)})
-												</a>
-											)}
-											{enableItemToShow(post.id, showCommNum) === true && (
-												<a
-													className="card-p-comment-num text-secondary text-decoration-none"
-													href="/"
-													target="_blank"
-													onClick={(e) => handleDisplayCommNum(e, post.id)}
-												>
-													Masquer les commentaires (
-													{checkCommExists(comments, post)})
-												</a>
-											)}
-
-											<a
-												className="card-p-comment-num text-secondary  text-decoration-none"
-												href="/"
-												target="_blank"
-												onClick={(e) => handleDisplayCommentForm(e, post.id)}
-											>
-												Commenter
-											</a>
-											<a
-												className="card-p-comment-num text-secondary  text-decoration-none"
-												href="/"
-												target="_blank"
-												onClick={(e) =>
-													handleLikes(e, post.likes, post.usersLiked, post.id)
-												}
-												//onClick={(e) => handleDisplayCommNum(e, post.id)}
-											>
-												<div>
-													<FontAwesomeIcon
-														icon={faThumbsUp}
-														className="px-1 py-2"
-													/>
-													<span>{post.likes === 0 ? null : post.likes}</span>
-												</div>
-											</a>
-											<a
-												className="card-p-comment-num text-secondary  text-decoration-none"
-												href="/"
-												target="_blank"
-												onClick={(e) => {
-													handleDisplayPostModal(e, post.id);
-													getValueInputPost(e, post.title, post.content);
-												}}
-											>
-												Modifier
-											</a>
-											{enableItemToShow(post.id, showPostModal) === true && (
-												<PostModal
-													post={post}
-													handleInputUpdatePost={handleInputUpdatePost}
-													submitUpdatePost={submitUpdatePost}
-													handleDisplayPostModal={handleDisplayPostModal}
-													postModal={postModal}
-												/>
-											)}
-											<a
-												className="card-p-comment-num text-secondary  text-decoration-none"
-												href="/"
-												target="_blank"
-												onClick={(e) => deletePost(e, post.id)}
-											>
-												Supprimer
-											</a>
-										</section>
-										{enableItemToShow(post.id, showCommNum) === true &&
-											comments
-												.filter((col) => col.postId === post.id)
-												.map((comment, index) => (
-													<div className="" key={index}>
-														<Comments comment={comment} />
-													</div>
-												))}
-										{enableItemToShow(post.id, showCommentForm) === true && (
-											<div className="card-footer">
-												<form
-													className="d-flex"
-													key={index}
-													onSubmit={(e) => submitNewComment(e, index, post.id)}
-												>
-													<input
-														className="form-control form-control-change"
-														type="text"
-														name={index}
-														id={index}
-														onChange={handleChangeInput}
-														placeholder="Ecrire un commentaire"
-													/>
-
-													<FontAwesomeIcon
-														icon={faFaceLaugh}
-														className="px-1 py-2"
-														onClick={() => handleClickDisplayGifs(post.id)}
-													/>
-													<button
-														className={`btn btn-primary btn-sm btn-change ${changeCommentButtonStyle(
-															index
-														)}`}
-														id={index}
-														disabled={enableCommentButton(index)}
-														type="submit"
+										<div className="col-sm-10 padding-col">
+											<Post post={post} />
+											<section className="card-section-actions d-flex justify-content-evenly align-items-center flex-wrap fw-bold">
+												{enableItemToShow(post.id, showCommNum) === false && (
+													<a
+														className="card-p-comment-num text-secondary text-decoration-none"
+														href="/"
+														target="_blank"
+														onClick={(e) => handleDisplayCommNum(e, post.id)}
 													>
-														Send
-													</button>
-												</form>
-											</div>
-										)}
-										{enableItemToShow(post.id, showGifs) === true && (
-											<div className="d-flex flex-wrap flex-row justify-content-between align-items-center">
-												{gifs.map((gif, idx) => (
-													<div key={idx}>
-														<Gifs
-															postId={post.id}
-															gif={gif}
-															index={index}
-															handleSelectGif={handleSelectGif}
+														Afficher les commentaires (
+														{checkCommExists(comments, post)})
+													</a>
+												)}
+												{enableItemToShow(post.id, showCommNum) === true && (
+													<a
+														className="card-p-comment-num text-secondary text-decoration-none"
+														href="/"
+														target="_blank"
+														onClick={(e) => handleDisplayCommNum(e, post.id)}
+													>
+														Masquer les commentaires (
+														{checkCommExists(comments, post)})
+													</a>
+												)}
+
+												<a
+													className="card-p-comment-num text-secondary  text-decoration-none"
+													href="/"
+													target="_blank"
+													onClick={(e) => handleDisplayCommentForm(e, post.id)}
+												>
+													Commenter
+												</a>
+												<a
+													className="card-p-comment-num text-secondary  text-decoration-none"
+													href="/"
+													target="_blank"
+													onClick={(e) =>
+														handleLikes(e, post.likes, post.usersLiked, post.id)
+													}
+													//onClick={(e) => handleDisplayCommNum(e, post.id)}
+												>
+													<div>
+														<FontAwesomeIcon
+															icon={faThumbsUp}
+															className="px-1 py-2"
 														/>
+														<span>{post.likes === 0 ? null : post.likes}</span>
 													</div>
-												))}
-											</div>
-										)}
+												</a>
+												<a
+													className="card-p-comment-num text-secondary  text-decoration-none"
+													href="/"
+													target="_blank"
+													onClick={(e) => {
+														handleDisplayPostModal(e, post.id);
+														getValueInputPost(e, post.title, post.content);
+													}}
+												>
+													Modifier
+												</a>
+												{enableItemToShow(post.id, showPostModal) === true && (
+													<PostModal
+														post={post}
+														showPostModal={showPostModal}
+														handleInputUpdatePost={handleInputUpdatePost}
+														submitUpdatePost={submitUpdatePost}
+														handleDisplayPostModal={handleDisplayPostModal}
+														postModal={postModal}
+													/>
+												)}
+												<a
+													className="card-p-comment-num text-secondary  text-decoration-none"
+													href="/"
+													target="_blank"
+													onClick={(e) => deletePost(e, post.id)}
+												>
+													Supprimer
+												</a>
+											</section>
+											{enableItemToShow(post.id, showCommNum) === true &&
+												comments
+													.filter((col) => col.postId === post.id)
+													.map((comment, index) => (
+														<div className="" key={index}>
+															<Comments comment={comment} />
+														</div>
+													))}
+											{enableItemToShow(post.id, showCommentForm) === true && (
+												<div className="card-footer">
+													<NewCommentForm
+														postId={post.id}
+														index={index}
+														enableCommentButton={enableCommentButton}
+														changeCommentButtonStyle={changeCommentButtonStyle}
+														handleChangeInput={handleChangeInput}
+														handleClickDisplayGifs={handleClickDisplayGifs}
+														submitNewComment={submitNewComment}
+													/>
+												</div>
+											)}
+											{enableItemToShow(post.id, showGifs) === true && (
+												<div className="d-flex flex-wrap flex-row justify-content-between align-items-center">
+													{gifs.map((gif, idx) => (
+														<div key={idx}>
+															<Gifs
+																postId={post.id}
+																gif={gif}
+																index={index}
+																handleSelectGif={handleSelectGif}
+															/>
+														</div>
+													))}
+												</div>
+											)}
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-					))}
-				</div>
-			)}
+						))}
+					</div>
+				)}
+			</div>
 		</div>
 	);
 };

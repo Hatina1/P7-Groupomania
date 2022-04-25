@@ -194,6 +194,24 @@ p em {
 	font-weight: 600;
 }
 
+.overlay {
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0, 0, 0, 0.5);
+	position: fixed;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.wrapper {
+	background: rgba(249, 249, 249, 0.913);
+	width: 500px;
+	height: 400px;
+	box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
+	z-index: 10;
+}
+
 @media (prefers-reduced-motion: no-preference) {
 	.App-logo {
 		animation: App-logo-spin infinite 20s linear;

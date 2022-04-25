@@ -10,21 +10,24 @@ import SignupForm from "./Components/SignupForm";
 import LoginForm from "./Components/LoginForm";
 import "./styles/bootstrap.min.css";
 import "./styles/headers.css";
-import { ErrorBoundary } from "react-error-boundary";
-
+//import { ErrorBoundary } from "react-error-boundary";
+import { QueryClient, QueryClientProvider } from "react-query";
+const queryClient = new QueryClient();
 function App() {
 	return (
 		<Router>
 			<div className="bg-color bg-opacity-10">
 				<Navbar />
 				<div className="container mt-3">
-					<Routes>
-						<Route exact path="/" element={<Home />} />
-						<Route element={<Admin />} />
-						<Route path="/login" element={<LoginForm />} />
-						<Route path="/signup" element={<SignupForm />} />
-						<Route path="/profile" element={<Profile />} />
-					</Routes>
+					<QueryClientProvider client={queryClient}>
+						<Routes>
+							<Route exact path="/" element={<Home />} />
+							<Route element={<Admin />} />
+							<Route path="/login" element={<LoginForm />} />
+							<Route path="/signup" element={<SignupForm />} />
+							<Route path="/profile" element={<Profile />} />
+						</Routes>
+					</QueryClientProvider>
 				</div>
 				<Footer />
 			</div>
