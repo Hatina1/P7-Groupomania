@@ -16,7 +16,7 @@ export function ShowPostFormButton({ handleShowPostForm, msgToShow }) {
 
 export function ClosePostFormButton({ handleShowPostForm, msgToShow }) {
 	return (
-		<div className="d-grid gap-2 d-md-flex justify-content-md-end mt-2">
+		<div className="mt-2">
 			<button
 				type="button"
 				className="btn btn-secondary me-md-2"
@@ -31,7 +31,7 @@ export function ClosePostFormButton({ handleShowPostForm, msgToShow }) {
 export function SubmitPostButton({ enablePostButton, changePostButtonStyle }) {
 	return (
 		<button
-			className={`btn btn-primary btn-sm btn-change ${changePostButtonStyle(
+			className={`btn btn-primary btn-sm btn-change col-3 align-self-center ${changePostButtonStyle(
 				"newPostTitle",
 				"newPostMessage"
 			)}`}

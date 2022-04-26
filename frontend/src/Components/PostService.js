@@ -69,8 +69,8 @@ const fetchAllComments = (token) =>
 	})
 		.then((res) => res.json())
 		.catch((err) => console.log("What's happening ?", err));
-
-const fetchCreateComments = (token, postId, comment) =>
+//multipart/form-data
+/* const fetchCreateComments = (token, postId, comment) =>
 	fetch(`http://localhost:3000/api/posts/${postId}/comments`, {
 		method: "POST",
 		headers: {
@@ -81,7 +81,22 @@ const fetchCreateComments = (token, postId, comment) =>
 		body: JSON.stringify(comment),
 	})
 		.then((res) => res.json())
+		.catch((err) => console.log("Comment creation error :", err)); */
+
+const fetchCreateComments = (token, postId, comment) => {
+	//console.log("comment", comment.get("newcomment"));
+	fetch(`http://localhost:3000/api/posts/${postId}/comments`, {
+		method: "POST",
+		headers: {
+			//Accept: "application/json",
+			//"Content-Type": "multipart/form-data",
+			Authorization: "Bearer " + token,
+		},
+		body: comment,
+	})
+		.then((res) => res.json())
 		.catch((err) => console.log("Comment creation error :", err));
+};
 
 const fetchGifs = (key) =>
 	fetch(

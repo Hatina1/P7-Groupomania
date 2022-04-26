@@ -22,10 +22,10 @@ function App() {
 					<QueryClientProvider client={queryClient}>
 						<Routes>
 							<Route exact path="/" element={<Home />} />
-							<Route element={<Admin />} />
 							<Route path="/login" element={<LoginForm />} />
 							<Route path="/signup" element={<SignupForm />} />
-							<Route path="/profile" element={<Profile />} />
+							<Route path="/profile/:id" element={<Profile />} />
+							<Route path="/admin" element={<Admin />} />
 						</Routes>
 					</QueryClientProvider>
 				</div>

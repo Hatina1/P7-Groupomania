@@ -56,7 +56,7 @@ function Navbar() {
 									</a>
 								</li>
 								<li className="nav-item">
-									<Link to={"/Profile"} className="nav-link">
+									<Link to={`/Profile/${currentUser.id}`} className="nav-link">
 										Profile
 									</Link>
 								</li>

@@ -7,15 +7,17 @@ import {
 } from "../Components/Buttons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceLaugh } from "@fortawesome/free-solid-svg-icons";
+import { faImage } from "@fortawesome/free-solid-svg-icons";
 
 export function NewPostForm({
 	enablePostButton,
 	changePostButtonStyle,
 	handleChangeInputPost,
+	handleChangeFilePost,
 	submitNewPost,
 }) {
 	return (
-		<form className="card px-4 py-4" onSubmit={submitNewPost}>
+		<form className="card col-8 px-4 py-4 d-flex" onSubmit={submitNewPost}>
 			<div className="form-group row">
 				<label htmlFor="newPostTitle" className="col-sm-2 col-form-label">
 					Titre de votre post
@@ -23,7 +25,7 @@ export function NewPostForm({
 				<div className="col-sm-10">
 					<input
 						type="text"
-						className="form-control"
+						className="form-control form-control-change"
 						id="newPostTitle"
 						onChange={handleChangeInputPost}
 						placeholder="Titre de votre post"
@@ -37,12 +39,23 @@ export function NewPostForm({
 				<div className="col-sm-10">
 					<textarea
 						type="text"
-						className="form-control"
+						className="form-control form-control-change"
 						id="newPostMessage"
 						onChange={handleChangeInputPost}
 						placeholder="Votre message"
 					/>
 				</div>
+			</div>
+			<div className="form-group">
+				<label htmlFor="newPostFile">
+					<FontAwesomeIcon icon={faImage} className="px-1 py-2" />
+				</label>
+				<input
+					type="file"
+					className=""
+					id="newPostFile"
+					onChange={handleChangeFilePost}
+				/>
 			</div>
 
 			<SubmitPostButton
@@ -59,12 +72,13 @@ export function NewCommentForm({
 	enableCommentButton,
 	changeCommentButtonStyle,
 	handleChangeInput,
+	handleChangeFile,
 	handleClickDisplayGifs,
 	submitNewComment,
 }) {
 	return (
 		<form
-			className="d-flex"
+			className="d-flex justify-content-between"
 			key={index}
 			onSubmit={(e) => submitNewComment(e, index, postId)}
 		>
@@ -82,7 +96,18 @@ export function NewCommentForm({
 				className="px-1 py-2"
 				onClick={() => handleClickDisplayGifs(postId)}
 			/>
-
+			<div className="form-group">
+				<label htmlFor={index}>
+					<FontAwesomeIcon icon={faImage} className="px-1 py-2" />
+				</label>
+				<input
+					type="file"
+					className=""
+					name={index}
+					id={index}
+					onChange={handleChangeFile}
+				/>
+			</div>
 			<SubmitCommentButton
 				index={index}
 				changeCommentButtonStyle={changeCommentButtonStyle}

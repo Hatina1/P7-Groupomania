@@ -1,11 +1,15 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import moment from "moment";
 import AuthService from "../Components/AuthService";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Home = () => {
-	const user = JSON.parse(localStorage.getItem("user"));
+	const profileRef = window.location.href;
+	const url = new URL(profileRef);
+	const userId = url.searchParams.get("id");
+	const [user, setUser] = useState([]);
+	const [currentUser, setCurrentUser] = useState(undefined);
 	const navigate = useNavigate();
 	const date = (sqlDate) => {
 		var dateCreation = moment(sqlDate).format("DD/MM/YYYY");
@@ -44,11 +48,32 @@ const Home = () => {
 		AuthService.logout();
 	};
 
+	/* {user.isAdmin && (
+			<Link to={"/Admin"} className="nav-link">
+				Go to the admin page
+			</Link>
+		)} */
+
+	//chartAt
+	useEffect(() => {
+		const ongoingUser = AuthService.getCurrentUser();
+
+		if (ongoingUser) {
+			setCurrentUser(ongoingUser);
+		}
+	}, []);
+
+	useEffect(() => {
+		const getOneUser = async () => {
+			const OneUser = await AuthService.getOneUser(currentUser.token, userId);
+			setUser(OneUser);
+		};
+		getOneUser().catch(console.error);
+	}, []);
+
 	const initiales =
 		user.firstname.charAt(0).toUpperCase() +
 		user.lastname.charAt(0).toUpperCase();
-
-	//chartAt
 
 	return (
 		<div className="px-2">
@@ -77,6 +102,10 @@ const Home = () => {
 						</p>
 						<p className="border-bottom border-2 pt-1 pb-3">
 							{user.isAdmin ? "Admin" : "Utilisateur"}
+
+							<Link to={"/Admin"} className="nav-link">
+								Go to the admin page
+							</Link>
 						</p>
 						<a href="/" target="_blank" className="link-dark pt-3">
 							Paramètres du compte

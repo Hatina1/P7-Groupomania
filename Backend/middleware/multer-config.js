@@ -2,7 +2,9 @@ const multer = require("multer");
 
 // types of extensions
 const MIME_TYPES = {
-	"image/gif": "gif",
+	"image/jpg": "jpg",
+	"image/jpeg": "jpg",
+	"image/png": "png",
 };
 
 // initialize storage with the save date

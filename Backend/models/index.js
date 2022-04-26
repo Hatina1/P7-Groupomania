@@ -38,13 +38,13 @@ db.comments = require("./comment.js")(sequelize, Sequelize);
 }); */
 
 // This will run .sync()
-/* db.users.sync({ force: true }).then(() => {
-	db.posts.sync({ force: true }).then(() => {
-		db.comments.sync({ force: true });
-	});
-}); */
 
-/* db.users.sync({ alter: true }).then(() => {
+/* 
+db.comments.sync({ force: true });
+db.posts.sync({ force: true }).then(() => {});
+db.users.sync({ force: true }).then(() => {});
+
+db.users.sync({ alter: true }).then(() => {
 	db.posts.sync({ alter: true }).then(() => {
 		db.comments.sync({ alter: true });
 	});
@@ -56,7 +56,7 @@ db.posts.belongsTo(db.users, {
 		name: "userId",
 		allowNull: false,
 	},
-	onDelete: "CASCADE",
+	onDelete: "NO ACTION",
 	onUpdate: "NO ACTION",
 });
 // belongsTo() indicates that one Comment only belongs to one User
@@ -65,7 +65,7 @@ db.comments.belongsTo(db.users, {
 		name: "userId",
 		allowNull: false,
 	},
-	onDelete: "CASCADE",
+	onDelete: "NO ACTION",
 	onUpdate: "NO ACTION",
 });
 //hasMany() indicates that one User can have many Posts

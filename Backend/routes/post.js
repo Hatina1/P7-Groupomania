@@ -13,7 +13,7 @@ const postCtrl = require("../controllers/post");
 router.get("/", auth, postCtrl.getAllPosts);
 router.post("/", auth, multer, postCtrl.createPost);
 router.get("/comments", auth, postCtrl.getAllComments);
-router.post("/:postId/comments", auth, postCtrl.createComment);
+router.post("/:postId/comments", auth, multer, postCtrl.createComment);
 router.get("/:postId", auth, postCtrl.getOnePost);
 router.put("/:postId", auth, multer, postCtrl.modifyPost);
 router.delete("/:postId", auth, postCtrl.deletePost);

@@ -44,10 +44,39 @@ const activeUser = (id, boolActive) =>
 		.catch((err) => console.log("Account activation error :", err));
 
 // Fetch request to get product items
-const deleteUser = (id) =>
-	fetch(`http://localhost:3000/api/${id}`)
+const deleteUser = (id, boolDelete) =>
+	fetch(`http://localhost:3000/api/${id}`, {
+		method: "PUT",
+		headers: {
+			Accept: "application/json",
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(boolDelete),
+	})
 		.then((res) => res.json())
 		.catch((err) => console.log("Delete account error :", err));
+
+const getOneUser = (token, id) =>
+	fetch(`http://localhost:3000/api/user/${id}`, {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: "Bearer " + token,
+		},
+	})
+		.then((res) => res.json())
+		.catch((err) => console.log("Get users account error :", err));
+
+const getAllUsers = (token) =>
+	fetch("http://localhost:3000/api/users/", {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: "Bearer " + token,
+		},
+	})
+		.then((res) => res.json())
+		.catch((err) => console.log("Get users account error :", err));
 
 const logout = () => {
 	localStorage.removeItem("user");
@@ -62,6 +91,8 @@ const authService = {
 	login,
 	logout,
 	getCurrentUser,
+	getAllUsers,
+	getOneUser,
 	activeUser,
 	deleteUser,
 };

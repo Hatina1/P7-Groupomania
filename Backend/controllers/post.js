@@ -16,29 +16,17 @@ exports.createPost = (req, res, next) => {
 };
 
 exports.createComment = (req, res, next) => {
-	/* const commentObj = req.file ? // if image is changed we have to parse the body and update imageUrl
-		  {
-				content: req.body.content,
-				userId: req.body.userId,
-				postId: req.body.postId,
+	const commentObj = req.file // if image is changed we have to parse the body and update imageUrl
+		? {
+				...JSON.parse(req.body.newcomment),
 				imageUrl: `${req.protocol}://${req.get("host")}/images/${
 					req.file.filename
 				}`,
 		  }
 		: // if image is not changed we get directly the body of the request
-		  {
-				content: req.body.content,
-				userId: req.body.userId,
-				postId: req.body.postId,
-				imageUrl: null,
-		  };
-	Comment.create({ ...commentObj }) */
-	Comment.create({
-		content: req.body.content,
-		userId: req.body.userId,
-		postId: req.body.postId,
-		imageUrl: req.body.imageUrl,
-	})
+		  { ...req.body };
+	//console.log(req);
+	Comment.create({ ...commentObj })
 		.then(() => res.status(201).json({ message: "Comment created !" }))
 		.catch((error) => res.status(400).json({ error }));
 };
@@ -55,7 +43,7 @@ exports.likePost = (req, res, next) => {
 };
 
 exports.getOnePost = (req, res, next) => {
-	Post.findbyPk(req.params.id, { include: [Comment] })
+	Post.findbyPk(req.params.id)
 		.then((post) => {
 			res.status(200).json(post);
 		})
@@ -63,7 +51,16 @@ exports.getOnePost = (req, res, next) => {
 };
 
 exports.modifyPost = (req, res, next) => {
-	Post.update(req.body, { where: { id: req.params.id } })
+	const commentObj = req.file // if image is changed we have to parse the body and update imageUrl
+		? {
+				...JSON.parse(req.body.newcomment),
+				imageUrl: `${req.protocol}://${req.get("host")}/images/${
+					req.file.filename
+				}`,
+		  }
+		: // if image is not changed we get directly the body of the request
+		  { ...req.body };
+	Post.update({ ...commentObj }, { where: { id: req.params.id } })
 		.then(() => {
 			res.status(200).json({ message: "Post modified !" });
 		})
@@ -77,8 +74,7 @@ exports.deletePost = (req, res, next) => {
 		})
 		.catch((error) => res.status(400).json({ error }));
 };
-//include: [{ model: Comment, as: "comments", foreignKey: "postId" }],
-//Post.findAll() //{ include: ["comments"] } //{ include: [Comment] }
+
 exports.getAllPosts = (req, res, next) => {
 	sequelize
 		.query(
@@ -93,14 +89,6 @@ exports.getAllPosts = (req, res, next) => {
 		})
 		.catch((error) => res.status(404).json({ error }));
 };
-
-/* exports.getAllCommentsbyPost = (req, res, next) => {
-	Comment.findAll()
-		.then((comments) => {
-			res.status(200).json(comments);
-		})
-		.catch((error) => res.status(404).json({ error }));
-}; */
 
 exports.getAllComments = (req, res, next) => {
 	sequelize
@@ -117,7 +105,18 @@ exports.getAllComments = (req, res, next) => {
 		.catch((error) => res.status(404).json({ error }));
 };
 
-/* Post.findAll({
+/* 
+include: [{ model: Comment, as: "comments", foreignKey: "postId" }],
+Post.findAll() //{ include: ["comments"] } //{ include: [Comment] }
+
+exports.getAllCommentsbyPost = (req, res, next) => {
+	Comment.findAll()
+		.then((comments) => {
+			res.status(200).json(comments);
+		})
+		.catch((error) => res.status(404).json({ error }));
+}; 
+Post.findAll({
 	include: { model: Comment, required: true },
 	order: [["createdAt", "DESC"]],
 })  
