@@ -61,7 +61,6 @@ function Admin() {
 						<th scope="col">Firstname</th>
 						<th scope="col">Lastname</th>
 						<th scope="col">Profile page</th>
-						<th scope="col">Action</th>
 					</tr>
 				</thead>
 
@@ -77,7 +76,6 @@ function Admin() {
 										Voir
 									</Link>
 								</td>
-								<td>Supprimer</td>
 							</tr>
 						</tbody>
 					))

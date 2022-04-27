@@ -50,14 +50,16 @@ const LoginForm = ({ submitForm }) => {
 			.then((response) => {
 				console.log(response);
 				//console.log(response.token);
-				if (response) {
+				if (response.error) {
+					alert(response.error);
+				} else {
 					localStorage.setItem("user", JSON.stringify(response));
+					navigate("/");
+					window.location.reload();
 				}
 			})
 			//.then((res) => console.log("Log in successfully", res.token))
 			.catch((err) => console.log("What's happening ?", err));
-
-		navigate("/");
 
 		//window.location.reload();
 	};

@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const sequelize = require("../models/index");
 const { DataTypes } = require("sequelize");
 const User = require("../models/user")(sequelize, DataTypes);
+const { QueryTypes } = require("sequelize");
 
 exports.signup = (req, res, next) => {
 	bcrypt
@@ -46,8 +47,10 @@ exports.login = (req, res, next) => {
 						id: user.id,
 						firstname: user.firstname,
 						lastname: user.lastname,
+						email: user.email,
 						isAdmin: user.isAdmin,
 						isActive: user.isActive,
+						isDeleted: user.isDeleted,
 						createdAt: user.createdAt,
 						token: jwt.sign({ id: user.id }, process.env.APP_SECRET, {
 							expiresIn: "24h",
@@ -60,9 +63,22 @@ exports.login = (req, res, next) => {
 };
 
 exports.getOneUser = (req, res, next) => {
-	Post.findbyPk(req.params.id)
-		.then((post) => {
-			res.status(200).json(post);
+	User.findOne(
+		{
+			attributes: [
+				"id",
+				"firstname",
+				"lastname",
+				"email",
+				"isAdmin",
+				"isActive",
+				"isDeleted",
+			],
+		},
+		{ where: { id: req.params.id } }
+	)
+		.then((user) => {
+			res.status(200).json(user);
 		})
 		.catch((error) => res.status(404).json({ error }));
 };
@@ -70,15 +86,18 @@ exports.getOneUser = (req, res, next) => {
 exports.modifyUser = (req, res, next) => {
 	User.update({ ...req.body }, { where: { id: req.params.id } })
 		.then(() => {
-			res.status(200).json({ message: "Post modified !" });
+			res.status(200).json({ message: "Account modified !" });
 		})
 		.catch((error) => res.status(403).json({ error }));
 };
 
 exports.deleteUser = (req, res, next) => {
-	User.update({ isDeleted: true }, { where: { id: req.params.id } })
+	User.update(
+		{ isDeleted: req.body.isDeleted },
+		{ where: { id: req.params.id } }
+	)
 		.then(() => {
-			res.status(200).json({ message: "Deleted!" });
+			res.status(200).json({ message: "Account deleted!" });
 		})
 		.catch((error) => res.status(400).json({ error }));
 };
@@ -86,7 +105,7 @@ exports.deleteUser = (req, res, next) => {
 exports.activeUser = (req, res, next) => {
 	User.update({ isActive: req.body.isActive }, { where: { id: req.params.id } })
 		.then(() => {
-			if (!req.body.isActive) {
+			if (req.body.isActive === 0) {
 				return res.status(200).json({ message: "Utilisateur désactivé" });
 			} else {
 				return res.status(200).json({ message: "Utilisateur réactivé" });
@@ -98,14 +117,14 @@ exports.activeUser = (req, res, next) => {
 exports.getAllUsers = (req, res, next) => {
 	sequelize
 		.query(
-			"SELECT `User`.`id`,`User`.`firstname`,`User`.`lastname`,`User`.`email`,`User`.`isActive`,`User`.`isAdmin` ,`User`.`createdAt` FROM `Users` AS `User`",
+			"SELECT `User`.`id`,`User`.`firstname`,`User`.`lastname`,`User`.`email`,`User`.`isActive`,`User`.`isAdmin`,`User`.`isDeleted` ,`User`.`createdAt` FROM `Users` AS `User`",
 			{
 				//replacements: [`createdAt`, `DESC`],
 				type: QueryTypes.SELECT,
 			}
 		)
-		.then((posts) => {
-			res.status(200).json(posts);
+		.then((users) => {
+			res.status(200).json(users);
 		})
 		.catch((error) => res.status(404).json({ error }));
 };

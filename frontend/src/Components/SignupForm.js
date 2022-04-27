@@ -59,7 +59,7 @@ const SignupForm = ({ submitForm }) => {
 			.then((res) => console.log("Sign up successfully", res))
 			.catch((err) => console.log("What's happening ?", err));
 
-		navigate("/");
+		navigate("/login");
 		window.location.reload();
 	};
 
@@ -97,6 +97,7 @@ const SignupForm = ({ submitForm }) => {
 											value={values.firstname}
 											onChange={changeHandler}
 											placeholder="Firstname"
+											autoComplete="current-firstname"
 										/>
 										{errors.firstname && (
 											<p className="error">{errors.firstname} </p>
@@ -111,6 +112,7 @@ const SignupForm = ({ submitForm }) => {
 											value={values.lastname}
 											onChange={changeHandler}
 											placeholder="Lastname"
+											autoComplete="current-lastname"
 										/>
 										{errors.lastname && (
 											<p className="error">{errors.lastname} </p>
@@ -125,6 +127,7 @@ const SignupForm = ({ submitForm }) => {
 											value={values.email}
 											onChange={changeHandler}
 											placeholder="Email"
+											autoComplete="current-email"
 										/>
 										{errors.email && <p className="error">{errors.email} </p>}
 									</div>
@@ -137,6 +140,7 @@ const SignupForm = ({ submitForm }) => {
 											value={values.password}
 											onChange={changeHandler}
 											placeholder="Password"
+											autoComplete="current-password"
 										/>
 										{errors.password && (
 											<p className="error">{errors.password} </p>

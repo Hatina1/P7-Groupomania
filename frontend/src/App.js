@@ -24,7 +24,7 @@ function App() {
 							<Route exact path="/" element={<Home />} />
 							<Route path="/login" element={<LoginForm />} />
 							<Route path="/signup" element={<SignupForm />} />
-							<Route path="/profile/:id" element={<Profile />} />
+							<Route path="/profile/:profileId" element={<Profile />} />
 							<Route path="/admin" element={<Admin />} />
 						</Routes>
 					</QueryClientProvider>

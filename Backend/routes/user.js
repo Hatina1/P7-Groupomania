@@ -9,7 +9,7 @@ router.post("/auth/login", userCtrl.login);
 router.get("/users", auth, userCtrl.getAllUsers);
 router.get("/users/:id", auth, userCtrl.getOneUser);
 router.put("/users/:id", auth, userCtrl.modifyUser);
-router.delete("/users/:id", auth, userCtrl.deleteUser);
-router.put("/users/:id", auth, userCtrl.activeUser);
+router.put("/users/:id/delete", auth, userCtrl.deleteUser);
+router.put("/users/:id/activate", auth, userCtrl.activeUser);
 
 module.exports = router;

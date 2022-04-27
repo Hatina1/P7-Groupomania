@@ -2,46 +2,101 @@ import React from "react";
 import { useState, useEffect } from "react";
 import moment from "moment";
 import AuthService from "../Components/AuthService";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useParams } from "react-router-dom";
+import ProfileModal from "../Components/ProfileModal";
+import validation from "../Components/validation";
 
-const Home = () => {
-	const profileRef = window.location.href;
-	const url = new URL(profileRef);
-	const userId = url.searchParams.get("id");
+const Profile = () => {
+	const currentUser = JSON.parse(localStorage.getItem("user"));
 	const [user, setUser] = useState([]);
-	const [currentUser, setCurrentUser] = useState(undefined);
 	const navigate = useNavigate();
 	const date = (sqlDate) => {
 		var dateCreation = moment(sqlDate).format("DD/MM/YYYY");
 		return dateCreation;
 	};
 
-	const [boolActive, setBoolActive] = useState({
-		isActive: "",
-	});
-	const onClickHandler = async (e) => {
+	const [boolActive, setBoolActive] = useState({ isActive: true });
+	const [deleteUser, setDeleteUser] = useState({});
+
+	// Accounts activation/desactivation and delete by the user
+	const onClickHandleActive = async (e) => {
+		e.preventDefault();
+
 		if (e.target.id === "activate") {
-			e.preventDefault();
-
 			user.isActive === true
-				? setBoolActive({
-						isActive: false,
-				  })
-				: setBoolActive({
-						isActive: true,
-				  });
-
-			AuthService.activeUser(user.id, boolActive);
-			AuthService.logout();
-			navigate("/login");
-		} else if (e.target.id === "suppression") {
-			e.preventDefault();
-			AuthService.deleteUser(user.id);
-			AuthService.logout();
-			navigate("/signup");
+				? setBoolActive({ isActive: 0 })
+				: setBoolActive({ isActive: 1 });
+			AuthService.activeUser(currentUser.token, user.id, boolActive);
+			if (currentUser.id === user.id) {
+				AuthService.logout();
+				navigate("/login");
+			}
 		}
+	};
 
-		//window.location.reload();
+	const onClickHandleDelete = async (e) => {
+		e.preventDefault();
+
+		//modal suppression
+		setDeleteUser({ isDeleted: 1 });
+		console.log(deleteUser, user.id);
+		AuthService.deleteUser(currentUser.token, user.id, deleteUser);
+
+		/* if (currentUser.id === user.id) {
+				AuthService.logout();
+				navigate("/signup");
+			} */
+	};
+
+	const [profileModal, setProfileModal] = useState({});
+	const [showProfileModal, setShowProfileModal] = useState(false);
+	const handleDisplayProfileModal = (e) => {
+		e.preventDefault();
+		setShowProfileModal(!showProfileModal);
+	};
+
+	const [errors, setErrors] = useState({});
+
+	const submitUpdateProfile = (e) => {
+		e.preventDefault();
+		setErrors(validation(profileModal));
+		const profileUpdateSent = {};
+		profileUpdateSent.firstname = profileModal["firstname"];
+		profileUpdateSent.lastname = profileModal["lastname"];
+		profileUpdateSent.email = profileModal["email"];
+		AuthService.updateUser(user.token, user.id, profileUpdateSent);
+		setShowProfileModal(!showProfileModal);
+		setProfileModal({});
+	};
+	const handleInputUpdateProfile = (e) => {
+		const { name, value } = e.target;
+		setProfileModal((prevState) => {
+			return {
+				...prevState,
+				[name]: value,
+			};
+		});
+	};
+	const getCurrentValues = (e, user) => {
+		console.log(user);
+		setProfileModal((prevState) => {
+			return {
+				...prevState,
+				firstname: user.firstname,
+			};
+		});
+		setProfileModal((prevState) => {
+			return {
+				...prevState,
+				lastname: user.lastname,
+			};
+		});
+		setProfileModal((prevState) => {
+			return {
+				...prevState,
+				email: user.email,
+			};
+		});
 	};
 
 	const logOut = () => {
@@ -54,41 +109,41 @@ const Home = () => {
 			</Link>
 		)} */
 
-	//chartAt
-	useEffect(() => {
-		const ongoingUser = AuthService.getCurrentUser();
-
-		if (ongoingUser) {
-			setCurrentUser(ongoingUser);
-		}
-	}, []);
-
+	let params = useParams();
 	useEffect(() => {
 		const getOneUser = async () => {
-			const OneUser = await AuthService.getOneUser(currentUser.token, userId);
-			setUser(OneUser);
+			const userProfile = await AuthService.getOneUser(
+				currentUser.token,
+				params.profileId
+			);
+			setUser(userProfile);
 		};
 		getOneUser().catch(console.error);
 	}, []);
-
-	const initiales =
-		user.firstname.charAt(0).toUpperCase() +
+	const initiales = "tt";
+	/* user.firstname.charAt(0).toUpperCase() +
 		user.lastname.charAt(0).toUpperCase();
+ */
+	useEffect(() => {
+		if (showProfileModal) {
+			console.log(showProfileModal);
+		}
+	}, [showProfileModal]);
 
 	return (
 		<div className="px-2">
 			<br />
 			<h1 className="my-3 text-white">Détails du compte</h1>
-
-			<br />
 			{!user.isActive && (
-				<button
-					id="activate"
-					className="btn btn-sm btn btn-warning btn-change me-3 my-3"
-					onClick={onClickHandler}
-				>
-					Réactiver le compte
-				</button>
+				<div className="d-flex justify-content-center">
+					<button
+						id="activate"
+						className="btn btn-lg btn btn-warning btn-change me-3 my-3"
+						onClick={onClickHandleActive}
+					>
+						Réactiver le compte
+					</button>
+				</div>
 			)}
 
 			<div className="row">
@@ -102,17 +157,32 @@ const Home = () => {
 						</p>
 						<p className="border-bottom border-2 pt-1 pb-3">
 							{user.isAdmin ? "Admin" : "Utilisateur"}
-
-							<Link to={"/Admin"} className="nav-link">
-								Go to the admin page
-							</Link>
 						</p>
-						<a href="/" target="_blank" className="link-dark pt-3">
-							Paramètres du compte
-						</a>
-						<a href="/" target="_blank" className="link-dark pt-3">
+
+						<Link to={"/Admin"} className="nav-link">
+							Go to the admin page
+						</Link>
+						<a
+							href="/"
+							target="_blank"
+							className="link-dark pt-3"
+							onClick={(e) => {
+								handleDisplayProfileModal(e);
+								getCurrentValues(e, user);
+							}}
+						>
 							Modifier le profil
 						</a>
+						{showProfileModal && (
+							<ProfileModal
+								handleInputUpdateProfile={handleInputUpdateProfile}
+								submitUpdateProfile={submitUpdateProfile}
+								handleDisplayProfileModal={handleDisplayProfileModal}
+								profileModal={profileModal}
+								showProfileModal={showProfileModal}
+								errors={errors}
+							/>
+						)}
 						<a
 							href="/login"
 							target="_blank"
@@ -150,7 +220,7 @@ const Home = () => {
 						<button
 							id="activate"
 							className="btn btn-sm btn btn-danger btn-change me-3 my-3"
-							onClick={onClickHandler}
+							onClick={onClickHandleActive}
 						>
 							Désactiver le compte
 						</button>
@@ -158,7 +228,7 @@ const Home = () => {
 						<button
 							id="activate"
 							className="btn btn-sm btn btn-warning btn-change me-3 my-3"
-							onClick={onClickHandler}
+							onClick={onClickHandleActive}
 						>
 							Réactiver le compte
 						</button>
@@ -167,7 +237,7 @@ const Home = () => {
 					<button
 						id="suppression"
 						className="btn btn-sm btn btn-danger btn-change me-3 my-3"
-						onClick={onClickHandler}
+						onClick={onClickHandleDelete}
 					>
 						Supprimer le compte
 					</button>
@@ -178,4 +248,4 @@ const Home = () => {
 	);
 };
 
-export default Home;
+export default Profile;
