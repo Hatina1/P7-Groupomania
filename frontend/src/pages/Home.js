@@ -2,6 +2,7 @@ import React from "react";
 //import PostService from "../Components/PostService";
 import { useState, useEffect } from "react";
 import { useQuery } from "react-query";
+import { useNavigate } from "react-router-dom";
 //import authHeader from "../auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
@@ -15,6 +16,7 @@ import { NewPostForm, NewCommentForm } from "../Components/Forms";
 
 const Home = () => {
 	//const [posts, setPosts] = useState([]);
+	//const navigate = useNavigate();
 	const [comments, setComments] = useState([]);
 	const user = JSON.parse(localStorage.getItem("user"));
 	const [newPost, setNewPost] = useState({});
@@ -26,13 +28,10 @@ const Home = () => {
 	const [selectedFileP, setSelectedFileP] = useState({});
 	const [showSelectedGif, setShowSelectedGif] = useState({});
 	const [showGifs, setShowGifs] = useState({});
-	//const [keyId, setKeyId] = useState({ id: "" });
 	const [showCommNum, setShowCommNum] = useState({});
 	const [showPostForm, setShowPostForm] = useState(false);
 	const [showCommentForm, setShowCommentForm] = useState({});
 	const [showPostModal, setShowPostModal] = useState({});
-	const [likes, setLikes] = useState(0);
-	const [usersLiked, setUsersLiked] = useState("");
 
 	const handleDisplayCommNum = (e, postId) => {
 		e.preventDefault();
@@ -84,32 +83,14 @@ const Home = () => {
 			});
 		}
 	};
-	function arrayRemove(arr, value) {
-		return arr.filter(function (ele) {
-			return ele !== value;
-		});
-	}
 
-	const handleLikes = (e, likesNum, usersList, postId) => {
+	const handleLikes = (e, postId) => {
 		e.preventDefault();
-		const checkListLiked = (user) => user === user.id;
-
-		const usersListArr = usersList === "" ? [] : usersList;
-
-		if (usersListArr.some(checkListLiked)) {
-			setLikes(likesNum - 1);
-			setUsersLiked(arrayRemove(usersListArr, user.id));
-		} else {
-			setLikes(likesNum + 1);
-			setUsersLiked(usersListArr.push(user.id));
-		}
 
 		const likeSent = {};
-		likeSent.likes = likes;
-		likeSent.usersLiked = usersLiked;
-		postService.fetchLikePost(user.token, user.id, postId, likeSent);
-		setLikes(0);
-		setUsersLiked("");
+		likeSent.userId = user.id;
+		likeSent.postId = postId;
+		postService.fetchLikePost(user.token, postId, likeSent);
 	};
 
 	const handleClickDisplayGifs = (postId) => {
@@ -200,18 +181,24 @@ const Home = () => {
 	const submitNewPost = (e) => {
 		e.preventDefault();
 
-		const postSent = new FormData();
+		const postSent = {};
+		postSent.title = newPost["newPostTitle"];
+		postSent.content = newPost["newPostMessage"]
+			? newPost["newPostMessage"]
+			: null;
+		postSent.userId = user.id;
 
-		postSent.append("title", newPost["newPostTitle"]);
-		postSent.append("content", newPost["newPostMessage"]);
-		postSent.append("imageUrl", selectedFileP, selectedFileP.name);
-		postSent.append("userId", user.id);
-
-		postService.fetchCreatePosts(user.token, postSent);
+		const postData = new FormData();
+		postData.append("newpost", JSON.stringify(postSent));
+		selectedFileP.hasOwnProperty("newPostFile") &&
+			postData.append("image", selectedFileP["newPostFile"]);
+		//console.log(selectedFileP);
+		postService.fetchCreatePost(user.token, postData);
 		setNewPost({});
 		setSelectedFileP({});
-
+		setShowPostForm(!showPostForm);
 		e.target.reset();
+
 		//console.log(newPost);
 	};
 
@@ -220,17 +207,34 @@ const Home = () => {
 
 		const postUpdateSent = {};
 
-		postUpdateSent.title = postModal["newPostTitle"];
-		postUpdateSent.content = postModal["newPostMessage"];
+		postUpdateSent.title = postModal["updatedTitle"];
+		postUpdateSent.content = postModal["updatedMessage"]
+			? postModal["updatedMessage"]
+			: null;
 		postUpdateSent.userId = user.id;
-		postService.fetchModifyPost(user.token, postId, postUpdateSent);
-		setPostModal({});
+
+		const postUpdateData = new FormData();
+
+		postUpdateData.append("updatepost", JSON.stringify(postUpdateSent));
+
+		postModal.hasOwnProperty("updatedFile") &&
+			postUpdateData.append("image", postModal["updatedFile"]);
+
+		postService.fetchModifyPost(user.token, postId, postUpdateData);
+		//setPostModal({});
+		setShowPostModal({});
 	};
 
 	const deletePost = (e, postId) => {
 		e.preventDefault();
 
 		postService.fetchDeletePost(user.token, postId);
+	};
+
+	const deleteComment = (e, postId, commId) => {
+		e.preventDefault();
+
+		postService.fetchDeleteComment(user.token, postId, commId);
 	};
 
 	const submitNewComment = (e, index, postId) => {
@@ -240,6 +244,9 @@ const Home = () => {
 		commentSent.content = newComment.hasOwnProperty(index)
 			? newComment[index]
 			: null;
+		commentSent.gifUrl = selectedGif.hasOwnProperty(index)
+			? selectedGif[index]
+			: null;
 		commentSent.postId = postId;
 		commentSent.userId = user.id;
 
@@ -248,20 +255,11 @@ const Home = () => {
 		selectedFileC.hasOwnProperty(index) &&
 			commentData.append("image", selectedFileC[index]);
 
-		/* 
-			commentSent.gifUrl = selectedGif.hasOwnProperty(index) ? selectedGif[index]
-			: null;
-			
-		newComment[index].hasOwnProperty(index) && commentData.append("content", newComment[index]);
-		commentData.append("postId", postId);
-		commentData.append("userId", user.id);
-		selectedGif.hasOwnProperty(index) &&
-		commentData.append("imageUrl", selectedGif[index]); */
-
-		postService.fetchCreateComments(user.token, postId, commentData);
+		postService.fetchCreateComment(user.token, postId, commentData);
 
 		setNewComment({ [index]: "" });
 		setSelectedGif({ [index]: "" });
+		setShowCommentForm({ [index]: "" });
 		setShowSelectedGif({ [index]: "" });
 		setSelectedFileC({ [index]: "" });
 		e.target.reset();
@@ -331,11 +329,11 @@ const Home = () => {
 	};
 
 	const handleChangeFilePost = (e) => {
-		const { id, files } = e.target;
-		setNewPost((prevState) => {
+		const { name, files } = e.target;
+		setSelectedFileP((prevState) => {
 			return {
 				...prevState,
-				[id]: files[0],
+				[name]: files[0],
 			};
 		});
 	};
@@ -350,19 +348,34 @@ const Home = () => {
 		});
 	};
 
-	const getValueInputPost = (e, title, content) => {
+	const handleFileUpdatePost = (e) => {
+		const { id, files } = e.target;
 		setPostModal((prevState) => {
 			return {
 				...prevState,
-				updateTitle: title,
+				[id]: files[0],
+			};
+		});
+	};
+	const getValueInputPost = (e, title, content, imageUrl) => {
+		setPostModal((prevState) => {
+			return {
+				...prevState,
+				updatedTitle: title,
 			};
 		});
 		setPostModal((prevState) => {
 			return {
 				...prevState,
-				updateMessage: content,
+				updatedMessage: content,
 			};
 		});
+		/* setPostModal((prevState) => {
+			return {
+				...prevState,
+				updatedFile: imageUrl,
+			};
+		}); */
 	};
 
 	const enablePostButton = (id1, id2) => {
@@ -404,21 +417,22 @@ const Home = () => {
 	}, []); */
 	//get all comments
 	useEffect(() => {
+		console.log(user.id);
 		const getAllComments = async () => {
 			const allComments = await postService.fetchAllComments(user.token);
 			setComments(allComments);
 		};
 
 		getAllComments().catch(console.error);
-	}, [user.token]);
+	}, []);
 
 	const { isLoading, error, data } = useQuery("posts", () =>
 		postService.fetchAllPosts(user.token)
 	);
 
 	const posts = data || [];
-	if (isLoading) return "Loading...";
-	if (error) return "An error has occurred: " + error.message;
+	//if (isLoading) return "Loading...";
+	//if (error) return "An error has occurred: " + error.message;
 
 	const handleShowPostForm = () => {
 		setShowPostForm(!showPostForm);
@@ -432,6 +446,12 @@ const Home = () => {
 
 	return (
 		<div className="px-2">
+			{isLoading && <h1 className="my-3 text-white">Loading...</h1>}
+			{error && (
+				<h1 className="my-3 text-white">
+					`An error has occurred:${error.message}`
+				</h1>
+			)}
 			<h1 className="my-3 text-white">
 				Welcome <em className="fw-bold text-capitalize">{user.firstname} </em>
 				to Groupomania social app !
@@ -529,7 +549,7 @@ const Home = () => {
 												)}
 
 												<a
-													className="card-p-comment-num text-secondary  text-decoration-none"
+													className="card-p-comment-num text-secondary text-decoration-none"
 													href="/"
 													target="_blank"
 													onClick={(e) => handleDisplayCommentForm(e, post.id)}
@@ -537,15 +557,12 @@ const Home = () => {
 													Commenter
 												</a>
 												<a
-													className="card-p-comment-num text-secondary  text-decoration-none"
+													className="card-p-comment-num text-secondary text-decoration-none color-thumb"
 													href="/"
 													target="_blank"
-													onClick={(e) =>
-														handleLikes(e, post.likes, post.usersLiked, post.id)
-													}
-													//onClick={(e) => handleDisplayCommNum(e, post.id)}
+													onClick={(e) => handleLikes(e, post.id)}
 												>
-													<div>
+													<div className="d-flex justify-content-center align-items-center">
 														<FontAwesomeIcon
 															icon={faThumbsUp}
 															className="px-1 py-2"
@@ -559,7 +576,12 @@ const Home = () => {
 													target="_blank"
 													onClick={(e) => {
 														handleDisplayPostModal(e, post.id);
-														getValueInputPost(e, post.title, post.content);
+														getValueInputPost(
+															e,
+															post.title,
+															post.content,
+															post.imageUrl
+														);
 													}}
 												>
 													Modifier
@@ -569,6 +591,7 @@ const Home = () => {
 														post={post}
 														showPostModal={showPostModal}
 														handleInputUpdatePost={handleInputUpdatePost}
+														handleFileUpdatePost={handleFileUpdatePost}
 														submitUpdatePost={submitUpdatePost}
 														handleDisplayPostModal={handleDisplayPostModal}
 														postModal={postModal}
@@ -583,57 +606,60 @@ const Home = () => {
 													Supprimer
 												</a>
 											</section>
-											{comments && comments.length > 0 && (
-												<div>
-													{enableItemToShow(post.id, showCommNum) === true &&
-														comments
-															.filter((col) => col.postId === post.id)
-															.map((comment, index) => (
-																<div className="" key={index}>
-																	<Comments comment={comment} />
-																</div>
-															))}
-													{enableItemToShow(post.id, showSelectedGif) ===
-														true && (
-														<img
-															alt="gif-selected"
-															className="img-animated-gif flex-nowrap"
-															src={selectedGif[index]}
+
+											<div>
+												{enableItemToShow(post.id, showCommNum) === true &&
+													comments.length > 0 &&
+													comments
+														.filter((col) => col.postId === post.id)
+														.map((comment, index) => (
+															<div className="" key={index}>
+																<Comments
+																	comment={comment}
+																	post={post}
+																	deleteComment={deleteComment}
+																/>
+															</div>
+														))}
+												{enableItemToShow(post.id, showSelectedGif) ===
+													true && (
+													<img
+														alt="gif-selected"
+														className="img-animated-gif flex-nowrap"
+														src={selectedGif[index]}
+													/>
+												)}
+												{showCommentForm[post.id] && (
+													<div className="card-footer">
+														<NewCommentForm
+															postId={post.id}
+															index={index}
+															enableCommentButton={enableCommentButton}
+															changeCommentButtonStyle={
+																changeCommentButtonStyle
+															}
+															handleChangeInput={handleChangeInput}
+															handleChangeFile={handleChangeFile}
+															handleClickDisplayGifs={handleClickDisplayGifs}
+															submitNewComment={submitNewComment}
 														/>
-													)}
-													{enableItemToShow(post.id, showCommentForm) ===
-														true && (
-														<div className="card-footer">
-															<NewCommentForm
-																postId={post.id}
-																index={index}
-																enableCommentButton={enableCommentButton}
-																changeCommentButtonStyle={
-																	changeCommentButtonStyle
-																}
-																handleChangeInput={handleChangeInput}
-																handleChangeFile={handleChangeFile}
-																handleClickDisplayGifs={handleClickDisplayGifs}
-																submitNewComment={submitNewComment}
-															/>
-														</div>
-													)}
-													{enableItemToShow(post.id, showGifs) === true && (
-														<div className="d-flex flex-wrap flex-row justify-content-between align-items-center">
-															{gifs.map((gif, idx) => (
-																<div key={idx}>
-																	<Gifs
-																		postId={post.id}
-																		gif={gif}
-																		index={index}
-																		handleSelectGif={handleSelectGif}
-																	/>
-																</div>
-															))}
-														</div>
-													)}
-												</div>
-											)}
+													</div>
+												)}
+												{enableItemToShow(post.id, showGifs) === true && (
+													<div className="d-flex flex-wrap flex-row justify-content-between align-items-center">
+														{gifs.map((gif, idx) => (
+															<div key={idx}>
+																<Gifs
+																	postId={post.id}
+																	gif={gif}
+																	index={index}
+																	handleSelectGif={handleSelectGif}
+																/>
+															</div>
+														))}
+													</div>
+												)}
+											</div>
 										</div>
 									</div>
 								</div>

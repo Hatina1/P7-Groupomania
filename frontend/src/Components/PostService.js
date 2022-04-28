@@ -13,6 +13,7 @@ const fetchDeletePost = (token, postId) =>
 	fetch(`http://localhost:3000/api/posts/${postId}`, {
 		method: "DELETE",
 		headers: {
+			Accept: "application/json",
 			"Content-Type": "application/json",
 			Authorization: "Bearer " + token,
 		},
@@ -20,34 +21,46 @@ const fetchDeletePost = (token, postId) =>
 		.then((res) => res.json())
 		.catch((err) => console.log("Delete error:", err));
 
-const fetchModifyPost = (token, postId, userId) =>
-	fetch(`http://localhost:3000/api/posts/${postId}/likes`, {
-		method: "PUT",
+const fetchDeleteComment = (token, postId, commId) =>
+	fetch(`http://localhost:3000/api/posts/${postId}/comments/${commId}`, {
+		method: "DELETE",
 		headers: {
 			Accept: "application/json",
 			"Content-Type": "application/json",
 			Authorization: "Bearer " + token,
 		},
-		body: JSON.stringify(userId),
 	})
 		.then((res) => res.json())
-		.catch((err) => console.log("Post was not sent", err));
+		.catch((err) => console.log("Delete error:", err));
 
-const fetchCreatePosts = (token, post) =>
+const fetchModifyPost = (token, postId, updatepost) =>
+	fetch(`http://localhost:3000/api/posts/${postId}`, {
+		method: "PUT",
+		headers: {
+			//Accept: "application/json",
+			//"Content-Type": "application/json",
+			Authorization: "Bearer " + token,
+		},
+		body: updatepost,
+	})
+		.then((res) => res.json())
+		.catch((err) => console.log("Post was not updated", err));
+
+const fetchCreatePost = (token, post) =>
 	fetch(`http://localhost:3000/api/posts`, {
 		method: "POST",
 		headers: {
-			Accept: "application/json",
-			"Content-Type": "application/json",
+			//Accept: "application/json",
+			//"Content-Type": "application/json",
 			Authorization: "Bearer " + token,
 		},
-		body: JSON.stringify(post),
+		body: post,
 	})
 		.then((res) => res.json())
 		.catch((err) => console.log("Post creation error :", err));
 
-const fetchLikePost = (token, userId, postId, likeSent) =>
-	fetch(`http://localhost:3000/api/posts/${postId}/like`, {
+const fetchLikePost = (token, postId, likeSent) =>
+	fetch(`http://localhost:3000/api/posts/${postId}/likes`, {
 		method: "PUT",
 		headers: {
 			Accept: "application/json",
@@ -83,7 +96,7 @@ const fetchAllComments = (token) =>
 		.then((res) => res.json())
 		.catch((err) => console.log("Comment creation error :", err)); */
 
-const fetchCreateComments = (token, postId, comment) => {
+const fetchCreateComment = (token, postId, comment) => {
 	//console.log("comment", comment.get("newcomment"));
 	fetch(`http://localhost:3000/api/posts/${postId}/comments`, {
 		method: "POST",
@@ -107,12 +120,13 @@ const fetchGifs = (key) =>
 
 const postService = {
 	fetchAllPosts,
-	fetchCreatePosts,
+	fetchCreatePost,
 	fetchLikePost,
 	fetchDeletePost,
 	fetchModifyPost,
 	fetchAllComments,
-	fetchCreateComments,
+	fetchCreateComment,
+	fetchDeleteComment,
 	fetchGifs,
 };
 

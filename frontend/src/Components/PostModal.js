@@ -3,64 +3,46 @@ import ReactDOM from "react-dom";
 import "../styles/bootstrap.min.css";
 import "../styles/headers.css";
 import Modal from "react-bootstrap/Modal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faImage } from "@fortawesome/free-solid-svg-icons";
 
 function PostModal({
 	post,
 	handleInputUpdatePost,
+	handleFileUpdatePost,
 	submitUpdatePost,
 	handleDisplayPostModal,
 	postModal,
 	showPostModal,
 }) {
-	/* 	
-		<button
-							className={`btn btn-primary btn-sm btn-change`}
-							id="newPost"
-							type="submit"
-						>
-							Modifier le post
-						</button>
-						
-	<div className="d-grid gap-2 d-md-flex justify-content-md-end mt-2">
-				<button
-					type="button"
-					className="btn btn-secondary me-md-2"
-					onClick={(e) => handleDisplayPostModal(e, post.id)}
-				>
-					Fermer
-				</button>
-		</div> 
-						
-
-	
-
-						*/
-
+	//onClick={(e) => handleDisplayPostModal(e, post.id)}
+	//onHide={(e) => handleDisplayPostModal(e, post.id)}
+	// onSubmit={(e) => submitUpdatePost(e, post.id)}
 	return (
 		<>
-			<Modal show={showPostModal} onHide={handleDisplayPostModal}>
+			<Modal show={showPostModal}>
 				<Modal.Header>
 					<Modal.Title>Modifier le message</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<form className="card px-4 py-4" onSubmit={submitUpdatePost}>
+					<form className="card px-4 py-4">
 						<div className="form-group row">
-							<label htmlFor="newPostTitle" className="col-sm-4 col-form-label">
+							<label htmlFor="updateTitle" className="col-sm-4 col-form-label">
 								Titre de votre post
 							</label>
 							<div className="col-sm-8">
 								<input
 									type="text"
 									className="form-control"
-									id="updateTitle"
+									id="updatedTitle"
 									onChange={handleInputUpdatePost}
-									value={postModal.updateTitle}
+									value={postModal.updatedTitle}
 								/>
 							</div>
 						</div>
 						<div className="form-group row">
 							<label
-								htmlFor="newPostMessage"
+								htmlFor="updateMessage"
 								className="col-sm-4 col-form-label"
 							>
 								Votre message
@@ -69,9 +51,21 @@ function PostModal({
 								<textarea
 									type="text"
 									className="form-control"
-									id="updateMessage"
+									id="updatedMessage"
 									onChange={handleInputUpdatePost}
-									value={postModal.updateMessage}
+									value={postModal.updatedMessage}
+								/>
+							</div>
+							<div className="form-group">
+								<label htmlFor="updatedFile">
+									<FontAwesomeIcon icon={faImage} className="px-1 py-2" />
+								</label>
+								<input
+									type="file"
+									className=""
+									name="updatedFile"
+									id="updatedFile"
+									onChange={handleFileUpdatePost}
 								/>
 							</div>
 						</div>
@@ -86,8 +80,12 @@ function PostModal({
 					</button>
 					<button
 						className={`btn btn-primary btn-sm btn-change`}
-						id="newPost"
+						id="updatePost"
 						type="submit"
+						onClick={(e) => {
+							handleDisplayPostModal(e, post.id);
+							submitUpdatePost(e, post.id);
+						}}
 					>
 						Modifier le post
 					</button>

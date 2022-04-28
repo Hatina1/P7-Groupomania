@@ -1,10 +1,5 @@
 import React from "react";
-import {
-	ShowPostFormButton,
-	ClosePostFormButton,
-	SubmitCommentButton,
-	SubmitPostButton,
-} from "../Components/Buttons";
+import { SubmitCommentButton, SubmitPostButton } from "../Components/Buttons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceLaugh } from "@fortawesome/free-solid-svg-icons";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
@@ -17,7 +12,10 @@ export function NewPostForm({
 	submitNewPost,
 }) {
 	return (
-		<form className="card col-8 px-4 py-4 d-flex" onSubmit={submitNewPost}>
+		<form
+			className="card bg-light col-8 px-4 py-4 d-flex"
+			onSubmit={submitNewPost}
+		>
 			<div className="form-group row">
 				<label htmlFor="newPostTitle" className="col-sm-2 col-form-label">
 					Titre de votre post
@@ -53,6 +51,7 @@ export function NewPostForm({
 				<input
 					type="file"
 					className=""
+					name="newPostFile"
 					id="newPostFile"
 					onChange={handleChangeFilePost}
 				/>

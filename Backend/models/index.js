@@ -48,7 +48,7 @@ db.users.sync({ alter: true }).then(() => {
 	db.posts.sync({ alter: true }).then(() => {
 		db.comments.sync({ alter: true });
 	});
-}); */
+});*/
 
 // belongsTo() indicates that one Post only belongs to one User
 db.posts.belongsTo(db.users, {

@@ -214,6 +214,13 @@ p em {
 .hidden {
 	display: none;
 }
+.color-can :hover {
+	color: red;
+}
+
+.color-thumb :hover {
+	color: #0d6efd;
+}
 
 @media (prefers-reduced-motion: no-preference) {
 	.App-logo {

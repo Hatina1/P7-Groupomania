@@ -4,13 +4,21 @@ const Post = require("../models/post")(sequelize, DataTypes);
 const User = require("../models/user")(sequelize, DataTypes);
 const Comment = require("../models/comment")(sequelize, DataTypes);
 const { QueryTypes } = require("sequelize");
+const fs = require("fs");
 
 exports.createPost = (req, res, next) => {
-	Post.create({
-		title: req.body.title,
-		content: req.body.content,
-		userId: req.body.userId,
-	})
+	const postObj = req.file // if image is changed we have to parse the body and update imageUrl
+		? {
+				...JSON.parse(req.body.newpost),
+				imageUrl: `${req.protocol}://${req.get("host")}/images/${
+					req.file.filename
+				}`,
+		  }
+		: // if image is not changed we get directly the body of the request
+		  {
+				...JSON.parse(req.body.newpost),
+		  };
+	Post.create({ ...postObj })
 		.then(() => res.status(201).json({ message: "Post created !" }))
 		.catch((error) => res.status(400).json({ error }));
 };
@@ -24,7 +32,7 @@ exports.createComment = (req, res, next) => {
 				}`,
 		  }
 		: // if image is not changed we get directly the body of the request
-		  { ...req.body };
+		  { ...JSON.parse(req.body.newcomment) };
 	//console.log(req);
 	Comment.create({ ...commentObj })
 		.then(() => res.status(201).json({ message: "Comment created !" }))
@@ -32,14 +40,50 @@ exports.createComment = (req, res, next) => {
 };
 
 exports.likePost = (req, res, next) => {
-	Post.update(
-		{ likes: req.body.likes, usersLiked: req.body.usersLiked },
-		{ where: { id: req.params.id } }
-	)
-		.then(() => {
-			res.status(200).json({ message: "post like status changed !" });
+	Post.findOne({ id: req.params.postId })
+		.then((post) => {
+			const usersListArr = post.usersLiked === "" ? [] : post.usersLiked;
+
+			if (!post.usersLiked.includes(req.body.userId)) {
+				// user likes the sauce and his userId doesn't appear in the arrray usersLiked
+				usersListArr.push(req.body.userId);
+				Post.update(
+					{
+						likes: post.likes + 1,
+						usersLiked: usersListArr,
+					},
+					{ where: { id: req.params.postId } }
+				)
+					.then(() => {
+						res.status(200).json({ message: "Post liked !" });
+					})
+					.catch((error) => {
+						console.log("FAILED BECAUSE 1st cond:", error.message);
+						res.status(400).json({ error });
+					});
+			} else if (post.usersLiked.includes(req.body.userId)) {
+				// if the userId is in the usersDisliked array
+				usersListArr.filter((user) => user !== req.body.userId);
+				Post.update(
+					{
+						likes: post.likes - 1,
+						usersLiked: usersListArr,
+					},
+					{ where: { id: req.params.postId } }
+				)
+					.then(() => {
+						res.status(200).json({ message: "Like removed !" });
+					})
+					.catch((error) => {
+						console.log("FAILED BECAUSE 2nd cond:", error.message);
+						res.status(400).json({ error });
+					});
+			}
 		})
-		.catch((error) => res.status(400).json({ error }));
+		.catch((error) => {
+			console.log("FAILED BECAUSE overall:", error.message);
+			res.status(400).json({ error });
+		});
 };
 
 exports.getOnePost = (req, res, next) => {
@@ -51,16 +95,16 @@ exports.getOnePost = (req, res, next) => {
 };
 
 exports.modifyPost = (req, res, next) => {
-	const commentObj = req.file // if image is changed we have to parse the body and update imageUrl
+	const postObj = req.file // if image is changed we have to parse the body and update imageUrl
 		? {
-				...JSON.parse(req.body.newcomment),
+				...JSON.parse(req.body.updatepost),
 				imageUrl: `${req.protocol}://${req.get("host")}/images/${
 					req.file.filename
 				}`,
 		  }
 		: // if image is not changed we get directly the body of the request
-		  { ...req.body };
-	Post.update({ ...commentObj }, { where: { id: req.params.id } })
+		  { ...JSON.parse(req.body.updatepost) };
+	Post.update({ ...postObj }, { where: { id: req.params.postId } })
 		.then(() => {
 			res.status(200).json({ message: "Post modified !" });
 		})
@@ -68,11 +112,53 @@ exports.modifyPost = (req, res, next) => {
 };
 
 exports.deletePost = (req, res, next) => {
-	Post.destroy({ where: { id: req.params.id } })
-		.then(() => {
-			res.status(200).json({ message: "Deleted!" });
+	Post.findOne({ where: { id: req.params.postId } })
+		.then((post) => {
+			if (post.imageUrl) {
+				// image name is first recuperated
+				const filename = post.imageUrl.split("/images/")[1];
+				// image is deleted (unlinked) from the directory images
+				fs.unlink(`images/${filename}`, () => {
+					Post.destroy({ where: { id: req.params.postId } })
+						.then(() => {
+							res.status(200).json({ message: "Deleted!" });
+						})
+						.catch((error) => res.status(400).json({ error }));
+				});
+			} else {
+				Post.destroy({ where: { id: req.params.postId } })
+					.then(() => {
+						res.status(200).json({ message: "Deleted!" });
+					})
+					.catch((error) => res.status(400).json({ error }));
+			}
 		})
-		.catch((error) => res.status(400).json({ error }));
+		.catch((error) => res.status(500).json({ error }));
+};
+
+exports.deleteComment = (req, res, next) => {
+	Comment.findOne({ where: { id: req.params.id } })
+		.then((comment) => {
+			if (comment.imageUrl) {
+				// image name is first recuperated
+				const filename = comment.imageUrl.split("/images/")[1];
+				// image is deleted (unlinked) from the directory images
+				fs.unlink(`images/${filename}`, () => {
+					Comment.destroy({ where: { id: req.params.id } })
+						.then(() => {
+							res.status(200).json({ message: "Deleted!" });
+						})
+						.catch((error) => res.status(400).json({ error }));
+				});
+			} else {
+				Comment.destroy({ where: { id: req.params.id } })
+					.then(() => {
+						res.status(200).json({ message: "Deleted!" });
+					})
+					.catch((error) => res.status(400).json({ error }));
+			}
+		})
+		.catch((error) => res.status(500).json({ error }));
 };
 
 exports.getAllPosts = (req, res, next) => {

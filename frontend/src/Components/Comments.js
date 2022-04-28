@@ -3,8 +3,10 @@ import ReactDOM from "react-dom";
 import "../styles/bootstrap.min.css";
 import "../styles/headers.css";
 import moment from "moment";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
-function Comments({ comment }) {
+function Comments({ comment, post, deleteComment }) {
 	const sqlToJsDate = (sqlDate) => {
 		var sqlDateFormat = new Date(sqlDate);
 		var jYear = sqlDateFormat.getFullYear();
@@ -20,14 +22,29 @@ function Comments({ comment }) {
 					<p>
 						Réponse de {comment.firstname} {comment.lastname}
 					</p>
-					<p>il y a {sqlToJsDate(comment.createdAt)}</p>
+					<div>
+						<p>il y a {sqlToJsDate(comment.createdAt)}</p>
+						<a
+							className="card-p-comment-num text-secondary text-decoration-none"
+							href="/"
+							target="_blank"
+							onClick={(e) => deleteComment(e, post.id, comment.id)}
+						>
+							<FontAwesomeIcon
+								icon={faTrashCan}
+								className="px-1 py-2 color-can"
+							/>
+						</a>
+					</div>
 				</div>
-
+				{comment.gifUrl && (
+					<img className="img-animated-gif" src={comment.gifUrl} alt="gif" />
+				)}
 				{comment.imageUrl && (
 					<img
-						className="img-animated-gif flex-nowrap"
+						className="img-animated-gif"
 						src={comment.imageUrl}
-						alt="gif"
+						alt="image"
 					/>
 				)}
 
