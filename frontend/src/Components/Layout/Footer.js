@@ -1,7 +1,7 @@
 import React from "react";
-import "../styles/bootstrap.min.css";
-import "../styles/footers.css";
-import icon from "../assets/icon.png";
+import "../../styles/bootstrap.min.css";
+import "../../styles/footers.css";
+import icon from "../../assets/icon.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
 	faFacebook,

@@ -1,13 +1,13 @@
 import React from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./Components/Navbar";
-import Footer from "./Components/Footer";
+import Navbar from "./Components/Layout/Navbar";
+import Footer from "./Components/Layout/Footer";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
-import SignupForm from "./Components/SignupForm";
-import LoginForm from "./Components/LoginForm";
+import SignupForm from "./Components/Forms/SignupForm";
+import LoginForm from "./Components/Forms/LoginForm";
 import "./styles/bootstrap.min.css";
 import "./styles/headers.css";
 //import { ErrorBoundary } from "react-error-boundary";

@@ -1,14 +1,10 @@
 import React from "react";
-import "../App.css";
+import "../../App.css";
 import validation from "./validation";
-import AuthService from "./AuthService";
-//  import useForm from "./useForm"; custom hook (methods and initial values)
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const SignupForm = ({ submitForm }) => {
-	//const { changeHandler, submitHandler, values, errors } = useForm(submitForm);
-
+const SignupForm = () => {
 	const [values, setValues] = useState({
 		firstname: "",
 		lastname: "",
@@ -17,11 +13,6 @@ const SignupForm = ({ submitForm }) => {
 	});
 
 	const [errors, setErrors] = useState({});
-
-	//const [dataIsChecked, setdataIsChecked] = useState(false);
-
-	//const [isLoggedIn, setIsLoggedIn] = useState(false);
-	//const { setAuthTokens } = useAuth();
 
 	const changeHandler = (e) => {
 		setValues({
@@ -35,19 +26,7 @@ const SignupForm = ({ submitForm }) => {
 		e.preventDefault();
 
 		setErrors(validation(values));
-		//setdataIsChecked(true);
-		/* try {
-			await AuthService.signup(values).then(
-				(response) => {
-					// check for token and user already exists with 200
-					console.log("Sign up successfully", response);
-					navigate("/");
-					window.location.reload();
-				},
-				(error) => {
-					console.log(error);
-				}
-			); */
+
 		fetch("http://localhost:3000/api/auth/signup", {
 			method: "POST",
 			headers: {
@@ -62,17 +41,6 @@ const SignupForm = ({ submitForm }) => {
 		navigate("/login");
 		window.location.reload();
 	};
-
-	/* useEffect(() => {
-		if (Object.keys(errors).length === 0 && dataIsChecked) {
-			submitForm(true);
-		}
-	}, [errors]); */
-
-	/* const navigate = useNavigate();
-	if (isLoggedIn) {
-		return navigate("/");
-	} */
 
 	return (
 		<div className="mask d-flex align-items-center h-100 gradient-custom-3">

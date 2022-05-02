@@ -1,20 +1,68 @@
 import React from "react";
+import { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import "../styles/bootstrap.min.css";
 import "../styles/headers.css";
 import moment from "moment";
+import SuppCommentModal from "./Modals/SuppCommentModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
 function Comments({ comment, post, deleteComment }) {
+	const user = JSON.parse(localStorage.getItem("user"));
 	const sqlToJsDate = (sqlDate) => {
 		var sqlDateFormat = new Date(sqlDate);
 		var jYear = sqlDateFormat.getFullYear();
 		var jMonth = sqlDateFormat.getMonth();
 		var jDay = sqlDateFormat.getDate();
-		var sentDelay = moment([jYear, jMonth, jDay + 1]).fromNow();
-		return sentDelay;
+		var delay = moment([jYear, jMonth, jDay + 1])
+			.fromNow()
+			.split(" ");
+		let period = delay[1];
+		let french = "";
+		if (period === "hours") {
+			french = delay[0] + " " + "heures";
+		} else if (period === "days") {
+			french = delay[0] + " " + "jours";
+		} else if (period === "years") {
+			french = delay[0] + " " + "années";
+		} else if (period === "day") {
+			french = "1 jour";
+		}
+		return french;
 	};
+	const [showSuppCommentModal, setShowSuppCommentModal] = useState({});
+	const handleSuppCommentModal = (e, commentId) => {
+		e.preventDefault();
+		if (showSuppCommentModal.hasOwnProperty(commentId)) {
+			setShowSuppCommentModal({
+				...showSuppCommentModal,
+				[commentId]: !showSuppCommentModal[commentId],
+			});
+		} else {
+			setShowSuppCommentModal((prevState) => {
+				return {
+					...prevState,
+					[commentId]: true,
+				};
+			});
+		}
+	};
+
+	useEffect(() => {
+		if (showSuppCommentModal) {
+			console.log(showSuppCommentModal);
+		}
+	}, [showSuppCommentModal]);
+
+	const enableItemToShow = (commentId, itemToShow) => {
+		if (itemToShow.hasOwnProperty(commentId)) {
+			return itemToShow[commentId];
+		} else {
+			return false;
+		}
+	};
+
 	return (
 		<section className="card-body-comment">
 			<article className="card-article-comment">
@@ -22,20 +70,7 @@ function Comments({ comment, post, deleteComment }) {
 					<p>
 						Réponse de {comment.firstname} {comment.lastname}
 					</p>
-					<div>
-						<p>il y a {sqlToJsDate(comment.createdAt)}</p>
-						<a
-							className="card-p-comment-num text-secondary text-decoration-none"
-							href="/"
-							target="_blank"
-							onClick={(e) => deleteComment(e, post.id, comment.id)}
-						>
-							<FontAwesomeIcon
-								icon={faTrashCan}
-								className="px-1 py-2 color-can"
-							/>
-						</a>
-					</div>
+					<p>il y a {sqlToJsDate(comment.createdAt)}</p>
 				</div>
 				{comment.gifUrl && (
 					<img className="img-animated-gif" src={comment.gifUrl} alt="gif" />
@@ -49,6 +84,27 @@ function Comments({ comment, post, deleteComment }) {
 				)}
 
 				<p className="p-change">{comment.content}</p>
+				<div className="d-flex flex-nowrap justify-content-end">
+					{user.isAdmin === true && (
+						<a
+							className="text-secondary text-decoration-none icons-change"
+							href="/"
+							target="_blank"
+							onClick={(e) => handleSuppCommentModal(e, comment.id)}
+						>
+							<FontAwesomeIcon icon={faTrashCan} className="px-1 py-2" />
+						</a>
+					)}
+					{enableItemToShow(comment.id, showSuppCommentModal) === true && (
+						<SuppCommentModal
+							post={post}
+							comment={comment}
+							showSuppCommentModal={showSuppCommentModal}
+							handleSuppCommentModal={handleSuppCommentModal}
+							deleteComment={deleteComment}
+						/>
+					)}
+				</div>
 			</article>
 		</section>
 	);

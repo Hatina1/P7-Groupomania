@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import AuthService from "../Components/AuthService";
+import AuthService from "../Components/Services/AuthService";
 import { useNavigate, Link } from "react-router-dom";
 
 function Admin() {
@@ -33,7 +33,6 @@ function Admin() {
 		if (keyword !== "") {
 			const results = users.filter((item) => {
 				return item.lastname.toLowerCase().startsWith(keyword.toLowerCase());
-				// Use the toLowerCase() method to make it case-insensitive
 			});
 			setFilteredUsers(results);
 		} else {
@@ -50,8 +49,8 @@ function Admin() {
 				type="search"
 				value={name}
 				onChange={filter}
-				className="input rounded my-2 py-2 col-4"
-				placeholder="Recherche d'un nom"
+				className="input rounded my-2 py-2 col-4 input-responsive"
+				placeholder="Recherche par nom"
 			/>
 
 			<table className="table table-sm my-4 text-white">
@@ -64,7 +63,8 @@ function Admin() {
 					</tr>
 				</thead>
 
-				{filteredUsers && filteredUsers.length > 0 ? (
+				{filteredUsers &&
+					filteredUsers.length > 0 &&
 					filteredUsers.map((item) => (
 						<tbody>
 							<tr key={item.id}>
@@ -78,11 +78,12 @@ function Admin() {
 								</td>
 							</tr>
 						</tbody>
-					))
-				) : (
-					<p>No results found!</p>
-				)}
+					))}
 			</table>
+
+			{filteredUsers && filteredUsers.length === 0 && (
+				<p className="text-white">Aucun résultat</p>
+			)}
 		</div>
 	);
 }

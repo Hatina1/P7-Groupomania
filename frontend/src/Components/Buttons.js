@@ -2,10 +2,10 @@ import React from "react";
 
 export function ShowPostFormButton({ handleShowPostForm, msgToShow }) {
 	return (
-		<div className="d-grid gap-2 col-3 mx-auto">
+		<div className="d-grid gap-2 col-3 mx-auto button-responsive">
 			<button
 				type="button"
-				className="btn btn-primary rounded-pill"
+				className="btn btn-primary rounded-pill "
 				onClick={handleShowPostForm}
 			>
 				{msgToShow}
@@ -31,7 +31,7 @@ export function ClosePostFormButton({ handleShowPostForm, msgToShow }) {
 export function SubmitPostButton({ enablePostButton, changePostButtonStyle }) {
 	return (
 		<button
-			className={`btn btn-primary btn-sm btn-change col-3 align-self-center ${changePostButtonStyle(
+			className={`btn btn-primary btn-lg btn-change col-3 align-self-center button-responsive ${changePostButtonStyle(
 				"newPostTitle",
 				"newPostMessage"
 			)}`}

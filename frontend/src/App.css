@@ -6,7 +6,13 @@
 	height: 40vmin;
 	pointer-events: none;
 }
-
+.container-change {
+	min-height: 100%;
+	position: relative;
+}
+.footer-change {
+	position: absolute;
+}
 form div {
 	margin-bottom: 20px;
 }
@@ -17,43 +23,6 @@ form div {
 
 .label {
 	width: 60px;
-}
-
-CSS .gradient-custom-3 {
-	/* fallback for old browsers */
-	background: #84fab0;
-
-	/* Chrome 10-25, Safari 5.1-6 */
-	background: -webkit-linear-gradient(
-		to right,
-		rgba(241, 103, 93, 0.76),
-		rgba(10, 16, 68, 0.26)
-	);
-
-	/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-	background: linear-gradient(
-		to right,
-		rgba(241, 103, 93, 0.76),
-		rgba(10, 16, 68, 0.26)
-	);
-}
-.gradient-custom-4 {
-	/* fallback for old browsers */
-	background: #84fab0;
-
-	/* Chrome 10-25, Safari 5.1-6 */
-	background: -webkit-linear-gradient(
-		to right,
-		rgba(241, 103, 93, 0.76),
-		rgba(10, 16, 68, 0.26)
-	);
-
-	/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-	background: linear-gradient(
-		to right,
-		rgba(241, 103, 93, 0.76),
-		rgba(197, 27, 15, 0.76)
-	);
 }
 
 .ul-margin-change {
@@ -214,7 +183,20 @@ p em {
 .hidden {
 	display: none;
 }
-.color-can :hover {
+.cursor-change {
+	cursor: pointer;
+}
+
+.overflow {
+	text-overflow: ellipsis;
+}
+
+.icons-div-change {
+	margin-bottom: -1rem;
+	margin-right: -1rem;
+}
+
+.icons-change :hover {
 	color: red;
 }
 
@@ -222,32 +204,57 @@ p em {
 	color: #0d6efd;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-	.App-logo {
-		animation: App-logo-spin infinite 20s linear;
+.margin-change {
+	margin-bottom: 0;
+}
+@media screen and (max-width: 425px) {
+	.card-responsive {
+		width: 380px;
+	}
+
+	.card-p-comment-num {
+		height: 37px;
+	}
+
+	.div-responsive {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.div-comment-responsive {
+		display: flex;
+		flex-wrap: nowrap;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.section-comment-responsive {
+		display: flex;
+		flex-wrap: nowrap;
+		justify-content: center;
+	}
+
+	.section-responsive {
+		display: flex;
+		flex-wrap: nowrap;
+		justify-content: center;
+	}
+
+	.button-responsive {
+		width: 75% !important;
+	}
+
+	.input-responsive {
+		width: 75% !important;
+		margin-left: 0;
+	}
+
+	.modal-responsive {
+		width: 90% !important;
 	}
 }
-
-.App-header {
-	background-color: #282c34;
-	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	font-size: calc(10px + 2vmin);
-	color: white;
-}
-
-.App-link {
-	color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-	from {
-		transform: rotate(0deg);
-	}
-	to {
-		transform: rotate(360deg);
+@media screen and (max-width: 376px) {
+	.card-responsive {
+		width: 350px;
 	}
 }

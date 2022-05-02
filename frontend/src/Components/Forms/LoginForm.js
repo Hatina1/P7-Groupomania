@@ -1,16 +1,11 @@
 import React from "react";
-import "../App.css";
+import "../../App.css";
 import validation from "./validation";
-import AuthService from "./AuthService";
-//  import useForm from "./useForm"; // custom hook (methods and initial values)
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-//import { useAuth } from "../auth";
-import icon from "../assets/icon.png";
+import icon from "../../assets/icon.png";
 
 const LoginForm = ({ submitForm }) => {
-	//const { changeHandler, submitHandler, values, errors } = useForm(submitForm);
-
 	const [values, setValues] = useState({
 		email: "",
 		password: "",
@@ -18,10 +13,6 @@ const LoginForm = ({ submitForm }) => {
 
 	const [errors, setErrors] = useState({});
 	const user = JSON.parse(localStorage.getItem("user"));
-	//const [dataIsChecked, setdataIsChecked] = useState(false);
-
-	//const [isLoggedIn, setIsLoggedIn] = useState(false);
-	//const { setAuthTokens } = useAuth();
 
 	const changeHandler = (e) => {
 		setValues({
@@ -36,7 +27,6 @@ const LoginForm = ({ submitForm }) => {
 		e.preventDefault();
 
 		setErrors(validation(values));
-		//setdataIsChecked(true);
 
 		fetch("http://localhost:3000/api/auth/login", {
 			method: "POST",
@@ -49,7 +39,6 @@ const LoginForm = ({ submitForm }) => {
 			.then((res) => res.json())
 			.then((response) => {
 				console.log(response);
-				//console.log(response.token);
 				if (response.error) {
 					alert(response.error);
 				} else {
@@ -63,17 +52,6 @@ const LoginForm = ({ submitForm }) => {
 
 		//window.location.reload();
 	};
-
-	/* 	useEffect(() => {
-		if (Object.keys(errors).length === 0 && dataIsChecked) {
-			submitForm(true);
-		}
-	}, [errors]); */
-
-	/* const navigate = useNavigate();
-	if (isLoggedIn) {
-		return navigate("/");
-	} */
 
 	return (
 		<div className="mask d-flex align-items-center h-100 gradient-custom-3">

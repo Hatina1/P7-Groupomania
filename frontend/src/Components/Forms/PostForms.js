@@ -1,5 +1,5 @@
 import React from "react";
-import { SubmitCommentButton, SubmitPostButton } from "../Components/Buttons";
+import { SubmitCommentButton, SubmitPostButton } from "../Buttons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceLaugh } from "@fortawesome/free-solid-svg-icons";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
@@ -13,7 +13,7 @@ export function NewPostForm({
 }) {
 	return (
 		<form
-			className="card bg-light col-8 px-4 py-4 d-flex"
+			className="card bg-light col-8 px-4 py-4 d-flex modal-responsive"
 			onSubmit={submitNewPost}
 		>
 			<div className="form-group row">
@@ -77,11 +77,11 @@ export function NewCommentForm({
 }) {
 	return (
 		<form
-			className="d-flex justify-content-between"
+			className="d-flex flex-column justify-content-between"
 			key={index}
 			onSubmit={(e) => submitNewComment(e, index, postId)}
 		>
-			<input
+			<textarea
 				className="form-control form-control-change"
 				type="text"
 				name={index}
@@ -89,29 +89,32 @@ export function NewCommentForm({
 				onChange={handleChangeInput}
 				placeholder="Ecrire un commentaire"
 			/>
-
-			<FontAwesomeIcon
-				icon={faFaceLaugh}
-				className="px-1 py-2"
-				onClick={() => handleClickDisplayGifs(postId)}
-			/>
-			<div className="form-group">
-				<label htmlFor={index}>
-					<FontAwesomeIcon icon={faImage} className="px-1 py-2" />
+			<div className="d-flex align-items-center justify-content-evenly div-comment-responsive mt-2">
+				<FontAwesomeIcon
+					icon={faFaceLaugh}
+					className="px-1 py-2"
+					onClick={() => handleClickDisplayGifs(postId)}
+				/>
+				<label>
+					<input
+						type="file"
+						className="hidden"
+						name={index}
+						id={index}
+						onChange={handleChangeFile}
+					/>
+					<FontAwesomeIcon
+						icon={faImage}
+						className="px-1 py-2 cursor-change "
+					/>
 				</label>
-				<input
-					type="file"
-					className=""
-					name={index}
-					id={index}
-					onChange={handleChangeFile}
+
+				<SubmitCommentButton
+					index={index}
+					changeCommentButtonStyle={changeCommentButtonStyle}
+					enableCommentButton={enableCommentButton}
 				/>
 			</div>
-			<SubmitCommentButton
-				index={index}
-				changeCommentButtonStyle={changeCommentButtonStyle}
-				enableCommentButton={enableCommentButton}
-			/>
 		</form>
 	);
 }

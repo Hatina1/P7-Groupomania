@@ -1,12 +1,11 @@
 import React from "react";
-import "../App.css";
+import "../../App.css";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-//import { createContext, useContext } from "react";
-import AuthService from "./AuthService";
-import "../styles/bootstrap.min.css";
-import "../styles/headers.css";
-import icon from "../assets/icon.png";
+import AuthService from "../Services/AuthService";
+import "../../styles/bootstrap.min.css";
+import "../../styles/headers.css";
+import icon from "../../assets/icon-left.png";
 
 function Navbar() {
 	const [currentUser, setCurrentUser] = useState(undefined);
@@ -22,30 +21,21 @@ function Navbar() {
 	const logOut = () => {
 		AuthService.logout();
 	};
-	//mr-auto div 1 et ms-auto div 2 et 3
+
 	return (
 		<div>
 			<nav className="navbar navbar-expand navbar-light bg-white border-bottom border-dark">
-				<div className="container-fluid">
+				<div className="container-fluid div-responsive">
 					<div className="navbar-nav mr-auto">
 						<li className="nav-item">
 							<Link
 								to={"/"}
 								className="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none"
 							>
-								<img src={icon} alt="Groupomania" className="gpnia-logo" />
+								<img src={icon} alt="Groupomania" className="grlogo" />
 							</Link>
 						</li>
 					</div>
-					{/* <div className="navbar-nav">
-					{currentUser && (
-						<li className="nav-item">
-							<Link to={"/admin"} className="nav-link">
-								Admin
-							</Link>
-						</li>
-					)}
-				</div> */}
 
 					{currentUser ? (
 						<div className="navbar-nav">

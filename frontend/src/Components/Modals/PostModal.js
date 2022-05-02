@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "../styles/bootstrap.min.css";
-import "../styles/headers.css";
+import "../../styles/bootstrap.min.css";
+import "../../styles/headers.css";
 import Modal from "react-bootstrap/Modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
@@ -25,7 +25,7 @@ function PostModal({
 					<Modal.Title>Modifier le message</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<form className="card px-4 py-4">
+					<form className="card px-4 py-4 modal-responsive">
 						<div className="form-group row">
 							<label htmlFor="updateTitle" className="col-sm-4 col-form-label">
 								Titre de votre post
@@ -56,18 +56,19 @@ function PostModal({
 									value={postModal.updatedMessage}
 								/>
 							</div>
-							<div className="form-group">
-								<label htmlFor="updatedFile">
-									<FontAwesomeIcon icon={faImage} className="px-1 py-2" />
-								</label>
+							<label>
 								<input
 									type="file"
-									className=""
+									className="hidden"
 									name="updatedFile"
 									id="updatedFile"
 									onChange={handleFileUpdatePost}
 								/>
-							</div>
+								<FontAwesomeIcon
+									icon={faImage}
+									className="px-1 py-2 cursor-change "
+								/>
+							</label>
 						</div>
 					</form>
 				</Modal.Body>
@@ -79,7 +80,7 @@ function PostModal({
 						Cancel
 					</button>
 					<button
-						className={`btn btn-primary btn-sm btn-change`}
+						className={`btn btn-primary btn-sm btn-change button-responsive`}
 						id="updatePost"
 						type="submit"
 						onClick={(e) => {

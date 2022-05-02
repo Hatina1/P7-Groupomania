@@ -1,10 +1,11 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import moment from "moment";
-import AuthService from "../Components/AuthService";
+import AuthService from "../Components/Services/AuthService";
 import { useNavigate, Link, useParams } from "react-router-dom";
-import ProfileModal from "../Components/ProfileModal";
-import validation from "../Components/validation";
+import ProfileModal from "../Components/Modals/ProfileModal";
+import validation from "../Components/Forms/validation";
+import SuppProfileModal from "../Components/Modals/SuppProfileModal";
 
 const Profile = () => {
 	const currentUser = JSON.parse(localStorage.getItem("user"));
@@ -14,7 +15,6 @@ const Profile = () => {
 		var dateCreation = moment(sqlDate).format("DD/MM/YYYY");
 		return dateCreation;
 	};
-
 	const [boolActive, setBoolActive] = useState({ isActive: true });
 	const [deleteUser, setDeleteUser] = useState({});
 
@@ -45,7 +45,9 @@ const Profile = () => {
 		/* if (currentUser.id === user.id) {
 				AuthService.logout();
 				navigate("/signup");
-			} */
+			}
+			
+	*/
 	};
 
 	const [profileModal, setProfileModal] = useState({});
@@ -103,12 +105,6 @@ const Profile = () => {
 		AuthService.logout();
 	};
 
-	/* {user.isAdmin && (
-			<Link to={"/Admin"} className="nav-link">
-				Go to the admin page
-			</Link>
-		)} */
-
 	let params = useParams();
 	useEffect(() => {
 		const getOneUser = async () => {
@@ -120,37 +116,42 @@ const Profile = () => {
 		};
 		getOneUser().catch(console.error);
 	}, []);
-	const initiales = "tt";
-	/* user.firstname.charAt(0).toUpperCase() +
-		user.lastname.charAt(0).toUpperCase();
- */
+
 	useEffect(() => {
 		if (showProfileModal) {
 			console.log(showProfileModal);
 		}
 	}, [showProfileModal]);
 
+	const [showSuppProfileModal, setShowSuppProfileModal] = useState(false);
+	const handleSuppProfileModal = (e) => {
+		e.preventDefault();
+		setShowSuppProfileModal(!showSuppProfileModal);
+	};
+
+	useEffect(() => {
+		if (showSuppProfileModal) {
+			console.log(showSuppProfileModal);
+		}
+	}, [showSuppProfileModal]);
+
+	/* 	const initiales = (firstname, lastname) => {
+		firstname.charAt(0).toUpperCase() + lastname.charAt(0).toUpperCase();
+	}; */
+
 	return (
 		<div className="px-2">
 			<br />
 			<h1 className="my-3 text-white">Détails du compte</h1>
-			{!user.isActive && (
-				<div className="d-flex justify-content-center">
-					<button
-						id="activate"
-						className="btn btn-lg btn btn-warning btn-change me-3 my-3"
-						onClick={onClickHandleActive}
-					>
-						Réactiver le compte
-					</button>
-				</div>
-			)}
 
 			<div className="row">
 				<div className="col-sm-4">
 					<div className="card d-flex align-items-center pt-4">
-						<div className=" pt-2 text-center align-middle border border-3 border-secondary bg-light  rounded-circle picture-change ">
-							<span className="text-center fw-bold">{initiales}</span>
+						<div className=" pt-2 text-center align-middle border border-3 border-secondary bg-light rounded-circle picture-change ">
+							<span className="text-center fw-bold">
+								{String(user.firstname).charAt(0).toUpperCase() +
+									String(user.lastname).charAt(0).toUpperCase()}
+							</span>
 						</div>
 						<p className="pt-3 fw-bold">
 							{user.firstname} {user.lastname}
@@ -159,9 +160,11 @@ const Profile = () => {
 							{user.isAdmin ? "Admin" : "Utilisateur"}
 						</p>
 
-						<Link to={"/Admin"} className="nav-link">
-							Go to the admin page
-						</Link>
+						{user.isAdmin && (
+							<Link to={"/Admin"} className="nav-link">
+								Go to the admin page
+							</Link>
+						)}
 						<a
 							href="/"
 							target="_blank"
@@ -194,7 +197,7 @@ const Profile = () => {
 					</div>
 				</div>
 
-				<div className="col-sm-8 text-white">
+				<div className="col-sm-8 text-white my-2">
 					<p className="py-2 d-inline border-bottom border-3">Votre profil</p>
 					<article className="border-bottom border-secondary pt-4 py-2 d-flex justify-content-between">
 						<p className="font-change">Prénom: </p>
@@ -208,39 +211,51 @@ const Profile = () => {
 
 					<article className="border-bottom border-secondary py-2 d-flex justify-content-between">
 						<p className="font-change">Addresse Email: </p>
-						<p className="">test@test.com</p>
+						<p className="">{user.email}</p>
 					</article>
 
 					<article className="border-bottom border-secondary py-2 d-flex justify-content-between">
 						<p className="font-change">Compte crée le: </p>
 						<p className="">{date(user.createdAt)}</p>
 					</article>
+					<section className="section-responsive">
+						{currentUser.isAdmin && user.isActive && (
+							<button
+								id="activate"
+								className="btn btn-sm btn btn-danger btn-change me-3 my-3"
+								onClick={onClickHandleActive}
+							>
+								Désactiver le compte
+							</button>
+						)}
 
-					{user.isActive ? (
+						{currentUser.isAdmin && !user.isActive && (
+							<button
+								id="activate"
+								className="btn btn-sm btn btn-warning btn-change me-3 my-3"
+								onClick={onClickHandleActive}
+							>
+								Réactiver le compte
+							</button>
+						)}
+
 						<button
-							id="activate"
+							id="suppression"
 							className="btn btn-sm btn btn-danger btn-change me-3 my-3"
-							onClick={onClickHandleActive}
+							onClick={(e) => {
+								handleSuppProfileModal(e);
+							}}
 						>
-							Désactiver le compte
+							Supprimer le compte
 						</button>
-					) : (
-						<button
-							id="activate"
-							className="btn btn-sm btn btn-warning btn-change me-3 my-3"
-							onClick={onClickHandleActive}
-						>
-							Réactiver le compte
-						</button>
+					</section>
+					{showSuppProfileModal && (
+						<SuppProfileModal
+							handleSuppProfileModal={handleSuppProfileModal}
+							onClickHandleDelete={onClickHandleDelete}
+							showSuppProfileModal={showSuppProfileModal}
+						/>
 					)}
-
-					<button
-						id="suppression"
-						className="btn btn-sm btn btn-danger btn-change me-3 my-3"
-						onClick={onClickHandleDelete}
-					>
-						Supprimer le compte
-					</button>
 				</div>
 			</div>
 			<br />

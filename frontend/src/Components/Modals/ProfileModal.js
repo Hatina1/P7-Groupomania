@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "../styles/bootstrap.min.css";
-import "../styles/headers.css";
+import "../../styles/bootstrap.min.css";
+import "../../styles/headers.css";
 import Modal from "react-bootstrap/Modal";
 
 function ProfileModal({
