@@ -1,29 +1,14 @@
 import React from "react";
-//import PostService from "../Components/PostService";
 import { useState, useEffect } from "react";
-import { useQuery } from "react-query";
-import { useNavigate } from "react-router-dom";
-//import authHeader from "../auth";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
-import { faComment } from "@fortawesome/free-solid-svg-icons";
 import postService from "../Services/PostService";
 import Gifs from "./Gif";
 import Comments from "../Comments";
 import PostCreator from "./PostCreator";
 import PostContent from "./PostContent";
 import PostFeatures from "./PostFeatures";
-import PostModal from "../Modals/PostModal";
-import { ShowPostFormButton, ClosePostFormButton } from "../Buttons";
-import { NewPostForm, NewCommentForm } from "../Forms/PostForms";
-import SuppPostModal from "../Modals/SuppPostModal";
-import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-import { faReply } from "@fortawesome/free-solid-svg-icons";
+import { NewCommentForm } from "../Forms/PostForms";
 
 const PostsList = ({ post }) => {
-	//const [posts, setPosts] = useState([]);
-	//const navigate = useNavigate();
 	const [comments, setComments] = useState([]);
 	const user = JSON.parse(localStorage.getItem("user"));
 	const [newPost, setNewPost] = useState({});

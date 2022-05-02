@@ -16,10 +16,13 @@
 	height: 45px;
 	width: 45px;
 }
-
+.bg-color {
+	background-color: rgba(17, 55, 93, 1); /*#11375d !important */
+}
 .footer {
 	position: relative;
 	left: 0;
 	bottom: 0;
 	right: 0;
+	height: 136px;
 }

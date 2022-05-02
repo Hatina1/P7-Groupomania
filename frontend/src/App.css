@@ -101,7 +101,22 @@ p em {
 	border-color: #979ba0;
 }
 .bg-color {
-	background-color: rgba(17, 55, 93, 1); /*#11375d !important*/
+	background-color: rgba(
+		17,
+		55,
+		93,
+		1
+	); /*#11375d !important margin-bottom: -136px; .div-wrapper:after {
+		content: "";
+		display: block;
+	}
+	
+	.div-wrapper:after {
+		height: 136px;
+	}*/
+}
+.div-wrapper {
+	min-height: calc(100vh - 205px);
 }
 
 .card-body-comment {

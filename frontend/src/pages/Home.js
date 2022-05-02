@@ -109,15 +109,11 @@ const Home = () => {
 					</h1>
 				)}
 				<h1 className="my-3 text-white">
-					Welcome <em className="fw-bold text-capitalize">{user.firstname} </em>
-					to Groupomania social app !
+					Bienvenue{" "}
+					<em className="fw-bold text-capitalize">{user.firstname} </em>!
 				</h1>
 				<br />
-				{user.isActive === false && (
-					<h2 className="my-2 text-warning">
-						Go to the profile to activate again your account
-					</h2>
-				)}
+
 				{user.isActive === true && (
 					<h2 className="my-2 text-white">
 						{" "}

@@ -43,7 +43,7 @@ function Admin() {
 	};
 
 	return (
-		<div className="container d-flex flex-column align-items-center px-4">
+		<div className="container d-flex flex-column align-items-center px-4  div-wrapper">
 			<h2 className="text-white my-2">Liste des utilisateurs : </h2>
 			<input
 				type="search"

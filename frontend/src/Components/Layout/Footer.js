@@ -11,31 +11,29 @@ import {
 
 function Footer() {
 	return (
-		<div className="container">
-			<footer className="footer footer-change d-flex flex-wrap justify-content-evenly align-items-center py-3 my-4 px-4 border-top">
-				<div className="col-md-4 d-flex align-items-center">
-					<a
-						href="/"
-						className="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1"
-					>
-						<img src={icon} alt="Groupomania" className="gpnia-logo" />
-					</a>
-					<span className="text-white">2021 Groupomania</span>
-				</div>
+		<footer className="footer footer-change d-flex flex-wrap justify-content-evenly align-items-center py-3 mt-4 px-4 border-top bg-color">
+			<div className="col-md-4 d-flex align-items-center">
+				<a
+					href="/"
+					className="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1"
+				>
+					<img src={icon} alt="Groupomania" className="gpnia-logo" />
+				</a>
+				<span className="text-white">2021 Groupomania</span>
+			</div>
 
-				<ul className="nav col-md-4 justify-content-end list-unstyled d-flex text-white">
-					<li className="ms-3">
-						<FontAwesomeIcon icon={faFacebook} />
-					</li>
-					<li className="ms-3">
-						<FontAwesomeIcon icon={faInstagram} />
-					</li>
-					<li className="ms-3">
-						<FontAwesomeIcon icon={faTwitter} />
-					</li>
-				</ul>
-			</footer>
-		</div>
+			<ul className="nav col-md-4 justify-content-end list-unstyled d-flex text-white">
+				<li className="ms-3">
+					<FontAwesomeIcon icon={faFacebook} />
+				</li>
+				<li className="ms-3">
+					<FontAwesomeIcon icon={faInstagram} />
+				</li>
+				<li className="ms-3">
+					<FontAwesomeIcon icon={faTwitter} />
+				</li>
+			</ul>
+		</footer>
 	);
 }
 
