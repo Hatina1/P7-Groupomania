@@ -116,6 +116,12 @@ const PostsList = ({ post }) => {
 		}
 	}, [showPostModal]);
 
+	/* 	useEffect(() => {
+		if (selectedGif) {
+			console.log(selectedGif);
+		}
+	}, [selectedGif]); */
+
 	const enableItemToShow = (postId, itemToShow) => {
 		if (itemToShow.hasOwnProperty(postId)) {
 			return itemToShow[postId];
@@ -199,12 +205,12 @@ const PostsList = ({ post }) => {
 
 	const handleSelectGif = (e, postId) => {
 		e.preventDefault();
-
-		const { name, src } = e.target;
+		console.log(e.target);
+		//const { name, src } = e.target;
 		setSelectedGif((prevState) => {
 			return {
 				...prevState,
-				[name]: src,
+				[postId]: e.target.src,
 			};
 		});
 
@@ -321,6 +327,11 @@ const PostsList = ({ post }) => {
 									src={selectedGif[post.id]}
 								/>
 							)}
+							{selectedFileC[post.id] ? (
+								<em className="mx-3 text-success">
+									{selectedFileC[post.id].name}
+								</em>
+							) : null}
 							{showCommentForm[post.id] && (
 								<div className="card-footer">
 									<NewCommentForm

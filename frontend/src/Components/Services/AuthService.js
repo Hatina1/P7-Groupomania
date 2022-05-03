@@ -8,6 +8,9 @@ const signup = (values) => {
 		body: JSON.stringify(values),
 	})
 		.then((res) => res.json())
+		.then((response) => {
+			alert(response.message);
+		})
 		.catch((err) => console.log("Sign up error : ", err));
 };
 
@@ -44,7 +47,7 @@ const updateUser = (token, id, updatedProfile) =>
 		.then((response) => {
 			alert(response.message);
 		})
-		.catch((err) => console.log("Delete account error :", err));
+		.catch((err) => console.log("Update account error :", err));
 
 const activeUser = (token, id, boolActive) =>
 	fetch(`http://localhost:3000/api/users/${id}/activate`, {

@@ -10,6 +10,7 @@ export function NewPostForm({
 	handleChangeInputPost,
 	handleChangeFilePost,
 	submitNewPost,
+	selectedFileP,
 }) {
 	return (
 		<form
@@ -44,18 +45,18 @@ export function NewPostForm({
 					/>
 				</div>
 			</div>
-			<div className="form-group">
-				<label htmlFor="newPostFile">
-					<FontAwesomeIcon icon={faImage} className="px-1 py-2" />
-				</label>
+			<label>
 				<input
 					type="file"
-					className=""
+					className="hidden"
 					name="newPostFile"
 					id="newPostFile"
 					onChange={handleChangeFilePost}
 				/>
-			</div>
+				<FontAwesomeIcon icon={faImage} className="px-1 py-2 cursor-change " />
+			</label>
+
+			{selectedFileP["newPostFile"] ? selectedFileP["newPostFile"].name : null}
 
 			<SubmitPostButton
 				enablePostButton={enablePostButton}

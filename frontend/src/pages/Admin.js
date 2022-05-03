@@ -68,11 +68,16 @@ function Admin() {
 					filteredUsers.map((item) => (
 						<tbody>
 							<tr key={item.id}>
-								<th scope="row">{item.id}</th>
-								<td>{item.firstname}</td>
-								<td>{item.lastname}</td>
+								<th className="align-middle" scope="row">
+									{item.id}
+								</th>
+								<td className="align-middle">{item.firstname}</td>
+								<td className="align-middle">{item.lastname}</td>
 								<td>
-									<Link to={`/Profile/${item.id}`} className="nav-link">
+									<Link
+										to={`/Profile/${item.id}`}
+										className="fw-bold text-white nav-link"
+									>
 										Voir
 									</Link>
 								</td>

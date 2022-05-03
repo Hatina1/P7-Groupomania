@@ -62,12 +62,12 @@ const Profile = () => {
 	const submitUpdateProfile = (e) => {
 		e.preventDefault();
 		setErrors(validation(profileModal));
-		const profileUpdateSent = {};
-		profileUpdateSent.firstname = profileModal["firstname"];
-		profileUpdateSent.lastname = profileModal["lastname"];
-		profileUpdateSent.email = profileModal["email"];
-		AuthService.updateUser(user.token, user.id, profileUpdateSent);
-		setShowProfileModal(!showProfileModal);
+		const updatedProfile = {};
+		updatedProfile.firstname = profileModal["firstname"];
+		updatedProfile.lastname = profileModal["lastname"];
+		updatedProfile.email = profileModal["email"];
+		AuthService.updateUser(currentUser.token, user.id, updatedProfile);
+		//setShowProfileModal(!showProfileModal);
 		setProfileModal({});
 	};
 	const handleInputUpdateProfile = (e) => {
@@ -106,13 +106,14 @@ const Profile = () => {
 	};
 
 	let params = useParams();
+	const idUser = params.profileId;
 	useEffect(() => {
 		const getOneUser = async () => {
 			const userProfile = await AuthService.getOneUser(
 				currentUser.token,
-				params.profileId
+				idUser
 			);
-			setUser(userProfile);
+			setUser(userProfile[0]);
 		};
 		getOneUser().catch(console.error);
 	}, []);
@@ -122,6 +123,12 @@ const Profile = () => {
 			console.log(showProfileModal);
 		}
 	}, [showProfileModal]);
+
+	useEffect(() => {
+		if (user) {
+			console.log(user);
+		}
+	}, [user]);
 
 	const [showSuppProfileModal, setShowSuppProfileModal] = useState(false);
 	const handleSuppProfileModal = (e) => {
@@ -134,10 +141,6 @@ const Profile = () => {
 			console.log(showSuppProfileModal);
 		}
 	}, [showSuppProfileModal]);
-
-	/* 	const initiales = (firstname, lastname) => {
-		firstname.charAt(0).toUpperCase() + lastname.charAt(0).toUpperCase();
-	}; */
 
 	return (
 		<div className="px-2">
@@ -160,11 +163,11 @@ const Profile = () => {
 							{user.isAdmin ? "Admin" : "Utilisateur"}
 						</p>
 
-						{user.isAdmin && (
+						{user.isAdmin ? (
 							<Link to={"/Admin"} className="nav-link">
 								Go to the admin page
 							</Link>
-						)}
+						) : null}
 						<a
 							href="/"
 							target="_blank"

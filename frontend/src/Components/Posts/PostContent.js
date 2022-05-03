@@ -19,9 +19,12 @@ function Post({ post, deletePost, handleDisplayPostModal, getValueInputPost }) {
 		var delay = moment([jYear, jMonth, jDay + 1])
 			.fromNow()
 			.split(" ");
+		let checkPeriod = delay[0];
 		let period = delay[1];
 		let french = "";
-		if (period === "hours") {
+		if (checkPeriod === "in") {
+			french = delay[1] + " " + "heures";
+		} else if (period === "hours") {
 			french = delay[0] + " " + "heures";
 		} else if (period === "days") {
 			french = delay[0] + " " + "jours";
@@ -50,11 +53,11 @@ function Post({ post, deletePost, handleDisplayPostModal, getValueInputPost }) {
 		}
 	};
 
-	useEffect(() => {
+	/* useEffect(() => {
 		if (showSuppPostModal) {
 			console.log(showSuppPostModal);
 		}
-	}, [showSuppPostModal]);
+	}, [showSuppPostModal]); */
 
 	const enableItemToShow = (postId, itemToShow) => {
 		if (itemToShow.hasOwnProperty(postId)) {
@@ -67,15 +70,23 @@ function Post({ post, deletePost, handleDisplayPostModal, getValueInputPost }) {
 	return (
 		<div className="card-body-change">
 			<div className="card-body-header d-flex justify-content-between border-bottom border-1">
-				<p className="margin-change">
-					Posté par {post.firstname} {post.lastname}
+				<p className="margin-change p-change-responsive">
+					Posté par{" "}
+					<strong>
+						{post.firstname} {post.lastname}
+					</strong>
 				</p>
-				<p className="margin-change">
+				<p className="margin-change p-change-responsive">
 					il y a {`${sqlToJsDate(post.createdAt)}`}
 				</p>
 			</div>
+			{post.imageUrl ? (
+				<a href={post.imageUrl} className="text-decoration-none">
+					<img className="img-animated" src={post.imageUrl} alt="image" />
+				</a>
+			) : null}
 
-			<p className="p-change">{post.content}</p>
+			<p className="p-change my-4">{post.content}</p>
 		</div>
 	);
 }

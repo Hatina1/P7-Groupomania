@@ -191,14 +191,26 @@ const PostFeatures = ({
 		<section className="card-section-actions d-flex justify-content-evenly align-items-center flex-wrap fw-bold">
 			{enableItemToShow(post.id, showCommNum) === false && (
 				<div>
-					<a
-						className="card-p-comment-num text-secondary text-decoration-none d-none d-sm-block"
-						href="/"
-						target="_blank"
-						onClick={(e) => handleDisplayCommNum(e, post.id)}
-					>
-						Afficher les commentaires ({checkCommExists(comments, post)})
-					</a>
+					{checkCommExists(comments, post) === 0 ? (
+						<a
+							className="card-p-comment-num text-secondary text-decoration-none d-none d-sm-block"
+							href="/"
+							target="_blank"
+							onClick={(e) => handleDisplayCommNum(e, post.id)}
+						>
+							Pas de commentaires
+						</a>
+					) : (
+						<a
+							className="card-p-comment-num text-secondary text-decoration-none d-none d-sm-block"
+							href="/"
+							target="_blank"
+							onClick={(e) => handleDisplayCommNum(e, post.id)}
+						>
+							Afficher les commentaires ({checkCommExists(comments, post)})
+						</a>
+					)}
+
 					<a
 						className="card-p-comment-num text-secondary text-decoration-none d-block d-sm-none"
 						href="/"
@@ -215,7 +227,7 @@ const PostFeatures = ({
 			{enableItemToShow(post.id, showCommNum) === true && (
 				<div>
 					<a
-						className="card-p-comment-num text-secondary text-decoration-none"
+						className="card-p-comment-num text-secondary text-decoration-none d-none d-sm-block"
 						href="/"
 						target="_blank"
 						onClick={(e) => handleDisplayCommNum(e, post.id)}
@@ -241,6 +253,9 @@ const PostFeatures = ({
 				href="/"
 				target="_blank"
 				onClick={(e) => handleLikes(e, post.id)}
+				data-bs-toggle="tooltip"
+				data-bs-placement="bottom"
+				title="Liker"
 			>
 				<div className="d-flex justify-content-center align-items-center">
 					<FontAwesomeIcon icon={faThumbsUp} className="px-1 py-2" />
@@ -252,6 +267,9 @@ const PostFeatures = ({
 				href="/"
 				target="_blank"
 				onClick={(e) => handleDisplayCommentForm(e, post.id)}
+				data-bs-toggle="tooltip"
+				data-bs-placement="bottom"
+				title="Répondre"
 			>
 				<FontAwesomeIcon icon={faReply} className="px-1 py-2 " />
 			</a>
@@ -264,6 +282,9 @@ const PostFeatures = ({
 						handleDisplayPostModal(e, post.id);
 						getValueInputPost(e, post.title, post.content, post.imageUrl);
 					}}
+					data-bs-toggle="tooltip"
+					data-bs-placement="bottom"
+					title="Modifier le post"
 				>
 					<FontAwesomeIcon icon={faPenToSquare} className="px-1 py-2 " />
 				</a>
@@ -274,6 +295,9 @@ const PostFeatures = ({
 					href="/"
 					target="_blank"
 					onClick={(e) => handleSuppPostModal(e, post.id)}
+					data-bs-toggle="tooltip"
+					data-bs-placement="bottom"
+					title="Supprimer le post"
 				>
 					<FontAwesomeIcon icon={faTrashCan} className="px-1 py-2 " />
 				</a>

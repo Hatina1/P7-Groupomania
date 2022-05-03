@@ -23,14 +23,21 @@ function Footer() {
 			</div>
 
 			<ul className="nav col-md-4 justify-content-end list-unstyled d-flex text-white">
-				<li className="ms-3">
-					<FontAwesomeIcon icon={faFacebook} />
+				<li className="mx-3 icons-social">
+					<a href="/" className="text-white text-decoration-none">
+						<FontAwesomeIcon icon={faFacebook} />
+					</a>
 				</li>
-				<li className="ms-3">
-					<FontAwesomeIcon icon={faInstagram} />
+				<li className="mx-3 icons-social">
+					<a href="/" className="text-white text-decoration-none">
+						{" "}
+						<FontAwesomeIcon icon={faInstagram} />
+					</a>
 				</li>
-				<li className="ms-3">
-					<FontAwesomeIcon icon={faTwitter} />
+				<li className="mx-3 icons-social">
+					<a href="/" className="text-white text-decoration-none">
+						<FontAwesomeIcon icon={faTwitter} />
+					</a>
 				</li>
 			</ul>
 		</footer>

@@ -95,20 +95,37 @@ exports.getOnePost = (req, res, next) => {
 };
 
 exports.modifyPost = (req, res, next) => {
-	const postObj = req.file // if image is changed we have to parse the body and update imageUrl
-		? {
-				...JSON.parse(req.body.updatepost),
-				imageUrl: `${req.protocol}://${req.get("host")}/images/${
-					req.file.filename
-				}`,
-		  }
-		: // if image is not changed we get directly the body of the request
-		  { ...JSON.parse(req.body.updatepost) };
-	Post.update({ ...postObj }, { where: { id: req.params.postId } })
-		.then(() => {
-			res.status(200).json({ message: "Post modified !" });
+	//check if the id from the token is the post creator or admin one
+	User.findOne({ where: { id: req.auth.id } })
+		.then((user) => {
+			const adminBool = user.isAdmin;
+
+			Post.findOne({ where: { id: req.params.postId } })
+				.then((post) => {
+					if (!adminBool || post.userId !== req.auth.id) {
+						return res.status(401).json({
+							message: "Désolé, vous n'etes pas autorisé à modifier le post.",
+						});
+					} else {
+						const postObj = req.file // if image is changed we have to parse the body and update imageUrl
+							? {
+									...JSON.parse(req.body.updatepost),
+									imageUrl: `${req.protocol}://${req.get("host")}/images/${
+										req.file.filename
+									}`,
+							  }
+							: // if image is not changed we get directly the body of the request
+							  { ...JSON.parse(req.body.updatepost) };
+						Post.update({ ...postObj }, { where: { id: req.params.postId } })
+							.then(() => {
+								res.status(200).json({ message: "Post modified !" });
+							})
+							.catch((error) => res.status(403).json({ error }));
+					}
+				})
+				.catch((error) => res.status(500).json({ error }));
 		})
-		.catch((error) => res.status(403).json({ error }));
+		.catch((error) => res.status(500).json({ error }));
 };
 
 exports.deletePost = (req, res, next) => {
@@ -179,7 +196,7 @@ exports.getAllPosts = (req, res, next) => {
 exports.getAllComments = (req, res, next) => {
 	sequelize
 		.query(
-			"SELECT  `Comment`.`id`, `Comment`.`content`, `Comment`.`imageUrl`,`Comment`.`createdAt`,`Comment`.`postId`,`Comment`.`userId`,`User`.`firstname`,`User`.`lastname` FROM `Comments` AS `Comment` LEFT OUTER JOIN `Users` AS `User`  ON `Comment`.`userId` = `User`.`id` ORDER BY ? ?",
+			"SELECT  `Comment`.`id`, `Comment`.`content`, `Comment`.`imageUrl`, `Comment`.`gifUrl`,`Comment`.`createdAt`,`Comment`.`postId`,`Comment`.`userId`,`User`.`firstname`,`User`.`lastname` FROM `Comments` AS `Comment` LEFT OUTER JOIN `Users` AS `User`  ON `Comment`.`userId` = `User`.`id` ORDER BY ? ?",
 			{
 				replacements: [`createdAt`, "DESC "],
 				type: QueryTypes.SELECT,

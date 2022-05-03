@@ -63,25 +63,34 @@ exports.login = (req, res, next) => {
 };
 
 exports.getOneUser = (req, res, next) => {
-	User.findOne(
-		{
-			attributes: [
-				"id",
-				"firstname",
-				"lastname",
-				"email",
-				"isAdmin",
-				"isActive",
-				"isDeleted",
-			],
-		},
-		{ where: { id: req.params.id } }
-	)
+	sequelize
+		.query(
+			"SELECT `User`.`id`,`User`.`firstname`,`User`.`lastname`,`User`.`email`,`User`.`isActive`,`User`.`isAdmin`,`User`.`isDeleted` ,`User`.`createdAt` FROM `Users` AS `User` WHERE `User`.`id` = " +
+				req.params.id,
+			{
+				type: QueryTypes.SELECT,
+			}
+		)
 		.then((user) => {
 			res.status(200).json(user);
 		})
 		.catch((error) => res.status(404).json({ error }));
 };
+
+/* User.findOne(
+	{
+		attributes: [
+			"id",
+			"firstname",
+			"lastname",
+			"email",
+			"isAdmin",
+			"isActive",
+			"isDeleted",
+		],
+	},
+	{ where: { id: req.params.id } }
+) */
 
 exports.modifyUser = (req, res, next) => {
 	User.update({ ...req.body }, { where: { id: req.params.id } })

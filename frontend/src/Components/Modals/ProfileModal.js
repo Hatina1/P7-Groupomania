@@ -19,7 +19,7 @@ function ProfileModal({
 					<Modal.Title>Modifier le compte</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<form className="signupForm" onSubmit={submitUpdateProfile}>
+					<form className="signupForm">
 						<div className="form-outline mb-4">
 							<label className="form-label"> Firstname </label>
 							<input
@@ -66,6 +66,10 @@ function ProfileModal({
 						className={`btn btn-primary btn-sm btn-change`}
 						id="newPost"
 						type="submit"
+						onClick={(e) => {
+							handleDisplayProfileModal(e);
+							submitUpdateProfile(e);
+						}}
 					>
 						Modifier
 					</button>

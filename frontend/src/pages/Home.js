@@ -129,6 +129,7 @@ const Home = () => {
 						msgToShow="Publier un message"
 					/>
 				))}
+
 			{showPostForm && (
 				<div className=" d-flex flex-column align-items-center">
 					<NewPostForm
@@ -137,6 +138,7 @@ const Home = () => {
 						handleChangeInputPost={handleChangeInputPost}
 						handleChangeFilePost={handleChangeFilePost}
 						submitNewPost={submitNewPost}
+						selectedFileP={selectedFileP}
 					/>
 
 					<ClosePostFormButton

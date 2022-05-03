@@ -18,9 +18,12 @@ function Comments({ comment, post, deleteComment }) {
 		var delay = moment([jYear, jMonth, jDay + 1])
 			.fromNow()
 			.split(" ");
+		let checkPeriod = delay[0];
 		let period = delay[1];
 		let french = "";
-		if (period === "hours") {
+		if (checkPeriod === "in") {
+			french = delay[1] + " " + "heures";
+		} else if (period === "hours") {
 			french = delay[0] + " " + "heures";
 		} else if (period === "days") {
 			french = delay[0] + " " + "jours";
@@ -73,14 +76,16 @@ function Comments({ comment, post, deleteComment }) {
 					<p>il y a {sqlToJsDate(comment.createdAt)}</p>
 				</div>
 				{comment.gifUrl && (
-					<img className="img-animated-gif" src={comment.gifUrl} alt="gif" />
+					<img
+						className="img-animated-gif d-block"
+						src={comment.gifUrl}
+						alt="gif"
+					/>
 				)}
 				{comment.imageUrl && (
-					<img
-						className="img-animated-gif"
-						src={comment.imageUrl}
-						alt="image"
-					/>
+					<a href={comment.imageUrl} className="text-decoration-none">
+						<img className="img-animated" src={comment.imageUrl} alt="image" />
+					</a>
 				)}
 
 				<p className="p-change">{comment.content}</p>
@@ -92,7 +97,10 @@ function Comments({ comment, post, deleteComment }) {
 							target="_blank"
 							onClick={(e) => handleSuppCommentModal(e, comment.id)}
 						>
-							<FontAwesomeIcon icon={faTrashCan} className="px-1 py-2" />
+							<FontAwesomeIcon
+								icon={faTrashCan}
+								className="py-2 icon-height "
+							/>
 						</a>
 					)}
 					{enableItemToShow(comment.id, showSuppCommentModal) === true && (

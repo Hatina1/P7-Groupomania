@@ -26,3 +26,6 @@
 	right: 0;
 	height: 136px;
 }
+.icons-social:hover {
+	transform: scale(1.2);
+}

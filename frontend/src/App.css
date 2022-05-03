@@ -33,6 +33,10 @@ form div {
 	border-radius: 15px;
 }
 
+.card-responsive {
+	width: 800px;
+}
+
 /* .card-footer {
 	display: flex;
 	background-color: white;
@@ -44,6 +48,11 @@ form div {
 
 .btn-change {
 	border-radius: 0.5rem !important;
+}
+
+.img-animated {
+	width: auto;
+	height: 180px;
 }
 
 .img-animated-gif {
@@ -72,7 +81,7 @@ form div {
 	font-weight: 500;
 	border-radius: 0.25rem;
 	color: rgba(17, 55, 93, 1);
-	color: #c91a60;
+	color: #dc3545;
 	background-color: rgb(212, 233, 255);
 	background-color: rgb(200 193 199 / 41%);
 }
@@ -81,8 +90,6 @@ form div {
 	padding-left: 0 !important;
 }
 .p-change {
-	margin-top: 0.5rem;
-	margin-bottom: 0.5rem;
 	font-size: 1rem;
 }
 p em {
@@ -226,9 +233,14 @@ p em {
 	.card-responsive {
 		width: 380px;
 	}
-
+	.p-change-responsive {
+		font-size: 0.8rem;
+	}
 	.card-p-comment-num {
 		height: 37px;
+	}
+	.icon-height {
+		height: 0.8rem;
 	}
 
 	.div-responsive {

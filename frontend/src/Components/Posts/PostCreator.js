@@ -11,7 +11,7 @@ function Post({ post }) {
 						post.lastname.charAt(0).toUpperCase()}
 				</span>
 			</div>
-			<p className="pt-3 fw-bold">
+			<p className="pt-3 fw-bold text-center">
 				{post.firstname} {post.lastname}
 			</p>
 		</div>
