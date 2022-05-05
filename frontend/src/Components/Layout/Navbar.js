@@ -2,7 +2,7 @@ import React from "react";
 import "../../App.css";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import AuthService from "../Services/AuthService";
+import authService from "../Services/AuthService";
 import "../../styles/bootstrap.min.css";
 import "../../styles/headers.css";
 import icon from "../../assets/icon-left.png";
@@ -10,14 +10,14 @@ import icon from "../../assets/icon-left.png";
 function Navbar() {
 	const [currentUser, setCurrentUser] = useState(undefined);
 	useEffect(() => {
-		const user = AuthService.getCurrentUser();
+		const user = authService.getCurrentUser();
 		if (user) {
 			setCurrentUser(user);
 		}
 	}, []);
 	/*	useEffect(() => {
 		function checkConnection() {
-			//const user = AuthService.getCurrentUser();
+			//const user = authService.getCurrentUser();
 			const user = JSON.parse(localStorage.getItem("user"));
 			if (user) {
 				setCurrentUser(user);
@@ -34,7 +34,7 @@ function Navbar() {
 */
 
 	const logOut = () => {
-		AuthService.logout();
+		authService.logout();
 	};
 
 	return (

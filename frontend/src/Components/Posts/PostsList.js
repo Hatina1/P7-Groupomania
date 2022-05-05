@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import postService from "../Services/PostService";
+import commentService from "../Services/CommentService";
 import Gifs from "./Gif";
 import Comments from "../Comments";
 import PostCreator from "./PostCreator";
@@ -159,7 +160,7 @@ const PostsList = ({ post }) => {
 	const deleteComment = (e, postId, commId) => {
 		e.preventDefault();
 
-		postService.fetchDeleteComment(user.token, postId, commId);
+		commentService.fetchDeleteComment(user.token, postId, commId);
 	};
 
 	const getPostId = () => {
@@ -174,7 +175,7 @@ const PostsList = ({ post }) => {
 
 	const addComment = useMutation(
 		(commentData) =>
-			postService.fetchCreateComment(user.token, getPostId, commentData),
+			commentService.fetchCreateComment(user.token, getPostId, commentData),
 		{
 			// After success or failure, refetch the todos query
 			onSuccess: () => {
@@ -203,7 +204,7 @@ const PostsList = ({ post }) => {
 
 		addComment.mutate(commentData);
 
-		//postService.fetchCreateComment(user.token, postId, commentData);
+		//commentService.fetchCreateComment(user.token, postId, commentData);
 
 		setNewComment({ [index]: "" });
 		setSelectedGif({ [index]: "" });
@@ -219,7 +220,7 @@ const PostsList = ({ post }) => {
 	//get gifs
 	useEffect(() => {
 		const getGifs = async () => {
-			const resultGifs = await postService.fetchGifs(
+			const resultGifs = await commentService.fetchGifs(
 				process.env.REACT_APP_GIF_PASSWORD
 			);
 			console.log(resultGifs);
@@ -294,7 +295,7 @@ const PostsList = ({ post }) => {
 	useEffect(() => {
 		console.log(user.id);
 		const getAllComments = async () => {
-			const allComments = await postService.fetchAllComments(user.token);
+			const allComments = await commentService.fetchAllComments(user.token);
 			setComments(allComments);
 		};
 
@@ -302,7 +303,7 @@ const PostsList = ({ post }) => {
 	}, []); */
 
 	const { isLoading, error, data } = useQuery("comments", () =>
-		postService.fetchAllComments(user.token)
+		commentService.fetchAllComments(user.token)
 	);
 
 	const comments = data || [];

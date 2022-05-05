@@ -7,9 +7,10 @@ const signup = (values) => {
 		},
 		body: JSON.stringify(values),
 	})
-		.then((res) => res.json())
+		.then((res) => console.log("Sign up successfully", res))
 		.then((response) => {
 			alert(response.message);
+			//navigate("/login");
 		})
 		.catch((err) => console.log("Sign up error : ", err));
 };
@@ -23,87 +24,19 @@ const login = (values) => {
 		},
 		body: JSON.stringify(values),
 	})
+		.then((res) => res.json())
 		.then((response) => {
-			if (response.token) {
-				localStorage.setItem("user", JSON.stringify(response.token));
+			console.log(response);
+			if (response.error) {
+				alert(response.error);
+			} else {
+				localStorage.setItem("user", JSON.stringify(response));
+				//navigate("/");
+				//window.location.reload();
 			}
-
-			return response.token;
 		})
-		.catch((err) => console.log("Login error : ", err));
+		.catch((err) => console.log("What's happening ?", err));
 };
-
-const updateUser = (token, id, updatedProfile) =>
-	fetch(`http://localhost:3000/api/users/${id}`, {
-		method: "PUT",
-		headers: {
-			Accept: "application/json",
-			"Content-Type": "application/json",
-			Authorization: "Bearer " + token,
-		},
-		body: JSON.stringify(updatedProfile),
-	})
-		.then((res) => res.json())
-		.then((response) => {
-			alert(response.message);
-		})
-		.catch((err) => console.log("Update account error :", err));
-
-const activeUser = (token, id, boolActive) =>
-	fetch(`http://localhost:3000/api/users/${id}/activate`, {
-		method: "PUT",
-		headers: {
-			Accept: "application/json",
-			"Content-Type": "application/json",
-			Authorization: "Bearer " + token,
-		},
-		body: JSON.stringify(boolActive),
-	})
-		.then((res) => res.json())
-		.then((response) => {
-			alert(response.message);
-		})
-		.catch((err) => console.log("Account activation error :", err));
-
-const deleteUser = (token, id, deletion) =>
-	fetch(`http://localhost:3000/api/users/${id}/delete`, {
-		method: "PUT",
-		headers: {
-			Accept: "application/json",
-			"Content-Type": "application/json",
-			Authorization: "Bearer " + token,
-		},
-		body: JSON.stringify(deletion),
-	})
-		.then((res) => res.json())
-		.then((response) => {
-			alert(response.message);
-		})
-		.catch((err) => console.log("Delete account error :", err));
-
-const getOneUser = (token, id) =>
-	fetch(`http://localhost:3000/api/users/${id}`, {
-		method: "GET",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: "Bearer " + token,
-		},
-	})
-		.then((res) => res.json())
-		.catch((err) => console.log("Get one user account error :", err));
-
-const getAllUsers = (token) =>
-	fetch("http://localhost:3000/api/users/", {
-		method: "GET",
-		headers: {
-			Accept: "application/json",
-			"Content-Type": "application/json",
-			Authorization: "Bearer " + token,
-		},
-	})
-		.then((res) => res.json())
-		.catch((err) => console.log("Get users account error :", err));
-
 const logout = () => {
 	localStorage.removeItem("user");
 };
@@ -111,17 +44,11 @@ const logout = () => {
 const getCurrentUser = () => {
 	return JSON.parse(localStorage.getItem("user"));
 };
-
 const authService = {
 	signup,
 	login,
 	logout,
 	getCurrentUser,
-	getAllUsers,
-	getOneUser,
-	updateUser,
-	activeUser,
-	deleteUser,
 };
 
 export default authService;

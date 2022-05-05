@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import moment from "moment";
-import AuthService from "../Components/Services/AuthService";
+import userService from "../Components/Services/UserService";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import ProfileModal from "../Components/Modals/ProfileModal";
 import validation from "../Components/Forms/validation";
@@ -29,9 +29,9 @@ const Profile = () => {
 				? setBoolActive({ isActive: 0 })
 				: setBoolActive({ isActive: 1 });
 			console.log(boolActive);
-			AuthService.activeUser(currentUser.token, user.id, boolActive);
+			userService.activeUser(currentUser.token, user.id, boolActive);
 			if (currentUser.id === user.id) {
-				AuthService.logout();
+				userService.logout();
 				navigate("/login");
 			}
 		}
@@ -43,9 +43,9 @@ const Profile = () => {
 		//modal suppression
 		setDeleteUser({ isDeleted: 1 });
 		console.log(deleteUser);
-		AuthService.deleteUser(currentUser.token, user.id, deleteUser);
+		userService.deleteUser(currentUser.token, user.id, deleteUser);
 		if (currentUser.id === user.id) {
-			AuthService.logout();
+			userService.logout();
 			navigate("/signup");
 		} else {
 			navigate("/admin");
@@ -63,7 +63,7 @@ const Profile = () => {
 
 	const updateUser = useMutation(
 		(updatedProfile) =>
-			AuthService.updateUser(currentUser.token, user.id, updatedProfile),
+			userService.updateUser(currentUser.token, user.id, updatedProfile),
 		{
 			// After success or failure, refetch the todos query
 			onSuccess: () => {
@@ -79,7 +79,7 @@ const Profile = () => {
 		updatedProfile.lastname = profileModal["lastname"];
 		updatedProfile.email = profileModal["email"];
 		updateUser.mutate(updatedProfile);
-		//AuthService.updateUser(currentUser.token, user.id, updatedProfile);
+		//userService.updateUser(currentUser.token, user.id, updatedProfile);
 		//setShowProfileModal(!showProfileModal);
 		setProfileModal({});
 	};
@@ -115,14 +115,14 @@ const Profile = () => {
 	};
 
 	const logOut = () => {
-		AuthService.logout();
+		userService.logout();
 	};
 
 	let params = useParams();
 	const idUser = params.profileId;
 	/* 	useEffect(() => {
 		const getOneUser = async () => {
-			const userProfile = await AuthService.getOneUser(
+			const userProfile = await userService.getOneUser(
 				currentUser.token,
 				idUser
 			);
@@ -132,7 +132,7 @@ const Profile = () => {
 	}, []); */
 
 	const { isLoading, error, data } = useQuery("user", () =>
-		AuthService.getOneUser(currentUser.token, idUser)
+		userService.getOneUser(currentUser.token, idUser)
 	);
 	const user = data || [];
 

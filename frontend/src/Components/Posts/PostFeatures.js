@@ -1,9 +1,11 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 import { faComment } from "@fortawesome/free-solid-svg-icons";
 import postService from "../Services/PostService";
+import commentService from "../Services/CommentService";
 import PostModal from "../Modals/PostModal";
 import SuppPostModal from "../Modals/SuppPostModal";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
@@ -16,7 +18,7 @@ const PostFeatures = ({
 	handleDisplayCommNum,
 	handleDisplayCommentForm,
 }) => {
-	const [comments, setComments] = useState([]);
+	//const [comments, setComments] = useState([]);
 	const user = JSON.parse(localStorage.getItem("user"));
 	const [postModal, setPostModal] = useState({});
 	const [showGifs, setShowGifs] = useState({});
@@ -153,15 +155,21 @@ const PostFeatures = ({
 		});
 	};
 
-	useEffect(() => {
+	/* useEffect(() => {
 		console.log(user.id);
 		const getAllComments = async () => {
-			const allComments = await postService.fetchAllComments(user.token);
+			const allComments = await commentService.fetchAllComments(user.token);
 			setComments(allComments);
 		};
 
 		getAllComments().catch(console.error);
-	}, []);
+	}, []); */
+
+	const { isLoading, error, data } = useQuery("comments", () =>
+		commentService.fetchAllComments(user.token)
+	);
+
+	const comments = data || [];
 
 	const [showSuppPostModal, setShowSuppPostModal] = useState({});
 	const handleSuppPostModal = (e, postId) => {

@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import AuthService from "../Components/Services/AuthService";
+import userService from "../Components/Services/UserService";
 import { useNavigate, Link } from "react-router-dom";
 
 function Admin() {
@@ -11,7 +11,7 @@ function Admin() {
 
 	useEffect(() => {
 		const getAllUsers = async () => {
-			const allUsers = await AuthService.getAllUsers(user.token);
+			const allUsers = await userService.getAllUsers(user.token);
 			allUsers.sort(function (a, b) {
 				if (a.id > b.id) {
 					return 1;
