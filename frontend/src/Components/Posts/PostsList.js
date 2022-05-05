@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import postService from "../Services/PostService";
 import Gifs from "./Gif";
 import Comments from "../Comments";
@@ -9,19 +10,17 @@ import PostFeatures from "./PostFeatures";
 import { NewCommentForm } from "../Forms/PostForms";
 
 const PostsList = ({ post }) => {
-	const [comments, setComments] = useState([]);
+	const queryClient = useQueryClient();
+	//	const [comments, setComments] = useState([]);
 	const user = JSON.parse(localStorage.getItem("user"));
-	const [newPost, setNewPost] = useState({});
 	const [postModal, setPostModal] = useState({});
 	const [newComment, setNewComment] = useState({});
 	const [gifs, setGifs] = useState([]);
 	const [selectedGif, setSelectedGif] = useState({});
 	const [selectedFileC, setSelectedFileC] = useState({});
-	const [selectedFileP, setSelectedFileP] = useState({});
 	const [showSelectedGif, setShowSelectedGif] = useState({});
 	const [showGifs, setShowGifs] = useState({});
 	const [showCommNum, setShowCommNum] = useState({});
-	const [showPostForm, setShowPostForm] = useState(false);
 	const [showCommentForm, setShowCommentForm] = useState({});
 	const [showPostModal, setShowPostModal] = useState({});
 
@@ -163,6 +162,27 @@ const PostsList = ({ post }) => {
 		postService.fetchDeleteComment(user.token, postId, commId);
 	};
 
+	const getPostId = () => {
+		if (Object.keys(newComment) !== undefined) {
+			return Object.keys(newComment);
+		} else if (Object.keys(selectedGif) !== undefined) {
+			return Object.keys(selectedGif);
+		} else if (Object.keys(selectedFileC) !== undefined) {
+			return Object.keys(selectedFileC);
+		}
+	};
+
+	const addComment = useMutation(
+		(commentData) =>
+			postService.fetchCreateComment(user.token, getPostId, commentData),
+		{
+			// After success or failure, refetch the todos query
+			onSuccess: () => {
+				queryClient.invalidateQueries("comments");
+			},
+		}
+	);
+
 	const submitNewComment = (e, index, postId) => {
 		e.preventDefault();
 
@@ -181,7 +201,9 @@ const PostsList = ({ post }) => {
 		selectedFileC.hasOwnProperty(index) &&
 			commentData.append("image", selectedFileC[index]);
 
-		postService.fetchCreateComment(user.token, postId, commentData);
+		addComment.mutate(commentData);
+
+		//postService.fetchCreateComment(user.token, postId, commentData);
 
 		setNewComment({ [index]: "" });
 		setSelectedGif({ [index]: "" });
@@ -191,9 +213,9 @@ const PostsList = ({ post }) => {
 		e.target.reset();
 	};
 
-	useEffect(() => {
+	/* useEffect(() => {
 		console.log(comments);
-	}, [comments]);
+	}, [comments]); */
 	//get gifs
 	useEffect(() => {
 		const getGifs = async () => {
@@ -268,7 +290,7 @@ const PostsList = ({ post }) => {
 			: "comments-button-disabled";
 	};
 
-	//get all comments
+	/* //get all comments
 	useEffect(() => {
 		console.log(user.id);
 		const getAllComments = async () => {
@@ -277,7 +299,13 @@ const PostsList = ({ post }) => {
 		};
 
 		getAllComments().catch(console.error);
-	}, []);
+	}, []); */
+
+	const { isLoading, error, data } = useQuery("comments", () =>
+		postService.fetchAllComments(user.token)
+	);
+
+	const comments = data || [];
 
 	const [showSuppPostModal, setShowSuppPostModal] = useState({});
 

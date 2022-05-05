@@ -6,13 +6,7 @@ import { useNavigate, Link, useParams } from "react-router-dom";
 import ProfileModal from "../Components/Modals/ProfileModal";
 import validation from "../Components/Forms/validation";
 import SuppProfileModal from "../Components/Modals/SuppProfileModal";
-import {
-	useQuery,
-	useQueryClient,
-	useMutation,
-	QueryClient,
-	QueryClientProvider,
-} from "react-query";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 const Profile = () => {
 	const queryClient = useQueryClient();
 	const currentUser = JSON.parse(localStorage.getItem("user"));

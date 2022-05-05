@@ -6,24 +6,34 @@ const User = require("../models/user")(sequelize, DataTypes);
 const { QueryTypes } = require("sequelize");
 
 exports.signup = (req, res, next) => {
-	bcrypt
-		//  Password hashed in 10 iterations
-		.hash(req.body.password, 10)
-		.then((hash) => {
-			User.build({
-				email: req.body.email,
-				password: hash,
-				firstname: req.body.firstname,
-				lastname: req.body.lastname,
-			})
-				.save()
-				.then(() => res.status(201).json({ message: "Utilisateur créé !" }))
-				.catch((error) => {
-					console.log("FAILED BECAUSE:", error.message);
-					res.status(500).json({ error });
-				});
-		})
-		.catch((error) => res.status(500).json({ error }));
+	User.findOne({
+		where: { email: req.body.email },
+	}).then((user) => {
+		if (user !== null) {
+			return res
+				.status(401)
+				.json({ error: "Cet adresse email est déja utilisée!" });
+		} else {
+			bcrypt
+				//  Password hashed in 10 iterations
+				.hash(req.body.password, 10)
+				.then((hash) => {
+					User.build({
+						email: req.body.email,
+						password: hash,
+						firstname: req.body.firstname,
+						lastname: req.body.lastname,
+					})
+						.save()
+						.then(() => res.status(201).json({ message: "Utilisateur créé !" }))
+						.catch((error) => {
+							console.log("FAILED BECAUSE:", error.message);
+							res.status(500).json({ error });
+						});
+				})
+				.catch((error) => res.status(500).json({ error }));
+		}
+	});
 };
 
 exports.login = (req, res, next) => {

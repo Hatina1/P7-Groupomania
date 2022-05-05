@@ -100,7 +100,6 @@ const fetchAllComments = (token) =>
 		.catch((err) => console.log("Comment creation error :", err)); */
 
 const fetchCreateComment = (token, postId, comment) => {
-	//console.log("comment", comment.get("newcomment"));
 	fetch(`http://localhost:3000/api/posts/${postId}/comments`, {
 		method: "POST",
 		headers: {

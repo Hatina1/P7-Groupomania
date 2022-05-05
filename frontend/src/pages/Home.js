@@ -1,16 +1,27 @@
 import React from "react";
 import { useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import postService from "../Components/Services/PostService";
 import PostsList from "../Components/Posts/PostsList";
 import { ShowPostFormButton, ClosePostFormButton } from "../Components/Buttons";
 import { NewPostForm } from "../Components/Forms/PostForms";
 
 const Home = () => {
+	const queryClient = useQueryClient();
 	const user = JSON.parse(localStorage.getItem("user"));
 	const [newPost, setNewPost] = useState({});
 	const [selectedFileP, setSelectedFileP] = useState({});
 	const [showPostForm, setShowPostForm] = useState(false);
+
+	const addPost = useMutation(
+		(postData) => postService.fetchCreatePost(user.token, postData),
+		{
+			// After success or failure, refetch the todos query
+			onSuccess: () => {
+				queryClient.invalidateQueries("posts");
+			},
+		}
+	);
 
 	const submitNewPost = (e) => {
 		e.preventDefault();
@@ -27,7 +38,8 @@ const Home = () => {
 		selectedFileP.hasOwnProperty("newPostFile") &&
 			postData.append("image", selectedFileP["newPostFile"]);
 		//console.log(selectedFileP);
-		postService.fetchCreatePost(user.token, postData);
+		//postService.fetchCreatePost(user.token, postData);
+		addPost.mutate(postData);
 		setNewPost({});
 		setSelectedFileP({});
 		setShowPostForm(!showPostForm);
