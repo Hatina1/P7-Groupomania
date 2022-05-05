@@ -15,7 +15,10 @@ module.exports = (sequelize, DataTypes) => {
 			email: {
 				type: DataTypes.STRING,
 				allowNull: false,
-				unique: true,
+				unique: {
+					args: true,
+					msg: "Adresse email déja utilisée",
+				},
 			},
 			password: {
 				type: DataTypes.STRING,
@@ -23,9 +26,11 @@ module.exports = (sequelize, DataTypes) => {
 			},
 			firstname: {
 				type: DataTypes.STRING,
+				allowNull: false,
 			},
 			lastname: {
 				type: DataTypes.STRING,
+				allowNull: false,
 			},
 			username: {
 				type: DataTypes.VIRTUAL,

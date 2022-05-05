@@ -3,6 +3,7 @@ import "../../App.css";
 import validation from "./validation";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import icon from "../../assets/icon.png";
 
 const SignupForm = () => {
 	const [values, setValues] = useState({
@@ -24,24 +25,28 @@ const SignupForm = () => {
 
 	const submitHandler = async (e) => {
 		e.preventDefault();
+		if (Object.keys(validation(values)).length === 0) {
+			fetch("http://localhost:3000/api/auth/signup", {
+				method: "POST",
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(values),
+			})
+				.then((res) => console.log("Sign up successfully", res))
+				.then((response) => {
+					alert(response.message);
+					navigate("/login");
+				})
+				.catch((err) => console.log("Sign up error : ", err));
+		} else {
+			setErrors(validation(values));
+		}
 
-		setErrors(validation(values));
-
-		fetch("http://localhost:3000/api/auth/signup", {
-			method: "POST",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(values),
-		})
-			.then((res) => console.log("Sign up successfully", res))
-			.catch((err) => console.log("What's happening ?", err));
-
-		navigate("/login");
-		window.location.reload();
+		//window.location.reload();
 	};
-
+	//<div className="col-12 col-md-9 col-lg-7 col-xl-4">
 	return (
 		<div className="mask d-flex align-items-center h-100 gradient-custom-3">
 			<div className="container h-100">
@@ -50,46 +55,49 @@ const SignupForm = () => {
 						<div className="card card-border">
 							<div className="card-body p-5">
 								<form className="signupForm" onSubmit={submitHandler}>
-									<div>
-										<h2 className="text-uppercase text-center mb-5">
-											Create an account
-										</h2>
+									<div className="d-flex flex-column align-items-center">
+										<img src={icon} alt="Groupomania" className="gpnia-logo" />
+										<h2 className="text-center mb-3">Créer un compte</h2>
 									</div>
 
-									<div className="form-outline mb-4">
-										<label className="form-label"> Firstname </label>
+									<div className="form-outline mb-3">
+										<label className="form-label"> Prénom </label>
 										<input
-											className="form-control form-control-lg"
+											className="form-control"
 											type="text"
 											name="firstname"
 											value={values.firstname}
 											onChange={changeHandler}
-											placeholder="Firstname"
+											placeholder="Prénom"
 											autoComplete="current-firstname"
 										/>
 										{errors.firstname && (
-											<p className="error">{errors.firstname} </p>
+											<p className="error text-danger text-center fw-light">
+												{errors.firstname}{" "}
+											</p>
 										)}
 									</div>
-									<div className="form-outline mb-4">
-										<label className="form-label"> Lastname </label>
+									<div className="form-outline mb-3">
+										<label className="form-label"> Nom de famille </label>
 										<input
-											className="form-control form-control-lg"
+											className="form-control"
 											type="text"
 											name="lastname"
 											value={values.lastname}
 											onChange={changeHandler}
-											placeholder="Lastname"
+											placeholder="Nom de famille"
 											autoComplete="current-lastname"
 										/>
 										{errors.lastname && (
-											<p className="error">{errors.lastname} </p>
+											<p className="error text-danger text-center fw-light">
+												{errors.lastname}{" "}
+											</p>
 										)}
 									</div>
-									<div className="form-outline mb-4">
+									<div className="form-outline mb-3">
 										<label className="form-label"> Email </label>
 										<input
-											className="form-control form-control-lg"
+											className="form-control"
 											type="email"
 											name="email"
 											value={values.email}
@@ -97,36 +105,39 @@ const SignupForm = () => {
 											placeholder="Email"
 											autoComplete="current-email"
 										/>
-										{errors.email && <p className="error">{errors.email} </p>}
+										{errors.email && (
+											<p className="error text-danger text-center fw-light">
+												{errors.email}{" "}
+											</p>
+										)}
 									</div>
-									<div className="form-outline mb-4">
-										<label className="form-label"> Password </label>
+									<div className="form-outline mb-3">
+										<label className="form-label"> Mot de passe </label>
 										<input
-											className="form-control form-control-lg"
+											className="form-control"
 											type="password"
 											name="password"
 											value={values.password}
 											onChange={changeHandler}
-											placeholder="Password"
+											placeholder="Mot de passe"
 											autoComplete="current-password"
 										/>
 										{errors.password && (
-											<p className="error">{errors.password} </p>
+											<p className="error text-danger text-center fw-light">
+												{errors.password}{" "}
+											</p>
 										)}
 									</div>
 									<div className="d-flex justify-content-center">
-										<button
-											className="btn btn-primary btn-block btn-lg"
-											type="submit"
-										>
-											Sign Up
+										<button className="btn btn-primary btn-block" type="submit">
+											S'inscrire
 										</button>
 									</div>
 									<Link
 										to="/login"
-										className="text-center text-muted mt-5 mb-0"
+										className="text-center text-muted mt-4 mb-0"
 									>
-										Already have an account?
+										Déja un compte ?
 									</Link>
 								</form>
 							</div>

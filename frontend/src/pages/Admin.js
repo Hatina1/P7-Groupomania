@@ -66,8 +66,8 @@ function Admin() {
 				{filteredUsers &&
 					filteredUsers.length > 0 &&
 					filteredUsers.map((item) => (
-						<tbody>
-							<tr key={item.id}>
+						<tbody key={item.id}>
+							<tr>
 								<th className="align-middle" scope="row">
 									{item.id}
 								</th>

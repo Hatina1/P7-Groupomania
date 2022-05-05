@@ -72,7 +72,7 @@ exports.getOneUser = (req, res, next) => {
 			}
 		)
 		.then((user) => {
-			res.status(200).json(user);
+			res.status(200).json(user[0]);
 		})
 		.catch((error) => res.status(404).json({ error }));
 };
@@ -90,7 +90,16 @@ exports.getOneUser = (req, res, next) => {
 		],
 	},
 	{ where: { id: req.params.id } }
-) */
+) 
+
+sequelize
+		.query(
+			"SELECT `User`.`id`,`User`.`firstname`,`User`.`lastname`,`User`.`email`,`User`.`isActive`,`User`.`isAdmin`,`User`.`isDeleted` ,`User`.`createdAt` FROM `Users` AS `User` WHERE `User`.`id` = " +
+				req.params.id,
+			{
+				type: QueryTypes.SELECT,
+			}
+		)*/
 
 exports.modifyUser = (req, res, next) => {
 	User.update({ ...req.body }, { where: { id: req.params.id } })
@@ -101,6 +110,7 @@ exports.modifyUser = (req, res, next) => {
 };
 
 exports.deleteUser = (req, res, next) => {
+	console.log(req.body.isDeleted);
 	User.update(
 		{ isDeleted: req.body.isDeleted },
 		{ where: { id: req.params.id } }
@@ -126,7 +136,7 @@ exports.activeUser = (req, res, next) => {
 exports.getAllUsers = (req, res, next) => {
 	sequelize
 		.query(
-			"SELECT `User`.`id`,`User`.`firstname`,`User`.`lastname`,`User`.`email`,`User`.`isActive`,`User`.`isAdmin`,`User`.`isDeleted` ,`User`.`createdAt` FROM `Users` AS `User`",
+			"SELECT `User`.`id`,`User`.`firstname`,`User`.`lastname`,`User`.`email`,`User`.`isActive`,`User`.`isAdmin`,`User`.`isDeleted` ,`User`.`createdAt` FROM `Users` AS `User` WHERE `User`.`isDeleted` = 0",
 			{
 				//replacements: [`createdAt`, `DESC`],
 				type: QueryTypes.SELECT,

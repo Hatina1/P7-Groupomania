@@ -8,12 +8,12 @@ import { faImage } from "@fortawesome/free-solid-svg-icons";
 
 function PostModal({
 	post,
+	showPostModal,
 	handleInputUpdatePost,
 	handleFileUpdatePost,
 	submitUpdatePost,
 	handleDisplayPostModal,
 	postModal,
-	showPostModal,
 }) {
 	//onClick={(e) => handleDisplayPostModal(e, post.id)}
 	//onHide={(e) => handleDisplayPostModal(e, post.id)}

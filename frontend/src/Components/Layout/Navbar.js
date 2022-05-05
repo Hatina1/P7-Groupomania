@@ -9,14 +9,29 @@ import icon from "../../assets/icon-left.png";
 
 function Navbar() {
 	const [currentUser, setCurrentUser] = useState(undefined);
-
 	useEffect(() => {
 		const user = AuthService.getCurrentUser();
-
 		if (user) {
 			setCurrentUser(user);
 		}
 	}, []);
+	/*	useEffect(() => {
+		function checkConnection() {
+			//const user = AuthService.getCurrentUser();
+			const user = JSON.parse(localStorage.getItem("user"));
+			if (user) {
+				setCurrentUser(user);
+			}
+		}
+		window.addEventListener("storage", checkConnection);
+
+		return () => {
+			window.removeEventListener("storage", checkConnection);
+		};
+	}, []);
+
+
+*/
 
 	const logOut = () => {
 		AuthService.logout();
@@ -42,12 +57,12 @@ function Navbar() {
 							<ul className="list-inline d-flex ul-margin-change">
 								<li className="nav-item">
 									<a href="/login" className="nav-link" onClick={logOut}>
-										Logout
+										Deconnexion
 									</a>
 								</li>
 								<li className="nav-item">
 									<Link to={`/Profile/${currentUser.id}`} className="nav-link">
-										Profile
+										Profil
 									</Link>
 								</li>
 								{currentUser.isAdmin && (
@@ -63,16 +78,16 @@ function Navbar() {
 						<div className="navbar-nav">
 							<li className="nav-item">
 								<Link to={"/login"} className="nav-link">
-									<button className="btn btn-light text-secondary border btn-block btn-lg">
-										Login
+									<button className="btn btn-light text-secondary border btn-block">
+										Se connecter
 									</button>
 								</Link>
 							</li>
 
 							<li className="nav-item">
 								<Link to={"/signup"} className="nav-link">
-									<button className="btn btn-primary btn-block btn-lg">
-										Sign up
+									<button className="btn btn-primary btn-block">
+										Inscription
 									</button>
 								</Link>
 							</li>

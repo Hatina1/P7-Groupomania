@@ -43,7 +43,7 @@ const PostFeatures = ({
 
 	const handleLikes = (e, postId) => {
 		e.preventDefault();
-
+		//console.log(post.likes);
 		const likeSent = {};
 		likeSent.userId = user.id;
 		likeSent.postId = postId;
@@ -93,10 +93,10 @@ const PostFeatures = ({
 			: null;
 		postUpdateSent.userId = user.id;
 
+		console.log(postUpdateSent);
+
 		const postUpdateData = new FormData();
-
 		postUpdateData.append("updatepost", JSON.stringify(postUpdateSent));
-
 		postModal.hasOwnProperty("updatedFile") &&
 			postUpdateData.append("image", postModal["updatedFile"]);
 

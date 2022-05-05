@@ -190,6 +190,10 @@ const PostsList = ({ post }) => {
 		setSelectedFileC({ [index]: "" });
 		e.target.reset();
 	};
+
+	useEffect(() => {
+		console.log(comments);
+	}, [comments]);
 	//get gifs
 	useEffect(() => {
 		const getGifs = async () => {

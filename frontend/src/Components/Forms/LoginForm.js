@@ -26,31 +26,33 @@ const LoginForm = ({ submitForm }) => {
 	const submitHandler = async (e) => {
 		e.preventDefault();
 
-		setErrors(validation(values));
-
-		fetch("http://localhost:3000/api/auth/login", {
-			method: "POST",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(values),
-		})
-			.then((res) => res.json())
-			.then((response) => {
-				console.log(response);
-				if (response.error) {
-					alert(response.error);
-				} else {
-					localStorage.setItem("user", JSON.stringify(response));
-					navigate("/");
-					window.location.reload();
-				}
+		if (
+			!validation(values).hasOwnProperty("email") ||
+			!validation(values).hasOwnProperty("password")
+		) {
+			fetch("http://localhost:3000/api/auth/login", {
+				method: "POST",
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(values),
 			})
-			//.then((res) => console.log("Log in successfully", res.token))
-			.catch((err) => console.log("What's happening ?", err));
-
-		//window.location.reload();
+				.then((res) => res.json())
+				.then((response) => {
+					console.log(response);
+					if (response.error) {
+						alert(response.error);
+					} else {
+						localStorage.setItem("user", JSON.stringify(response));
+						navigate("/");
+						window.location.reload();
+					}
+				})
+				.catch((err) => console.log("What's happening ?", err));
+		} else {
+			setErrors(validation(values));
+		}
 	};
 
 	return (
@@ -61,16 +63,14 @@ const LoginForm = ({ submitForm }) => {
 						<div className="card card-border">
 							<div className="card-body p-5">
 								<form className="loginForm" onSubmit={submitHandler}>
-									<div>
+									<div className="d-flex flex-column align-items-center">
 										<img src={icon} alt="Groupomania" className="gpnia-logo" />
-										<h2 className="text-uppercase text-center mb-5">
-											Please Log in
-										</h2>
+										<h2 className="text-center mb-3">Please Log in</h2>
 									</div>
-									<div className="form-outline mb-4">
+									<div className="form-outline mb-3">
 										<label className="form-label"> Email </label>
 										<input
-											className="form-control form-control-lg"
+											className="form-control"
 											type="email"
 											name="email"
 											value={values.email}
@@ -78,37 +78,43 @@ const LoginForm = ({ submitForm }) => {
 											placeholder="Email"
 											autoComplete="current-email"
 										/>
-										{errors.email && <p className="error">{errors.email} </p>}
+										{errors.email && (
+											<p className="error text-danger text-center fw-light">
+												{errors.email}{" "}
+											</p>
+										)}
 									</div>
-									<div className="form-outline mb-4">
-										<label className="form-label"> Password </label>
+									<div className="form-outline mb-3">
+										<label className="form-label"> Mot de passe </label>
 										<input
-											className="form-control form-control-lg"
+											className="form-control"
 											type="password"
 											name="password"
 											value={values.password}
 											onChange={changeHandler}
-											placeholder="Password"
+											placeholder="Mot de passe"
 											autoComplete="current-password"
 										/>
 										{errors.password && (
-											<p className="error">{errors.password} </p>
+											<p className="error text-danger text-center fw-light">
+												{errors.password}{" "}
+											</p>
 										)}
 									</div>
-									<div>
+									<div className="d-flex justify-content-center">
 										<button
-											className="btn btn-primary btn-block btn-lg"
+											className="btn btn-primary btn-block "
 											type="submit"
 										>
-											Login
+											Se connecter
 										</button>
 									</div>
 
 									<Link
 										to="/signup"
-										className="text-center text-muted mt-5 mb-0"
+										className="text-center text-muted mt-4 mb-0"
 									>
-										Don't have an account?
+										Pas encore de compte ?
 									</Link>
 								</form>
 							</div>

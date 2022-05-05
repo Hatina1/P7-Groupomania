@@ -70,6 +70,9 @@ const fetchLikePost = (token, postId, likeSent) =>
 		body: JSON.stringify(likeSent),
 	})
 		.then((res) => res.json())
+		.then((response) => {
+			alert(response.message);
+		})
 		.catch((err) => console.log("Like was not sent", err));
 
 const fetchAllComments = (token) =>

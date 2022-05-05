@@ -6,26 +6,35 @@ import { useNavigate, Link, useParams } from "react-router-dom";
 import ProfileModal from "../Components/Modals/ProfileModal";
 import validation from "../Components/Forms/validation";
 import SuppProfileModal from "../Components/Modals/SuppProfileModal";
-
+import {
+	useQuery,
+	useQueryClient,
+	useMutation,
+	QueryClient,
+	QueryClientProvider,
+} from "react-query";
 const Profile = () => {
+	const queryClient = useQueryClient();
 	const currentUser = JSON.parse(localStorage.getItem("user"));
-	const [user, setUser] = useState([]);
+	//const [user, setUser] = useState([]);
 	const navigate = useNavigate();
 	const date = (sqlDate) => {
 		var dateCreation = moment(sqlDate).format("DD/MM/YYYY");
 		return dateCreation;
 	};
-	const [boolActive, setBoolActive] = useState({ isActive: true });
+	const [boolActive, setBoolActive] = useState({});
 	const [deleteUser, setDeleteUser] = useState({});
 
 	// Accounts activation/desactivation and delete by the user
 	const onClickHandleActive = async (e) => {
 		e.preventDefault();
-
+		console.log(boolActive);
 		if (e.target.id === "activate") {
-			user.isActive === true
+			//console.log(user.isActive);
+			user.isActive === 1
 				? setBoolActive({ isActive: 0 })
 				: setBoolActive({ isActive: 1 });
+			console.log(boolActive);
 			AuthService.activeUser(currentUser.token, user.id, boolActive);
 			if (currentUser.id === user.id) {
 				AuthService.logout();
@@ -36,18 +45,17 @@ const Profile = () => {
 
 	const onClickHandleDelete = async (e) => {
 		e.preventDefault();
-
+		console.log(user.isDeleted);
 		//modal suppression
 		setDeleteUser({ isDeleted: 1 });
-		console.log(deleteUser, user.id);
+		console.log(deleteUser);
 		AuthService.deleteUser(currentUser.token, user.id, deleteUser);
-
-		/* if (currentUser.id === user.id) {
-				AuthService.logout();
-				navigate("/signup");
-			}
-			
-	*/
+		if (currentUser.id === user.id) {
+			AuthService.logout();
+			navigate("/signup");
+		} else {
+			navigate("/admin");
+		}
 	};
 
 	const [profileModal, setProfileModal] = useState({});
@@ -59,6 +67,16 @@ const Profile = () => {
 
 	const [errors, setErrors] = useState({});
 
+	const updateUser = useMutation(
+		(updatedProfile) =>
+			AuthService.updateUser(currentUser.token, user.id, updatedProfile),
+		{
+			// After success or failure, refetch the todos query
+			onSuccess: () => {
+				queryClient.invalidateQueries("user");
+			},
+		}
+	);
 	const submitUpdateProfile = (e) => {
 		e.preventDefault();
 		setErrors(validation(profileModal));
@@ -66,7 +84,8 @@ const Profile = () => {
 		updatedProfile.firstname = profileModal["firstname"];
 		updatedProfile.lastname = profileModal["lastname"];
 		updatedProfile.email = profileModal["email"];
-		AuthService.updateUser(currentUser.token, user.id, updatedProfile);
+		updateUser.mutate(updatedProfile);
+		//AuthService.updateUser(currentUser.token, user.id, updatedProfile);
 		//setShowProfileModal(!showProfileModal);
 		setProfileModal({});
 	};
@@ -107,7 +126,7 @@ const Profile = () => {
 
 	let params = useParams();
 	const idUser = params.profileId;
-	useEffect(() => {
+	/* 	useEffect(() => {
 		const getOneUser = async () => {
 			const userProfile = await AuthService.getOneUser(
 				currentUser.token,
@@ -116,19 +135,18 @@ const Profile = () => {
 			setUser(userProfile[0]);
 		};
 		getOneUser().catch(console.error);
-	}, []);
+	}, []); */
+
+	const { isLoading, error, data } = useQuery("user", () =>
+		AuthService.getOneUser(currentUser.token, idUser)
+	);
+	const user = data || [];
 
 	useEffect(() => {
 		if (showProfileModal) {
 			console.log(showProfileModal);
 		}
 	}, [showProfileModal]);
-
-	useEffect(() => {
-		if (user) {
-			console.log(user);
-		}
-	}, [user]);
 
 	const [showSuppProfileModal, setShowSuppProfileModal] = useState(false);
 	const handleSuppProfileModal = (e) => {
@@ -144,6 +162,12 @@ const Profile = () => {
 
 	return (
 		<div className="px-2">
+			{isLoading && <h1 className="my-3 text-white">Loading...</h1>}
+			{error && (
+				<h1 className="my-3 text-white">
+					`An error has occurred:${error.message}`
+				</h1>
+			)}
 			<br />
 			<h1 className="my-3 text-white">Détails du compte</h1>
 
@@ -222,7 +246,7 @@ const Profile = () => {
 						<p className="">{date(user.createdAt)}</p>
 					</article>
 					<section className="section-responsive">
-						{currentUser.isAdmin && user.isActive && (
+						{currentUser.isAdmin && user.isActive ? (
 							<button
 								id="activate"
 								className="btn btn-sm btn btn-danger btn-change me-3 my-3"
@@ -230,7 +254,7 @@ const Profile = () => {
 							>
 								Désactiver le compte
 							</button>
-						)}
+						) : null}
 
 						{currentUser.isAdmin && !user.isActive && (
 							<button

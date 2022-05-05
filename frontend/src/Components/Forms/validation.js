@@ -2,23 +2,23 @@ const validation = (values) => {
 	let errors = {};
 	let reg = /.+@.+\..+/g; // /\D+@\D+.{2,}/
 	if (!values.firstname) {
-		errors.firstname = "Firstname is required";
+		errors.firstname = "Prénom requis";
 	}
 
 	if (!values.lastname) {
-		errors.lastname = "Lastname is required";
+		errors.lastname = "Nom de famille requis";
 	}
 
 	if (!values.email) {
-		errors.email = "Email is required";
+		errors.email = "L'adresse email est requis";
 	} else if (!reg.test(values.email)) {
-		errors.email = "Email is required";
+		errors.email = "Format requis aaaa@bbbb.ccc";
 	}
 
 	if (!values.password) {
-		errors.password = "Password is required";
+		errors.password = "Mot de passe requis";
 	} else if (values.password.length < 6) {
-		errors.password = "Password is required";
+		errors.password = "Le mot de passe doit conteniir au moins 6 caractères ";
 	}
 
 	return errors;

@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Navbar from "./Components/Layout/Navbar";
 import Footer from "./Components/Layout/Footer";
 import Home from "./pages/Home";
@@ -8,12 +9,39 @@ import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
 import SignupForm from "./Components/Forms/SignupForm";
 import LoginForm from "./Components/Forms/LoginForm";
+import AuthService from "./Components/Services/AuthService";
 import "./styles/bootstrap.min.css";
 import "./styles/headers.css";
 //import { ErrorBoundary } from "react-error-boundary";
 import { QueryClient, QueryClientProvider } from "react-query";
 const queryClient = new QueryClient();
+
 function App() {
+	const [currentUser, setCurrentUser] = useState(undefined);
+
+	/* 	useEffect(() => {
+		const user = AuthService.getCurrentUser();
+		if (user) {
+			setCurrentUser(user);
+		}
+	}, []); 
+	
+	useEffect(() => {
+		function checkConnection() {
+			//const user = AuthService.getCurrentUser();
+			const user = JSON.parse(localStorage.getItem("user"));
+			if (user) {
+				setCurrentUser(user);
+			}
+		}
+		window.addEventListener("storage", checkConnection);
+
+		return () => {
+			window.removeEventListener("storage", checkConnection);
+		};
+	}, []);
+	*/
+
 	return (
 		<Router>
 			<div className="bg-color bg-opacity-10">
