@@ -15,28 +15,10 @@ function Comments({ comment, post }) {
 	const user = JSON.parse(localStorage.getItem("user"));
 	const sqlToJsDate = (sqlDate) => {
 		var sqlDateFormat = new Date(sqlDate);
-		var jYear = sqlDateFormat.getFullYear();
-		var jMonth = sqlDateFormat.getMonth();
-		var jDay = sqlDateFormat.getDate();
-		var delay = moment([jYear, jMonth, jDay + 1])
-			.fromNow()
-			.split(" ");
-		let checkPeriod = delay[0];
-		let period = delay[1];
-		let french = "";
-		if (checkPeriod === "in") {
-			french = delay[1] + " " + "heures";
-		} else if (period === "hours") {
-			french = delay[0] + " " + "heures";
-		} else if (period === "days") {
-			french = delay[0] + " " + "jours";
-		} else if (period === "years") {
-			french = delay[0] + " " + "années";
-		} else if (period === "day") {
-			french = "1 jour";
-		}
-		return french;
+		var date = new Intl.DateTimeFormat().format(sqlDateFormat);
+		return date;
 	};
+
 	const [showSuppCommentModal, setShowSuppCommentModal] = useState({});
 	const handleSuppCommentModal = (e, commentId) => {
 		e.preventDefault();
@@ -97,7 +79,7 @@ function Comments({ comment, post }) {
 					<p>
 						Réponse de {comment.firstname} {comment.lastname}
 					</p>
-					<p>il y a {sqlToJsDate(comment.createdAt)}</p>
+					<p>{sqlToJsDate(comment.createdAt)}</p>
 				</div>
 				{comment.gifUrl && (
 					<img

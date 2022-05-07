@@ -13,27 +13,8 @@ function Post({ post, deletePost, handleDisplayPostModal, getValueInputPost }) {
 	const user = JSON.parse(localStorage.getItem("user"));
 	const sqlToJsDate = (sqlDate) => {
 		var sqlDateFormat = new Date(sqlDate);
-		var jYear = sqlDateFormat.getFullYear();
-		var jMonth = sqlDateFormat.getMonth();
-		var jDay = sqlDateFormat.getDate();
-		var delay = moment([jYear, jMonth, jDay + 1])
-			.fromNow()
-			.split(" ");
-		let checkPeriod = delay[0];
-		let period = delay[1];
-		let french = "";
-		if (checkPeriod === "in") {
-			french = delay[1] + " " + "heures";
-		} else if (period === "hours") {
-			french = delay[0] + " " + "heures";
-		} else if (period === "days") {
-			french = delay[0] + " " + "jours";
-		} else if (period === "years") {
-			french = delay[0] + " " + "années";
-		} else if (period === "day") {
-			french = "1 jour";
-		}
-		return french;
+		var date = new Intl.DateTimeFormat().format(sqlDateFormat);
+		return date;
 	};
 	const [showSuppPostModal, setShowSuppPostModal] = useState({});
 	const handleSuppPostModal = (e, postId) => {
@@ -77,7 +58,7 @@ function Post({ post, deletePost, handleDisplayPostModal, getValueInputPost }) {
 					</strong>
 				</p>
 				<p className="margin-change p-change-responsive">
-					il y a {`${sqlToJsDate(post.createdAt)}`}
+					{sqlToJsDate(post.createdAt)}
 				</p>
 			</div>
 			{post.imageUrl ? (
