@@ -1,14 +1,17 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import ReactDOM from "react-dom";
 import "../styles/bootstrap.min.css";
 import "../styles/headers.css";
 import moment from "moment";
+import commentService from "./Services/CommentService";
 import SuppCommentModal from "./Modals/SuppCommentModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
-function Comments({ comment, post, deleteComment }) {
+function Comments({ comment, post }) {
+	const queryClient = useQueryClient();
 	const user = JSON.parse(localStorage.getItem("user"));
 	const sqlToJsDate = (sqlDate) => {
 		var sqlDateFormat = new Date(sqlDate);
@@ -52,11 +55,32 @@ function Comments({ comment, post, deleteComment }) {
 		}
 	};
 
-	useEffect(() => {
+	const getCommId = () => {
+		if (Object.keys(showSuppCommentModal) !== undefined) {
+			let arrKey = Object.keys(showSuppCommentModal);
+			console.log(showSuppCommentModal, arrKey[0]);
+			return arrKey[0];
+		}
+	};
+	const deleteCommentMutation = useMutation(
+		(postId) => commentService.deleteComment(user.token, postId, getCommId()),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries("comments");
+			},
+		}
+	);
+
+	const deleteComment = (e, postId) => {
+		e.preventDefault();
+		deleteCommentMutation.mutate(postId);
+	};
+
+	/* useEffect(() => {
 		if (showSuppCommentModal) {
 			console.log(showSuppCommentModal);
 		}
-	}, [showSuppCommentModal]);
+	}, [showSuppCommentModal]); */
 
 	const enableItemToShow = (commentId, itemToShow) => {
 		if (itemToShow.hasOwnProperty(commentId)) {

@@ -1,15 +1,24 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import userService from "../Components/Services/UserService";
+import userService from "../components/Services/UserService";
 import { useNavigate, Link } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 
 function Admin() {
 	const user = JSON.parse(localStorage.getItem("user"));
-	const [users, setUsers] = useState([]);
+	//const [users, setUsers] = useState([]);
 	const [name, setName] = useState("");
-	const [filteredUsers, setFilteredUsers] = useState(users);
+	const { isLoading, error, data } = useQuery("users", () =>
+		userService.getAllUsers(user.token)
+	);
 
+	const users = data || [];
+
+	const [filteredUsers, setFilteredUsers] = useState(users);
 	useEffect(() => {
+		setFilteredUsers(users);
+	}, []);
+	/* useEffect(() => {
 		const getAllUsers = async () => {
 			const allUsers = await userService.getAllUsers(user.token);
 			allUsers.sort(function (a, b) {
@@ -25,7 +34,7 @@ function Admin() {
 			setFilteredUsers(allUsers);
 		};
 		getAllUsers().catch(console.error);
-	}, []);
+	}, []); */
 
 	const filter = (e) => {
 		const keyword = e.target.value;
@@ -45,6 +54,7 @@ function Admin() {
 	return (
 		<div className="container d-flex flex-column align-items-center px-4  div-wrapper">
 			<h2 className="text-white my-2">Liste des utilisateurs : </h2>
+			{isLoading && <p className="my-3 text-white">Loading...</p>}
 			<input
 				type="search"
 				value={name}
@@ -53,7 +63,7 @@ function Admin() {
 				placeholder="Recherche par nom"
 			/>
 
-			<table className="table table-sm my-4 text-white">
+			<table className="table table-sm table-change my-4   text-white">
 				<thead>
 					<tr>
 						<th scope="col">#</th>

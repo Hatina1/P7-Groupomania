@@ -92,6 +92,7 @@ const PostsList = ({ post }) => {
 		}
 	};
 
+	/* 
 	useEffect(() => {
 		if (showCommNum) {
 			console.log(showCommNum);
@@ -116,7 +117,10 @@ const PostsList = ({ post }) => {
 		}
 	}, [showPostModal]);
 
-	/* 	useEffect(() => {
+
+	
+	
+	useEffect(() => {
 		if (selectedGif) {
 			console.log(selectedGif);
 		}
@@ -154,13 +158,7 @@ const PostsList = ({ post }) => {
 	const deletePost = (e, postId) => {
 		e.preventDefault();
 
-		postService.fetchDeletePost(user.token, postId);
-	};
-
-	const deleteComment = (e, postId, commId) => {
-		e.preventDefault();
-
-		commentService.fetchDeleteComment(user.token, postId, commId);
+		postService.deletePost(user.token, postId);
 	};
 
 	const getPostId = () => {
@@ -175,7 +173,7 @@ const PostsList = ({ post }) => {
 
 	const addComment = useMutation(
 		(commentData) =>
-			commentService.fetchCreateComment(user.token, getPostId, commentData),
+			commentService.createComment(user.token, getPostId(), commentData),
 		{
 			// After success or failure, refetch the todos query
 			onSuccess: () => {
@@ -204,7 +202,7 @@ const PostsList = ({ post }) => {
 
 		addComment.mutate(commentData);
 
-		//commentService.fetchCreateComment(user.token, postId, commentData);
+		//commentService.createComment(user.token, postId, commentData);
 
 		setNewComment({ [index]: "" });
 		setSelectedGif({ [index]: "" });
@@ -220,10 +218,10 @@ const PostsList = ({ post }) => {
 	//get gifs
 	useEffect(() => {
 		const getGifs = async () => {
-			const resultGifs = await commentService.fetchGifs(
+			const resultGifs = await commentService.getGifs(
 				process.env.REACT_APP_GIF_PASSWORD
 			);
-			console.log(resultGifs);
+
 			setGifs(resultGifs.data);
 		};
 
@@ -295,7 +293,7 @@ const PostsList = ({ post }) => {
 	useEffect(() => {
 		console.log(user.id);
 		const getAllComments = async () => {
-			const allComments = await commentService.fetchAllComments(user.token);
+			const allComments = await commentService.getAllComments(user.token);
 			setComments(allComments);
 		};
 
@@ -303,18 +301,18 @@ const PostsList = ({ post }) => {
 	}, []); */
 
 	const { isLoading, error, data } = useQuery("comments", () =>
-		commentService.fetchAllComments(user.token)
+		commentService.getAllComments(user.token)
 	);
 
 	const comments = data || [];
 
 	const [showSuppPostModal, setShowSuppPostModal] = useState({});
 
-	useEffect(() => {
+	/* useEffect(() => {
 		if (showSuppPostModal) {
 			console.log(showSuppPostModal);
 		}
-	}, [showSuppPostModal]);
+	}, [showSuppPostModal]); */
 
 	return (
 		<div key={post.id} className="card my-4 card-responsive">
@@ -346,11 +344,7 @@ const PostsList = ({ post }) => {
 									.filter((col) => col.postId === post.id)
 									.map((comment, index) => (
 										<div className="" key={index}>
-											<Comments
-												comment={comment}
-												post={post}
-												deleteComment={deleteComment}
-											/>
+											<Comments comment={comment} post={post} />
 										</div>
 									))}
 							{enableItemToShow(post.id, showSelectedGif) === true && (

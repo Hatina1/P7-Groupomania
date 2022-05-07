@@ -51,8 +51,9 @@ form div {
 }
 
 .img-animated {
-	width: auto;
-	height: 180px;
+	/* width: auto;height: 180px;*/
+	height: auto;
+	max-width: 75%;
 }
 
 .img-animated-gif {
@@ -225,10 +226,18 @@ p em {
 .color-thumb :hover {
 	color: #0d6efd;
 }
+.liked-blue {
+	color: #0d6efd;
+}
 
 .margin-change {
 	margin-bottom: 0;
 }
+
+.table-change {
+	width: 60%;
+}
+
 @media screen and (max-width: 425px) {
 	.card-responsive {
 		width: 380px;
@@ -279,6 +288,9 @@ p em {
 	.modal-responsive {
 		width: 90% !important;
 	}
+}
+.table-change {
+	width: 100%;
 }
 @media screen and (max-width: 376px) {
 	.card-responsive {

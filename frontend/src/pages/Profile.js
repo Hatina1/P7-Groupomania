@@ -1,11 +1,11 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import moment from "moment";
-import userService from "../Components/Services/UserService";
+import userService from "../components/Services/UserService";
 import { useNavigate, Link, useParams } from "react-router-dom";
-import ProfileModal from "../Components/Modals/ProfileModal";
-import validation from "../Components/Forms/validation";
-import SuppProfileModal from "../Components/Modals/SuppProfileModal";
+import ProfileModal from "../components/Modals/ProfileModal";
+import validation from "../components/Forms/validation";
+import SuppProfileModal from "../components/Modals/SuppProfileModal";
 import { useQuery, useQueryClient, useMutation } from "react-query";
 const Profile = () => {
 	const queryClient = useQueryClient();
@@ -19,33 +19,50 @@ const Profile = () => {
 	const [boolActive, setBoolActive] = useState({});
 	const [deleteUser, setDeleteUser] = useState({});
 
+	const activateUserMutation = useMutation(
+		(userId) =>
+			userService.activeUser(
+				currentUser.token,
+				userId,
+				user.isActive === 1 ? { isActive: 0 } : { isActive: 1 }
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries("user");
+			},
+		}
+	);
 	// Accounts activation/desactivation and delete by the user
 	const onClickHandleActive = async (e) => {
 		e.preventDefault();
-		console.log(boolActive);
-		if (e.target.id === "activate") {
-			//console.log(user.isActive);
-			user.isActive === 1
-				? setBoolActive({ isActive: 0 })
-				: setBoolActive({ isActive: 1 });
-			console.log(boolActive);
-			userService.activeUser(currentUser.token, user.id, boolActive);
-			if (currentUser.id === user.id) {
-				userService.logout();
-				navigate("/login");
-			}
+
+		//console.log(user.isActive);
+		/* user.isActive === 1 ? setBoolActive({ isActive: 0 }) : setBoolActive({ isActive: 1 }); */
+
+		activateUserMutation.mutate(user.id);
+
+		if (currentUser.id === user.id) {
+			userService.logout();
+			navigate("/login");
 		}
 	};
 
+	const deleteUserMutation = useMutation(
+		(userId) =>
+			userService.deleteUser(currentUser.token, userId, { isDeleted: 1 }),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries("user");
+			},
+		}
+	);
+
 	const onClickHandleDelete = async (e) => {
 		e.preventDefault();
-		console.log(user.isDeleted);
-		//modal suppression
-		setDeleteUser({ isDeleted: 1 });
-		console.log(deleteUser);
-		userService.deleteUser(currentUser.token, user.id, deleteUser);
+		//console.log(user.isDeleted);
+		deleteUserMutation.mutate(user.id);
 		if (currentUser.id === user.id) {
-			userService.logout();
+			//userService.logout();
 			navigate("/signup");
 		} else {
 			navigate("/admin");
@@ -65,7 +82,6 @@ const Profile = () => {
 		(updatedProfile) =>
 			userService.updateUser(currentUser.token, user.id, updatedProfile),
 		{
-			// After success or failure, refetch the todos query
 			onSuccess: () => {
 				queryClient.invalidateQueries("user");
 			},

@@ -61,16 +61,18 @@ const LoginForm = ({ submitForm }) => {
 				<div className="row d-flex justify-content-center align-items-center h-100">
 					<div className="col-12 col-md-9 col-lg-7 col-xl-4">
 						<div className="card card-border">
-							<div className="card-body p-5">
+							<div className="card-body p-md-5 p-sm-2">
 								<form className="loginForm" onSubmit={submitHandler}>
 									<div className="d-flex flex-column align-items-center">
 										<img src={icon} alt="Groupomania" className="gpnia-logo" />
-										<h2 className="text-center mb-3">Please Log in</h2>
+										<h2 className="text-center mb-3">
+											Connectez-vous à Groupomania App
+										</h2>
 									</div>
 									<div className="form-outline mb-3">
 										<label className="form-label"> Email </label>
 										<input
-											className="form-control"
+											className="form-control form-control-lg"
 											type="email"
 											name="email"
 											value={values.email}
@@ -87,7 +89,7 @@ const LoginForm = ({ submitForm }) => {
 									<div className="form-outline mb-3">
 										<label className="form-label"> Mot de passe </label>
 										<input
-											className="form-control"
+											className="form-control form-control-lg"
 											type="password"
 											name="password"
 											value={values.password}
@@ -101,21 +103,20 @@ const LoginForm = ({ submitForm }) => {
 											</p>
 										)}
 									</div>
-									<div className="d-flex justify-content-center">
+									<div className="d-flex justify-content-center flex-column">
 										<button
-											className="btn btn-primary btn-block "
+											className="btn btn-primary btn-block mt-2"
 											type="submit"
 										>
 											Se connecter
 										</button>
+										<Link
+											to="/signup"
+											className="text-center text-muted mt-4 mb-0"
+										>
+											Pas encore de compte ?
+										</Link>
 									</div>
-
-									<Link
-										to="/signup"
-										className="text-center text-muted mt-4 mb-0"
-									>
-										Pas encore de compte ?
-									</Link>
 								</form>
 							</div>
 						</div>

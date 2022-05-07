@@ -1,12 +1,17 @@
 const validation = (values) => {
 	let errors = {};
+	let regName = /^(?=.*\D{2,})(?=.*^([^0-9]*)$).*$/;
 	let reg = /.+@.+\..+/g; // /\D+@\D+.{2,}/
 	if (!values.firstname) {
 		errors.firstname = "Prénom requis";
+	} else if (!regName.test(values.firstname)) {
+		errors.firstname = "Le prénom semble contenir des caractères inappropriés";
 	}
 
 	if (!values.lastname) {
 		errors.lastname = "Nom de famille requis";
+	} else if (!regName.test(values.lastname)) {
+		errors.lastname = "Le nom semble contenir des caractères inappropriés";
 	}
 
 	if (!values.email) {

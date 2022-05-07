@@ -41,7 +41,7 @@ exports.login = (req, res, next) => {
 		where: { email: req.body.email },
 	})
 		.then((user) => {
-			if (!user) {
+			if (!user || user.isDeleted) {
 				return res.status(401).json({ error: "Utilisateur non trouvé !" });
 			}
 

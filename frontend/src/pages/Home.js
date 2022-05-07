@@ -1,10 +1,10 @@
 import React from "react";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import postService from "../Components/Services/PostService";
-import PostsList from "../Components/Posts/PostsList";
-import { ShowPostFormButton, ClosePostFormButton } from "../Components/Buttons";
-import { NewPostForm } from "../Components/Forms/PostForms";
+import postService from "../components/Services/PostService";
+import PostsList from "../components/Posts/PostsList";
+import { ShowPostFormButton, ClosePostFormButton } from "../components/Buttons";
+import { NewPostForm } from "../components/Forms/PostForms";
 
 const Home = () => {
 	const queryClient = useQueryClient();
@@ -14,9 +14,8 @@ const Home = () => {
 	const [showPostForm, setShowPostForm] = useState(false);
 
 	const addPost = useMutation(
-		(postData) => postService.fetchCreatePost(user.token, postData),
+		(postData) => postService.createPost(user.token, postData),
 		{
-			// After success or failure, refetch the todos query
 			onSuccess: () => {
 				queryClient.invalidateQueries("posts");
 			},
@@ -38,7 +37,7 @@ const Home = () => {
 		selectedFileP.hasOwnProperty("newPostFile") &&
 			postData.append("image", selectedFileP["newPostFile"]);
 		//console.log(selectedFileP);
-		//postService.fetchCreatePost(user.token, postData);
+		//postService.createPost(user.token, postData);
 		addPost.mutate(postData);
 		setNewPost({});
 		setSelectedFileP({});
@@ -95,14 +94,14 @@ const Home = () => {
 	//get all posts
 	/* useEffect(() => {
 		const getAllPosts = async () => {
-			const allPosts = await postService.fetchAllPosts(user.token);
+			const allPosts = await postService.getAllPosts(user.token);
 			setPosts(allPosts);
 		};
 		getAllPosts().catch(console.error);
 	}, []); */
 
 	const { isLoading, error, data } = useQuery("posts", () =>
-		postService.fetchAllPosts(user.token)
+		postService.getAllPosts(user.token)
 	);
 
 	const posts = data || [];
@@ -120,6 +119,7 @@ const Home = () => {
 						`An error has occurred:${error.message}`
 					</h1>
 				)}
+
 				<h1 className="my-3 text-white">
 					Bienvenue{" "}
 					<em className="fw-bold text-capitalize">{user.firstname} </em>!

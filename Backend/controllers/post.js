@@ -41,37 +41,13 @@ exports.createComment = (req, res, next) => {
 };
 
 exports.likePost = async (req, res, next) => {
-	//Post.findOne({ id: req.params.postId })
-
-	/*  sequelize
-		.query(
-			"SELECT * FROM `Posts` WHERE `id`=" +
-				req.params.postId +
-				"AND JSON_CONTAINS(`usersLiked`,'" +
-				req.body.userId +
-				"',$)",
-			{ type: QueryTypes.SELECT }
-		) 
-		
-		select id, 
-		details->>'$.name' as browser_str,
-		details->'$.name' as browser_name
-		from users
-		where ->>'$.name'="Chrome";
-
-	
-		*/
-
 	const arr = await sequelize.query(
 		"SELECT `id`, `likes`,`usersLiked` FROM `Posts` WHERE `id`=" +
 			req.params.postId,
 		{ type: QueryTypes.SELECT }
 	);
-	//.then((post) => {
-	//const usersListArr = post.usersLiked === "" ? [] : post.usersLiked;
-	//usersListArr.includes(req.body.userId)!
-	//const usersArr = arr[0].usersLiked;
-	console.log(arr[0].usersLiked, typeof arr[0].usersLiked);
+
+	//console.log(arr[0].usersLiked, typeof arr[0].usersLiked);
 
 	let usersListArr = [];
 	if (typeof arr[0].usersLiked !== "object") {
@@ -79,24 +55,9 @@ exports.likePost = async (req, res, next) => {
 	} else if (typeof arr[0].usersLiked === "object") {
 		usersListArr = arr[0].usersLiked;
 	}
-	/* 
-	
-	typeof arr[0].usersLiked === "object" ? (arr[0].usersLiked = null) ? (usersListArr = [""])
-			: (usersListArr = arr[0].usersLiked)
-		: usersListArr.push(arr[0].usersLiked); */
 
-	console.log(usersListArr);
+	//console.log(usersListArr);
 	if (!usersListArr.some((element) => element === req.body.userId)) {
-		//usersListArr.push(req.body.userId);
-		//console.log(usersListArr.length);
-		//Post.increment("likes", { by: 1, where: { id: req.params.postId } });
-		/* sequelize.query(
-			"UPDATE `Posts` SET `likes`=`likes`+ 1 WHERE `id`=" + req.params.postId,
-			{
-				type: QueryTypes.UPDATE,
-			}
-		); */
-
 		sequelize
 			.query(
 				"UPDATE `Posts` SET `likes`=`likes`+ 1, `usersLiked`= JSON_ARRAY_APPEND(`usersLiked`, '$'," +
@@ -117,57 +78,29 @@ exports.likePost = async (req, res, next) => {
 	} else if (usersListArr.some((element) => element === req.body.userId)) {
 		console.log(usersListArr);
 		let idx = usersListArr.findIndex((element) => element === req.body.userId);
-		let usersListArrFiltered = usersListArr.filter(
+		/* 	let usersListArrFiltered = usersListArr.filter(
 			(user) => user !== req.body.userId
 		);
-
-		if (usersListArrFiltered.length === 0) {
-			//Post.increment("likes", { by: -1, where: { id: req.params.postId } });
-			//insert ignore into t (id, j) values (1, NULL) CAST( 0 AS JSON)
-
-			sequelize
-				.query(
-					"UPDATE  `Posts` SET `likes`= 0 , `usersLiked`= JSON_REMOVE(`usersLiked`, '$['," +
-						idx +
-						"]') WHERE `id`=" +
-						req.params.postId,
-					{
-						type: QueryTypes.UPDATE,
-					}
-				)
-				.then(() => {
-					res.status(200).json({ message: "Like removed !" });
-				})
-				.catch((error) => {
-					console.log("FAILED BECAUSE 2nd cond:", error.message);
-					res.status(400).json({ error });
-				});
-		} else {
-			//Post.increment("likes", { by: -1, where: { id: req.params.postId } });
-			sequelize
-				.query(
-					"UPDATE  `Posts` SET `likes`= 0 , `usersLiked`= CAST( " +
-						usersListArrFiltered +
-						" AS JSON) WHERE `id`=" +
-						req.params.postId,
-					{
-						type: QueryTypes.UPDATE,
-					}
-				)
-				.then(() => {
-					res.status(200).json({ message: "Like removed !" });
-				})
-				.catch((error) => {
-					console.log("FAILED BECAUSE 3rd cond:", error.message);
-					res.status(400).json({ error });
-				});
-		}
+		Post.increment("likes", { by: -1, where: { id: req.params.postId } });
+		insert ignore into t (id, j) values (1, NULL) CAST( 0 AS JSON) */
+		sequelize
+			.query(
+				"UPDATE  `Posts` SET `likes`= `likes`- 1 , `usersLiked`= JSON_REMOVE(`usersLiked`, '$[" +
+					idx +
+					"]') WHERE `id`=" +
+					req.params.postId,
+				{
+					type: QueryTypes.UPDATE,
+				}
+			)
+			.then(() => {
+				res.status(200).json({ message: "Like removed !" });
+			})
+			.catch((error) => {
+				console.log("FAILED BECAUSE 2nd cond:", error.message);
+				res.status(400).json({ error });
+			});
 	}
-	/*})
-		.catch((error) => {
-			console.log("FAILED BECAUSE overall:", error.message);
-			res.status(400).json({ error });
-		});*/
 };
 
 exports.getOnePost = (req, res, next) => {
@@ -200,11 +133,27 @@ exports.modifyPost = (req, res, next) => {
 							  }
 							: // if image is not changed we get directly the body of the request
 							  { ...JSON.parse(req.body.updatepost) };
-						Post.update({ ...postObj }, { where: { id: req.params.postId } })
-							.then(() => {
-								res.status(200).json({ message: "Post modified !" });
-							})
-							.catch((error) => res.status(403).json({ error }));
+						if (req.file) {
+							// image name is first recuperated
+							const filename = post.imageUrl.split("/images/")[1];
+							// image is deleted (unlinked) from the directory images
+							fs.unlink(`images/${filename}`, () => {
+								Post.update(
+									{ ...postObj },
+									{ where: { id: req.params.postId } }
+								)
+									.then(() => {
+										res.status(200).json({ message: "Post modified !" });
+									})
+									.catch((error) => res.status(403).json({ error }));
+							});
+						} else {
+							Post.update({ ...postObj }, { where: { id: req.params.postId } })
+								.then(() => {
+									res.status(200).json({ message: "Post modified !" });
+								})
+								.catch((error) => res.status(403).json({ error }));
+						}
 					}
 				})
 				.catch((error) => res.status(500).json({ error }));

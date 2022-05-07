@@ -25,6 +25,7 @@ const PostFeatures = ({
 	//const [showCommNum, setShowCommNum] = useState({});
 	const [showCommentForm, setShowCommentForm] = useState({});
 	const [showPostModal, setShowPostModal] = useState({});
+	const queryClient = useQueryClient();
 
 	const handleDisplayPostModal = (e, postId) => {
 		e.preventDefault();
@@ -43,16 +44,29 @@ const PostFeatures = ({
 		}
 	};
 
+	const likePostMutation = useMutation(
+		(postId) =>
+			postService.likePost(user.token, postId, {
+				userId: user.id,
+				postId: postId,
+			}),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries("posts");
+			},
+		}
+	);
+
 	const handleLikes = (e, postId) => {
 		e.preventDefault();
-		//console.log(post.likes);
+		/* console.log(post.likes);
 		const likeSent = {};
 		likeSent.userId = user.id;
-		likeSent.postId = postId;
-		postService.fetchLikePost(user.token, postId, likeSent);
+		likeSent.postId = postId; */
+		likePostMutation.mutate(postId);
 	};
 
-	useEffect(() => {
+	/* useEffect(() => {
 		if (showCommNum) {
 			console.log(showCommNum);
 		}
@@ -74,7 +88,7 @@ const PostFeatures = ({
 		if (showPostModal) {
 			console.log(showPostModal);
 		}
-	}, [showPostModal]);
+	}, [showPostModal]); */
 
 	const enableItemToShow = (postId, itemToShow) => {
 		if (itemToShow.hasOwnProperty(postId)) {
@@ -83,6 +97,24 @@ const PostFeatures = ({
 			return false;
 		}
 	};
+
+	const getPostId = () => {
+		if (Object.keys(showPostModal) !== undefined) {
+			let arrKey = Object.keys(showPostModal);
+			console.log(arrKey[0]);
+			return arrKey[0];
+		}
+	};
+
+	const updatePostMutation = useMutation(
+		(postUpdateData) =>
+			postService.modifyPost(user.token, getPostId(), postUpdateData),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries("posts");
+			},
+		}
+	);
 
 	const submitUpdatePost = (e, postId) => {
 		e.preventDefault();
@@ -102,15 +134,25 @@ const PostFeatures = ({
 		postModal.hasOwnProperty("updatedFile") &&
 			postUpdateData.append("image", postModal["updatedFile"]);
 
-		postService.fetchModifyPost(user.token, postId, postUpdateData);
-		//setPostModal({});
+		updatePostMutation.mutate(postUpdateData);
+
+		setPostModal({});
 		setShowPostModal({});
 	};
+
+	const deletePostMutation = useMutation(
+		(postId) => postService.deletePost(user.token, postId),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries("posts");
+			},
+		}
+	);
 
 	const deletePost = (e, postId) => {
 		e.preventDefault();
 
-		postService.fetchDeletePost(user.token, postId);
+		deletePostMutation.mutate(postId);
 	};
 
 	const checkCommExists = (commList, postsList) => {
@@ -158,7 +200,7 @@ const PostFeatures = ({
 	/* useEffect(() => {
 		console.log(user.id);
 		const getAllComments = async () => {
-			const allComments = await commentService.fetchAllComments(user.token);
+			const allComments = await commentService.getAllComments(user.token);
 			setComments(allComments);
 		};
 
@@ -166,7 +208,7 @@ const PostFeatures = ({
 	}, []); */
 
 	const { isLoading, error, data } = useQuery("comments", () =>
-		commentService.fetchAllComments(user.token)
+		commentService.getAllComments(user.token)
 	);
 
 	const comments = data || [];
@@ -188,15 +230,33 @@ const PostFeatures = ({
 			});
 		}
 	};
-
+	const liked = (post) => {
+		let listUsersLike = Object.values(post.usersLiked);
+		if (listUsersLike.includes(user.id)) {
+			return "liked-blue";
+		}
+	};
+	/* 
+	listUsersLike.some((element) => element === user.id)
 	useEffect(() => {
 		if (showSuppPostModal) {
 			console.log(showSuppPostModal);
 		}
-	}, [showSuppPostModal]);
+	}, [showSuppPostModal]); */
 
 	return (
 		<section className="card-section-actions d-flex justify-content-evenly align-items-center flex-wrap fw-bold">
+			<a
+				className="card-p-comment-num text-secondary text-decoration-none"
+				href="/"
+				target="_blank"
+				onClick={(e) => handleDisplayCommentForm(e, post.id)}
+				data-bs-toggle="tooltip"
+				data-bs-placement="bottom"
+				title="Répondre"
+			>
+				<FontAwesomeIcon icon={faReply} className="px-1 py-2 " />
+			</a>
 			{enableItemToShow(post.id, showCommNum) === false && (
 				<div>
 					{checkCommExists(comments, post) === 0 ? (
@@ -266,24 +326,19 @@ const PostFeatures = ({
 				title="Liker"
 			>
 				<div className="d-flex justify-content-center align-items-center">
-					<FontAwesomeIcon icon={faThumbsUp} className="px-1 py-2" />
-					<span>{post.likes === 0 ? null : post.likes}</span>
+					<FontAwesomeIcon
+						icon={faThumbsUp}
+						className={`px-1 py-2 ${liked(post)}`}
+					/>
+					<span className={liked(post)}>
+						{post.likes === 0 ? null : post.likes}
+					</span>
 				</div>
 			</a>
-			<a
-				className="card-p-comment-num text-secondary text-decoration-none"
-				href="/"
-				target="_blank"
-				onClick={(e) => handleDisplayCommentForm(e, post.id)}
-				data-bs-toggle="tooltip"
-				data-bs-placement="bottom"
-				title="Répondre"
-			>
-				<FontAwesomeIcon icon={faReply} className="px-1 py-2 " />
-			</a>
+
 			{user.isAdmin === true && (
 				<a
-					className=" card-p-comment-num text-secondary text-decoration-none icons-change"
+					className=" card-p-comment-num text-secondary text-decoration-none icons-change text-danger"
 					href="/"
 					target="_blank"
 					onClick={(e) => {
@@ -299,7 +354,7 @@ const PostFeatures = ({
 			)}
 			{user.isAdmin === true && (
 				<a
-					className="card-p-comment-num text-secondary text-decoration-none icons-change"
+					className="card-p-comment-num text-secondary text-decoration-none icons-change text-danger"
 					href="/"
 					target="_blank"
 					onClick={(e) => handleSuppPostModal(e, post.id)}
