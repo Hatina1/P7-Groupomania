@@ -33,17 +33,13 @@ db.users = require("./user.js")(sequelize, Sequelize);
 db.posts = require("./post.js")(sequelize, Sequelize);
 db.comments = require("./comment.js")(sequelize, Sequelize);
 
-/* db.sequelize.sync({ force: true }).then(() => {
-	//console.log(`Database & tables created!`);
-}); */
+db.sequelize.sync().then(() => {
+	console.log(`Tables created!`);
+});
 
-// This will run .sync()
-
-/* 
-db.comments.sync({ force: true });
+/* db.comments.sync({ force: true });
 db.posts.sync({ force: true }).then(() => {});
 db.users.sync({ force: true }).then(() => {});
-
 db.users.sync({ alter: true }).then(() => {
 	db.posts.sync({ alter: true }).then(() => {
 		db.comments.sync({ alter: true });
