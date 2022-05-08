@@ -240,35 +240,3 @@ exports.getAllComments = (req, res, next) => {
 		})
 		.catch((error) => res.status(404).json({ error }));
 };
-
-/* 
-include: [{ model: Comment, as: "comments", foreignKey: "postId" }],
-Post.findAll() //{ include: ["comments"] } //{ include: [Comment] }
-
-exports.getAllCommentsbyPost = (req, res, next) => {
-	Comment.findAll()
-		.then((comments) => {
-			res.status(200).json(comments);
-		})
-		.catch((error) => res.status(404).json({ error }));
-}; 
-Post.findAll({
-	include: { model: Comment, required: true },
-	order: [["createdAt", "DESC"]],
-})  
-where:{
-			postId:req.params.postId
-		}
-sequelize
-		.query(
-			"SELECT  `Comment`.`id`, `Comment`.`content`, `Comment`.`imageUrl`,`Comment`.`createdAt`,`Comment`.`postId`,`Post`.`userId` AS `Posts.userId` FROM `Comments` AS `Comment` LEFT OUTER JOIN `Posts` AS `Post`  ON `Comment`.`postId` = `Post`.`id` WHERE `Post`.`id` = req.params.postId ORDER BY  COL_ORDER TYPE_ORDER",
-			{
-				replacements: {
-					COL_ORDER: `createdAt`,
-					TYPE_ORDER: "DESC ",
-				},
-				replacements: [`createdAt`, "DESC "],
-				type: QueryTypes.SELECT,
-			}
-		)
-*/

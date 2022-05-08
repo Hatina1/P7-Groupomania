@@ -87,30 +87,6 @@ exports.getOneUser = (req, res, next) => {
 		.catch((error) => res.status(404).json({ error }));
 };
 
-/* User.findOne(
-	{
-		attributes: [
-			"id",
-			"firstname",
-			"lastname",
-			"email",
-			"isAdmin",
-			"isActive",
-			"isDeleted",
-		],
-	},
-	{ where: { id: req.params.id } }
-) 
-
-sequelize
-		.query(
-			"SELECT `User`.`id`,`User`.`firstname`,`User`.`lastname`,`User`.`email`,`User`.`isActive`,`User`.`isAdmin`,`User`.`isDeleted` ,`User`.`createdAt` FROM `Users` AS `User` WHERE `User`.`id` = " +
-				req.params.id,
-			{
-				type: QueryTypes.SELECT,
-			}
-		)*/
-
 exports.modifyUser = (req, res, next) => {
 	User.update({ ...req.body }, { where: { id: req.params.id } })
 		.then(() => {
@@ -157,19 +133,3 @@ exports.getAllUsers = (req, res, next) => {
 		})
 		.catch((error) => res.status(404).json({ error }));
 };
-
-/* exports.getOneUser = (req, res, next) => {
-
-	sequelize
-		.query(
-			"SELECT `User`.`id`,`User`.`firstname`,`User`.`lastname`,`User`.`email`,`User`.`isActive`,`User`.`isAdmin` ,`User`.`createdAt` FROM `Users` AS `User` WHERE `User`.`id` =" + sss,
-			{
-				//replacements: [`createdAt`, `DESC`],
-				type: QueryTypes.SELECT,
-			}
-		)
-		.then((posts) => {
-			res.status(200).json(posts);
-		})
-		.catch((error) => res.status(404).json({ error }));
-}; */
