@@ -176,12 +176,6 @@ const PostsList = ({ post }) => {
 			};
 		});
 	};
-	//	delete post
-	const deletePost = (e, postId) => {
-		e.preventDefault();
-
-		postService.deletePost(user.token, postId);
-	};
 	//	create new Comment
 	// Button send enable
 	const enableCommentButton = (id) => {
@@ -199,13 +193,14 @@ const PostsList = ({ post }) => {
 			return Object.keys(showCommentForm);
 		}
 	};
+
 	const addCommentMutation = useMutation(
 		(commentData) =>
 			commentService.createComment(user.token, getPostId(), commentData),
 
 		{
 			onSuccess: () => {
-				queryClient.invalidateQueries(["posts", getPostId(), "comments"]);
+				queryClient.invalidateQueries(["comments"]);
 			},
 		}
 	);
@@ -227,7 +222,7 @@ const PostsList = ({ post }) => {
 		selectedFileC.hasOwnProperty(index) &&
 			commentData.append("image", selectedFileC[index]);
 
-		addCommentMutation.mutate(commentData);
+		addCommentMutation.mutateAsync(commentData);
 
 		//commentService.createComment(user.token, postId, commentData);
 
@@ -240,9 +235,16 @@ const PostsList = ({ post }) => {
 		//refetch();
 		//e.target.reset();
 	};
-	//	get all comments
-	const { error, data } = useQuery(["comments", post.id], () =>
-		commentService.getAllComments(user.token)
+	//	get all comments {refetchInterval: 10000,} { cacheTime: 0 }
+	const { error, data } = useQuery(
+		["comments"],
+		() => commentService.getAllComments(user.token),
+		{
+			refetchOnWindowFocus: true,
+			staleTime: 0,
+			cacheTime: 0,
+			refetchInterval: 10000,
+		}
 	);
 	const comments = data || [];
 
@@ -292,7 +294,7 @@ const PostsList = ({ post }) => {
 								</em>
 							) : null}
 							{showCommentForm[post.id] && (
-								<div className="card-footer">
+								<div className="card-footer" id={`reply-${post.id}`}>
 									<NewCommentForm
 										postId={post.id}
 										index={post.id}

@@ -36,6 +36,9 @@ form div {
 .card-responsive {
 	width: 800px;
 }
+.reply-hover:hover {
+	color: rgb(23 122 183) !important;
+}
 
 /* .card-footer {
 	display: flex;

@@ -14,6 +14,7 @@ import "./styles/bootstrap.min.css";
 import "./styles/headers.css";
 //import { ErrorBoundary } from "react-error-boundary";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 const queryClient = new QueryClient();
 
 function App() {
@@ -55,6 +56,7 @@ function App() {
 							<Route path="/profile/:profileId" element={<Profile />} />
 							<Route path="/admin" element={<Admin />} />
 						</Routes>
+						<ReactQueryDevtools initialIsOpen={false} />
 					</QueryClientProvider>
 				</div>
 				<Footer />

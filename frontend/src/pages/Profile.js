@@ -62,9 +62,8 @@ const Profile = () => {
 
 		deleteUserMutation.mutate(user.id);
 		if (currentUser.id === user.id) {
-			userService.logout();
+			//userService.logout();
 			navigate("/signup");
-			//window.location.reload();
 		} else {
 			navigate("/admin");
 			//window.location.reload();

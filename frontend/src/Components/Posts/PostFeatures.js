@@ -22,7 +22,6 @@ const PostFeatures = ({
 	const [postModal, setPostModal] = useState({});
 	const [showPostModal, setShowPostModal] = useState({});
 	const queryClient = useQueryClient();
-
 	const handleDisplayPostModal = (e, postId) => {
 		e.preventDefault();
 		if (showPostModal.hasOwnProperty(postId)) {
@@ -190,8 +189,8 @@ const PostFeatures = ({
 	return (
 		<section className="card-section-actions d-flex justify-content-evenly align-items-center flex-wrap fw-bold">
 			<a
-				className="card-p-comment-num text-secondary text-decoration-none"
-				href="/"
+				className="card-p-comment-num text-secondary text-decoration-none reply-hover"
+				href={`#reply-${post.id}`}
 				target="_blank"
 				onClick={(e) => handleDisplayCommentForm(e, post.id)}
 				data-bs-toggle="tooltip"
