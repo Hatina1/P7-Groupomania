@@ -1,10 +1,8 @@
 import React from "react";
-import { useState, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "react-query";
-import ReactDOM from "react-dom";
+import { useState } from "react";
+import { useMutation, useQueryClient } from "react-query";
 import "../styles/bootstrap.min.css";
 import "../styles/headers.css";
-import moment from "moment";
 import commentService from "./Services/CommentService";
 import SuppCommentModal from "./Modals/SuppCommentModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,12 +11,13 @@ import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 function Comments({ comment, post }) {
 	const queryClient = useQueryClient();
 	const user = JSON.parse(localStorage.getItem("user"));
+	//get comment creation date
 	const sqlToJsDate = (sqlDate) => {
 		var sqlDateFormat = new Date(sqlDate);
 		var date = new Intl.DateTimeFormat().format(sqlDateFormat);
 		return date;
 	};
-
+	//show delete comment modal
 	const [showSuppCommentModal, setShowSuppCommentModal] = useState({});
 	const handleSuppCommentModal = (e, commentId) => {
 		e.preventDefault();
@@ -36,7 +35,15 @@ function Comments({ comment, post }) {
 			});
 		}
 	};
+	const enableItemToShow = (commentId, itemToShow) => {
+		if (itemToShow.hasOwnProperty(commentId)) {
+			return itemToShow[commentId];
+		} else {
+			return false;
+		}
+	};
 
+	//delete comment
 	const getCommId = () => {
 		if (Object.keys(showSuppCommentModal) !== undefined) {
 			let arrKey = Object.keys(showSuppCommentModal);
@@ -52,29 +59,14 @@ function Comments({ comment, post }) {
 			},
 		}
 	);
-
 	const deleteComment = (e, postId) => {
 		e.preventDefault();
 		deleteCommentMutation.mutate(postId);
 	};
 
-	/* useEffect(() => {
-		if (showSuppCommentModal) {
-			console.log(showSuppCommentModal);
-		}
-	}, [showSuppCommentModal]); */
-
-	const enableItemToShow = (commentId, itemToShow) => {
-		if (itemToShow.hasOwnProperty(commentId)) {
-			return itemToShow[commentId];
-		} else {
-			return false;
-		}
-	};
-
 	return (
-		<section className="card-body-comment">
-			<article className="card-article-comment">
+		<section key={comment.id} className="card-body-comment">
+			<article key={comment.id} className="card-article-comment">
 				<div className="card-body-header d-flex justify-content-between">
 					<p>
 						Réponse de {comment.firstname} {comment.lastname}
@@ -90,7 +82,7 @@ function Comments({ comment, post }) {
 				)}
 				{comment.imageUrl && (
 					<a href={comment.imageUrl} className="text-decoration-none">
-						<img className="img-animated" src={comment.imageUrl} alt="image" />
+						<img className="img-animated" src={comment.imageUrl} alt="random" />
 					</a>
 				)}
 

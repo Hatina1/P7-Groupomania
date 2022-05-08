@@ -20,19 +20,6 @@ const getAllComments = (token) =>
 	})
 		.then((res) => res.json())
 		.catch((err) => console.log("What's happening ?", err));
-//multipart/form-data
-/* const fetchCreateComments = (token, postId, comment) =>
-	fetch(`http://localhost:3000/api/posts/${postId}/comments`, {
-		method: "POST",
-		headers: {
-			Accept: "application/json",
-			"Content-Type": "application/json",
-			Authorization: "Bearer " + token,
-		},
-		body: JSON.stringify(comment),
-	})
-		.then((res) => res.json())
-		.catch((err) => console.log("Comment creation error :", err)); */
 
 const createComment = (token, postId, comment) => {
 	fetch(`http://localhost:3000/api/posts/${postId}/comments`, {

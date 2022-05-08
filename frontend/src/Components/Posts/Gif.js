@@ -1,7 +1,6 @@
 import React from "react";
 import "../../styles/bootstrap.min.css";
 import "../../styles/headers.css";
-import ReactDOM from "react-dom";
 
 function Gifs({ postId, gif, index, handleSelectGif }) {
 	return (

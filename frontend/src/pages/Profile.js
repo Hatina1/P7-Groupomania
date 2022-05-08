@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import moment from "moment";
 import userService from "../components/Services/UserService";
 import { useNavigate, Link, useParams } from "react-router-dom";
@@ -10,15 +10,17 @@ import { useQuery, useQueryClient, useMutation } from "react-query";
 const Profile = () => {
 	const queryClient = useQueryClient();
 	const currentUser = JSON.parse(localStorage.getItem("user"));
-	//const [user, setUser] = useState([]);
 	const navigate = useNavigate();
+	const [errors, setErrors] = useState({});
+	const [showSuppProfileModal, setShowSuppProfileModal] = useState(false);
+	const [profileModal, setProfileModal] = useState({});
+	const [showProfileModal, setShowProfileModal] = useState(false);
 	const date = (sqlDate) => {
 		var dateCreation = moment(sqlDate).format("DD/MM/YYYY");
 		return dateCreation;
 	};
-	const [boolActive, setBoolActive] = useState({});
-	const [deleteUser, setDeleteUser] = useState({});
 
+	// Accounts activation/desactivation
 	const activateUserMutation = useMutation(
 		(userId) =>
 			userService.activeUser(
@@ -32,13 +34,8 @@ const Profile = () => {
 			},
 		}
 	);
-	// Accounts activation/desactivation and delete by the user
 	const onClickHandleActive = async (e) => {
 		e.preventDefault();
-
-		//console.log(user.isActive);
-		/* user.isActive === 1 ? setBoolActive({ isActive: 0 }) : setBoolActive({ isActive: 1 }); */
-
 		activateUserMutation.mutate(user.id);
 
 		if (currentUser.id === user.id) {
@@ -46,38 +43,39 @@ const Profile = () => {
 			navigate("/login");
 		}
 	};
-
+	// Account deletion
+	const handleSuppProfileModal = (e) => {
+		e.preventDefault();
+		setShowSuppProfileModal(!showSuppProfileModal);
+	};
 	const deleteUserMutation = useMutation(
 		(userId) =>
 			userService.deleteUser(currentUser.token, userId, { isDeleted: 1 }),
 		{
 			onSuccess: () => {
-				queryClient.invalidateQueries("user");
+				queryClient.invalidateQueries("users");
 			},
 		}
 	);
-
 	const onClickHandleDelete = async (e) => {
 		e.preventDefault();
-		//console.log(user.isDeleted);
+
 		deleteUserMutation.mutate(user.id);
 		if (currentUser.id === user.id) {
-			//userService.logout();
+			userService.logout();
 			navigate("/signup");
+			//window.location.reload();
 		} else {
 			navigate("/admin");
+			//window.location.reload();
 		}
 	};
 
-	const [profileModal, setProfileModal] = useState({});
-	const [showProfileModal, setShowProfileModal] = useState(false);
+	// Update user data
 	const handleDisplayProfileModal = (e) => {
 		e.preventDefault();
 		setShowProfileModal(!showProfileModal);
 	};
-
-	const [errors, setErrors] = useState({});
-
 	const updateUser = useMutation(
 		(updatedProfile) =>
 			userService.updateUser(currentUser.token, user.id, updatedProfile),
@@ -95,8 +93,7 @@ const Profile = () => {
 		updatedProfile.lastname = profileModal["lastname"];
 		updatedProfile.email = profileModal["email"];
 		updateUser.mutate(updatedProfile);
-		//userService.updateUser(currentUser.token, user.id, updatedProfile);
-		//setShowProfileModal(!showProfileModal);
+
 		setProfileModal({});
 	};
 	const handleInputUpdateProfile = (e) => {
@@ -130,45 +127,17 @@ const Profile = () => {
 		});
 	};
 
+	// Account logout
 	const logOut = () => {
 		userService.logout();
 	};
-
+	// Get user data
 	let params = useParams();
 	const idUser = params.profileId;
-	/* 	useEffect(() => {
-		const getOneUser = async () => {
-			const userProfile = await userService.getOneUser(
-				currentUser.token,
-				idUser
-			);
-			setUser(userProfile[0]);
-		};
-		getOneUser().catch(console.error);
-	}, []); */
-
 	const { isLoading, error, data } = useQuery("user", () =>
 		userService.getOneUser(currentUser.token, idUser)
 	);
 	const user = data || [];
-
-	useEffect(() => {
-		if (showProfileModal) {
-			console.log(showProfileModal);
-		}
-	}, [showProfileModal]);
-
-	const [showSuppProfileModal, setShowSuppProfileModal] = useState(false);
-	const handleSuppProfileModal = (e) => {
-		e.preventDefault();
-		setShowSuppProfileModal(!showSuppProfileModal);
-	};
-
-	useEffect(() => {
-		if (showSuppProfileModal) {
-			console.log(showSuppProfileModal);
-		}
-	}, [showSuppProfileModal]);
 
 	return (
 		<div className="px-2">

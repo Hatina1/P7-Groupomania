@@ -13,6 +13,35 @@ const Home = () => {
 	const [selectedFileP, setSelectedFileP] = useState({});
 	const [showPostForm, setShowPostForm] = useState(false);
 
+	// Create New Post
+	const handleShowPostForm = () => {
+		setShowPostForm(!showPostForm);
+	};
+	const handleChangeInputPost = (e) => {
+		const { id, value } = e.target;
+		setNewPost((prevState) => {
+			return {
+				...prevState,
+				[id]: value,
+			};
+		});
+	};
+	const handleChangeFilePost = (e) => {
+		const { name, files } = e.target;
+		setSelectedFileP((prevState) => {
+			return {
+				...prevState,
+				[name]: files[0],
+			};
+		});
+	};
+	const enablePostButton = (id1, id2) => {
+		if (newPost.hasOwnProperty(id1) && newPost.hasOwnProperty(id2)) {
+			return false;
+		} else {
+			return true;
+		}
+	};
 	const addPost = useMutation(
 		(postData) => postService.createPost(user.token, postData),
 		{
@@ -21,7 +50,6 @@ const Home = () => {
 			},
 		}
 	);
-
 	const submitNewPost = (e) => {
 		e.preventDefault();
 
@@ -36,8 +64,7 @@ const Home = () => {
 		postData.append("newpost", JSON.stringify(postSent));
 		selectedFileP.hasOwnProperty("newPostFile") &&
 			postData.append("image", selectedFileP["newPostFile"]);
-		//console.log(selectedFileP);
-		//postService.createPost(user.token, postData);
+
 		addPost.mutate(postData);
 		setNewPost({});
 		setSelectedFileP({});
@@ -46,37 +73,7 @@ const Home = () => {
 
 		//console.log(newPost);
 	};
-
-	const handleChangeInputPost = (e) => {
-		const { id, value } = e.target;
-		setNewPost((prevState) => {
-			return {
-				...prevState,
-				[id]: value,
-			};
-		});
-	};
-
-	const handleChangeFilePost = (e) => {
-		const { name, files } = e.target;
-		setSelectedFileP((prevState) => {
-			return {
-				...prevState,
-				[name]: files[0],
-			};
-		});
-	};
-
-	const enablePostButton = (id1, id2) => {
-		if (newPost.hasOwnProperty(id1) && newPost.hasOwnProperty(id2)) {
-			return false;
-		} else {
-			return true;
-		}
-	};
-
 	// Button send enable
-
 	const changePostButtonStyle = (id1, id2) => {
 		if (newPost.hasOwnProperty(id1) && newPost.hasOwnProperty(id2)) {
 			return "comments-button-enabled";
@@ -85,30 +82,11 @@ const Home = () => {
 		}
 	};
 
-	/* 	useEffect(() => {
-		if (newPost) {
-			console.log(newPost);
-		}
-	}, [newPost]);
- */
-	//get all posts
-	/* useEffect(() => {
-		const getAllPosts = async () => {
-			const allPosts = await postService.getAllPosts(user.token);
-			setPosts(allPosts);
-		};
-		getAllPosts().catch(console.error);
-	}, []); */
-
+	// Get All Posts
 	const { isLoading, error, data } = useQuery("posts", () =>
 		postService.getAllPosts(user.token)
 	);
-
 	const posts = data || [];
-
-	const handleShowPostForm = () => {
-		setShowPostForm(!showPostForm);
-	};
 
 	return (
 		<div className="px-2">

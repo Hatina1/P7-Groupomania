@@ -1,41 +1,25 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import userService from "../components/Services/UserService";
-import { useNavigate, Link } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import { Link } from "react-router-dom";
+import { useQuery } from "react-query";
 
 function Admin() {
 	const user = JSON.parse(localStorage.getItem("user"));
-	//const [users, setUsers] = useState([]);
+	//get name searched
 	const [name, setName] = useState("");
-	const { isLoading, error, data } = useQuery("users", () =>
+	//get users list
+	const { isLoading, data } = useQuery("users", () =>
 		userService.getAllUsers(user.token)
 	);
-
 	const users = data || [];
-
-	const [filteredUsers, setFilteredUsers] = useState(users);
+	//set filtered users to all users at first
+	const [filteredUsers, setFilteredUsers] = useState([]);
 	useEffect(() => {
 		setFilteredUsers(users);
-	}, []);
-	/* useEffect(() => {
-		const getAllUsers = async () => {
-			const allUsers = await userService.getAllUsers(user.token);
-			allUsers.sort(function (a, b) {
-				if (a.id > b.id) {
-					return 1;
-				}
-				if (a.id < b.id) {
-					return -1;
-				}
-				return 0;
-			});
-			setUsers(allUsers);
-			setFilteredUsers(allUsers);
-		};
-		getAllUsers().catch(console.error);
-	}, []); */
+	}, [users]);
 
+	//filter by name
 	const filter = (e) => {
 		const keyword = e.target.value;
 

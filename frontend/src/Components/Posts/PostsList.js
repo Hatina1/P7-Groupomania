@@ -12,7 +12,6 @@ import { NewCommentForm } from "../Forms/PostForms";
 
 const PostsList = ({ post }) => {
 	const queryClient = useQueryClient();
-	//	const [comments, setComments] = useState([]);
 	const user = JSON.parse(localStorage.getItem("user"));
 	const [postModal, setPostModal] = useState({});
 	const [newComment, setNewComment] = useState({});
@@ -25,6 +24,7 @@ const PostsList = ({ post }) => {
 	const [showCommentForm, setShowCommentForm] = useState({});
 	const [showPostModal, setShowPostModal] = useState({});
 
+	//	display comments
 	const handleDisplayCommNum = (e, postId) => {
 		e.preventDefault();
 		if (showCommNum.hasOwnProperty(postId)) {
@@ -41,7 +41,7 @@ const PostsList = ({ post }) => {
 			});
 		}
 	};
-
+	//	display post update modal
 	const handleDisplayPostModal = (e, postId) => {
 		e.preventDefault();
 		if (showPostModal.hasOwnProperty(postId)) {
@@ -58,7 +58,27 @@ const PostsList = ({ post }) => {
 			});
 		}
 	};
-
+	const getValueInputPost = (e, title, content, imageUrl) => {
+		setPostModal((prevState) => {
+			return {
+				...prevState,
+				updatedTitle: title,
+			};
+		});
+		setPostModal((prevState) => {
+			return {
+				...prevState,
+				updatedMessage: content,
+			};
+		});
+		/* setPostModal((prevState) => {
+			return {
+				...prevState,
+				updatedFile: imageUrl,
+			};
+		}); */
+	};
+	//	display comment form
 	const handleDisplayCommentForm = (e, postId) => {
 		e.preventDefault();
 		if (showCommentForm.hasOwnProperty(postId)) {
@@ -75,7 +95,7 @@ const PostsList = ({ post }) => {
 			});
 		}
 	};
-
+	//	display gifs div
 	const handleClickDisplayGifs = (postId) => {
 		if (showGifs.hasOwnProperty(postId)) {
 			setShowGifs({
@@ -91,41 +111,7 @@ const PostsList = ({ post }) => {
 			});
 		}
 	};
-
-	/* 
-	useEffect(() => {
-		if (showCommNum) {
-			console.log(showCommNum);
-		}
-	}, [showCommNum]);
-
-	useEffect(() => {
-		if (showCommentForm) {
-			console.log(showCommentForm);
-		}
-	}, [showCommentForm]);
-
-	useEffect(() => {
-		if (showGifs) {
-			console.log(showGifs);
-		}
-	}, [showGifs]);
-
-	useEffect(() => {
-		if (showPostModal) {
-			console.log(showPostModal);
-		}
-	}, [showPostModal]);
-
-
-	
-	
-	useEffect(() => {
-		if (selectedGif) {
-			console.log(selectedGif);
-		}
-	}, [selectedGif]); */
-
+	// new Comment content
 	const enableItemToShow = (postId, itemToShow) => {
 		if (itemToShow.hasOwnProperty(postId)) {
 			return itemToShow[postId];
@@ -143,7 +129,6 @@ const PostsList = ({ post }) => {
 			};
 		});
 	};
-
 	const handleChangeFile = (event) => {
 		const { name, files } = event.target;
 
@@ -154,68 +139,7 @@ const PostsList = ({ post }) => {
 			};
 		});
 	};
-
-	const deletePost = (e, postId) => {
-		e.preventDefault();
-
-		postService.deletePost(user.token, postId);
-	};
-
-	const getPostId = () => {
-		if (Object.keys(newComment) !== undefined) {
-			return Object.keys(newComment);
-		} else if (Object.keys(selectedGif) !== undefined) {
-			return Object.keys(selectedGif);
-		} else if (Object.keys(selectedFileC) !== undefined) {
-			return Object.keys(selectedFileC);
-		}
-	};
-
-	const addComment = useMutation(
-		(commentData) =>
-			commentService.createComment(user.token, getPostId(), commentData),
-		{
-			// After success or failure, refetch the todos query
-			onSuccess: () => {
-				queryClient.invalidateQueries("comments");
-			},
-		}
-	);
-
-	const submitNewComment = (e, index, postId) => {
-		e.preventDefault();
-
-		const commentSent = {};
-		commentSent.content = newComment.hasOwnProperty(index)
-			? newComment[index]
-			: null;
-		commentSent.gifUrl = selectedGif.hasOwnProperty(index)
-			? selectedGif[index]
-			: null;
-		commentSent.postId = postId;
-		commentSent.userId = user.id;
-
-		const commentData = new FormData();
-		commentData.append("newcomment", JSON.stringify(commentSent));
-		selectedFileC.hasOwnProperty(index) &&
-			commentData.append("image", selectedFileC[index]);
-
-		addComment.mutate(commentData);
-
-		//commentService.createComment(user.token, postId, commentData);
-
-		setNewComment({ [index]: "" });
-		setSelectedGif({ [index]: "" });
-		setShowCommentForm({ [index]: "" });
-		setShowSelectedGif({ [index]: "" });
-		setSelectedFileC({ [index]: "" });
-		e.target.reset();
-	};
-
-	/* useEffect(() => {
-		console.log(comments);
-	}, [comments]); */
-	//get gifs
+	// get all Gifs
 	useEffect(() => {
 		const getGifs = async () => {
 			const resultGifs = await commentService.getGifs(
@@ -227,7 +151,6 @@ const PostsList = ({ post }) => {
 
 		getGifs().catch(console.error);
 	}, []);
-
 	const handleSelectGif = (e, postId) => {
 		e.preventDefault();
 		console.log(e.target);
@@ -253,66 +176,75 @@ const PostsList = ({ post }) => {
 			};
 		});
 	};
+	//	delete post
+	const deletePost = (e, postId) => {
+		e.preventDefault();
 
+		postService.deletePost(user.token, postId);
+	};
+	//	create new Comment
 	// Button send enable
 	const enableCommentButton = (id) => {
 		return newComment[id] || selectedGif[id] || selectedFileC[id]
 			? false
 			: true;
 	};
-
-	const getValueInputPost = (e, title, content, imageUrl) => {
-		setPostModal((prevState) => {
-			return {
-				...prevState,
-				updatedTitle: title,
-			};
-		});
-		setPostModal((prevState) => {
-			return {
-				...prevState,
-				updatedMessage: content,
-			};
-		});
-		/* setPostModal((prevState) => {
-			return {
-				...prevState,
-				updatedFile: imageUrl,
-			};
-		}); */
-	};
-
-	// Button send enable
 	const changeCommentButtonStyle = (id) => {
 		return newComment[id] || selectedGif[id] || selectedFileC[id]
 			? "comments-button-enabled"
 			: "comments-button-disabled";
 	};
+	const getPostId = () => {
+		if (Object.keys(showCommentForm) !== undefined) {
+			return Object.keys(showCommentForm);
+		}
+	};
+	const addCommentMutation = useMutation(
+		(commentData) =>
+			commentService.createComment(user.token, getPostId(), commentData),
 
-	/* //get all comments
-	useEffect(() => {
-		console.log(user.id);
-		const getAllComments = async () => {
-			const allComments = await commentService.getAllComments(user.token);
-			setComments(allComments);
-		};
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries(["posts", getPostId(), "comments"]);
+			},
+		}
+	);
+	const submitNewComment = (e, index, postId) => {
+		e.preventDefault();
 
-		getAllComments().catch(console.error);
-	}, []); */
+		const commentSent = {};
+		commentSent.content = newComment.hasOwnProperty(index)
+			? newComment[index]
+			: null;
+		commentSent.gifUrl = selectedGif.hasOwnProperty(index)
+			? selectedGif[index]
+			: null;
+		commentSent.postId = postId;
+		commentSent.userId = user.id;
 
-	const { isLoading, error, data } = useQuery("comments", () =>
+		const commentData = new FormData();
+		commentData.append("newcomment", JSON.stringify(commentSent));
+		selectedFileC.hasOwnProperty(index) &&
+			commentData.append("image", selectedFileC[index]);
+
+		addCommentMutation.mutate(commentData);
+
+		//commentService.createComment(user.token, postId, commentData);
+
+		setNewComment({ [index]: "" });
+		setSelectedGif({ [index]: "" });
+		setShowCommentForm({ [index]: "" });
+		setShowSelectedGif({ [index]: "" });
+		setSelectedFileC({ [index]: "" });
+		//window.location.reload();
+		//refetch();
+		//e.target.reset();
+	};
+	//	get all comments
+	const { error, data } = useQuery(["comments", post.id], () =>
 		commentService.getAllComments(user.token)
 	);
-
 	const comments = data || [];
-
-	const [showSuppPostModal, setShowSuppPostModal] = useState({});
-
-	/* useEffect(() => {
-		if (showSuppPostModal) {
-			console.log(showSuppPostModal);
-		}
-	}, [showSuppPostModal]); */
 
 	return (
 		<div key={post.id} className="card my-4 card-responsive">
@@ -324,12 +256,7 @@ const PostsList = ({ post }) => {
 					</h3>
 					<PostCreator post={post} />
 					<div className=" card col-sm-10 padding-col">
-						<PostContent
-							post={post}
-							deletePost={deletePost}
-							handleDisplayPostModal={handleDisplayPostModal}
-							getValueInputPost={getValueInputPost}
-						/>
+						<PostContent post={post} />
 						<PostFeatures
 							post={post}
 							showCommNum={showCommNum}
@@ -342,8 +269,13 @@ const PostsList = ({ post }) => {
 								comments.length > 0 &&
 								comments
 									.filter((col) => col.postId === post.id)
-									.map((comment, index) => (
-										<div className="" key={index}>
+									.map((comment) => (
+										<div className="" key={comment.id}>
+											{error && (
+												<h4 className="my-3 text-white">
+													`An error has occurred:${error.message}`
+												</h4>
+											)}
 											<Comments comment={comment} post={post} />
 										</div>
 									))}

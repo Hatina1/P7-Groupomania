@@ -23,14 +23,6 @@ const SignupForm = () => {
 	};
 	const navigate = useNavigate();
 
-	const ShowValidation = function () {
-		return (
-			<div className="alert alert-success" role="alert">
-				<h4 class="alert-heading">Utilisateur crée !</h4>
-			</div>
-		);
-	};
-
 	const submitHandler = async (e) => {
 		e.preventDefault();
 		if (Object.keys(validation(values)).length === 0) {
@@ -57,10 +49,8 @@ const SignupForm = () => {
 		} else {
 			setErrors(validation(values));
 		}
-
-		//window.location.reload();
 	};
-	//<div className="col-12 col-md-9 col-lg-7 col-xl-4">
+
 	return (
 		<div className="mask d-flex align-items-center h-100 gradient-custom-3">
 			<div className="container h-100">

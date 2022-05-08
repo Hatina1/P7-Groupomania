@@ -5,14 +5,13 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import icon from "../../assets/icon.png";
 
-const LoginForm = ({ submitForm }) => {
+const LoginForm = () => {
 	const [values, setValues] = useState({
 		email: "",
 		password: "",
 	});
 
 	const [errors, setErrors] = useState({});
-	const user = JSON.parse(localStorage.getItem("user"));
 
 	const changeHandler = (e) => {
 		setValues({

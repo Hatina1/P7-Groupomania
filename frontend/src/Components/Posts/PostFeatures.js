@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
@@ -18,12 +18,8 @@ const PostFeatures = ({
 	handleDisplayCommNum,
 	handleDisplayCommentForm,
 }) => {
-	//const [comments, setComments] = useState([]);
 	const user = JSON.parse(localStorage.getItem("user"));
 	const [postModal, setPostModal] = useState({});
-	const [showGifs, setShowGifs] = useState({});
-	//const [showCommNum, setShowCommNum] = useState({});
-	const [showCommentForm, setShowCommentForm] = useState({});
 	const [showPostModal, setShowPostModal] = useState({});
 	const queryClient = useQueryClient();
 
@@ -44,6 +40,13 @@ const PostFeatures = ({
 		}
 	};
 
+	//handle like post
+	const liked = (post) => {
+		let listUsersLike = Object.values(post.usersLiked);
+		if (listUsersLike.includes(user.id)) {
+			return "liked-blue";
+		}
+	};
 	const likePostMutation = useMutation(
 		(postId) =>
 			postService.likePost(user.token, postId, {
@@ -56,40 +59,11 @@ const PostFeatures = ({
 			},
 		}
 	);
-
 	const handleLikes = (e, postId) => {
 		e.preventDefault();
-		/* console.log(post.likes);
-		const likeSent = {};
-		likeSent.userId = user.id;
-		likeSent.postId = postId; */
 		likePostMutation.mutate(postId);
 	};
-
-	/* useEffect(() => {
-		if (showCommNum) {
-			console.log(showCommNum);
-		}
-	}, [showCommNum]);
-
-	useEffect(() => {
-		if (showCommentForm) {
-			console.log(showCommentForm);
-		}
-	}, [showCommentForm]);
-
-	useEffect(() => {
-		if (showGifs) {
-			console.log(showGifs);
-		}
-	}, [showGifs]);
-
-	useEffect(() => {
-		if (showPostModal) {
-			console.log(showPostModal);
-		}
-	}, [showPostModal]); */
-
+	//update post
 	const enableItemToShow = (postId, itemToShow) => {
 		if (itemToShow.hasOwnProperty(postId)) {
 			return itemToShow[postId];
@@ -97,72 +71,6 @@ const PostFeatures = ({
 			return false;
 		}
 	};
-
-	const getPostId = () => {
-		if (Object.keys(showPostModal) !== undefined) {
-			let arrKey = Object.keys(showPostModal);
-			console.log(arrKey[0]);
-			return arrKey[0];
-		}
-	};
-
-	const updatePostMutation = useMutation(
-		(postUpdateData) =>
-			postService.modifyPost(user.token, getPostId(), postUpdateData),
-		{
-			onSuccess: () => {
-				queryClient.invalidateQueries("posts");
-			},
-		}
-	);
-
-	const submitUpdatePost = (e, postId) => {
-		e.preventDefault();
-
-		const postUpdateSent = {};
-
-		postUpdateSent.title = postModal["updatedTitle"];
-		postUpdateSent.content = postModal["updatedMessage"]
-			? postModal["updatedMessage"]
-			: null;
-		postUpdateSent.userId = user.id;
-
-		console.log(postUpdateSent);
-
-		const postUpdateData = new FormData();
-		postUpdateData.append("updatepost", JSON.stringify(postUpdateSent));
-		postModal.hasOwnProperty("updatedFile") &&
-			postUpdateData.append("image", postModal["updatedFile"]);
-
-		updatePostMutation.mutate(postUpdateData);
-
-		setPostModal({});
-		setShowPostModal({});
-	};
-
-	const deletePostMutation = useMutation(
-		(postId) => postService.deletePost(user.token, postId),
-		{
-			onSuccess: () => {
-				queryClient.invalidateQueries("posts");
-			},
-		}
-	);
-
-	const deletePost = (e, postId) => {
-		e.preventDefault();
-
-		deletePostMutation.mutate(postId);
-	};
-
-	const checkCommExists = (commList, postsList) => {
-		let checkComm = [];
-		let checkCommLen = 0;
-		checkComm = commList.filter((comm) => comm.postId === postsList.id);
-		checkCommLen = checkComm.length;
-		return checkCommLen;
-	};
-
 	const handleInputUpdatePost = (e) => {
 		const { id, value } = e.target;
 		setPostModal((prevState) => {
@@ -172,7 +80,6 @@ const PostFeatures = ({
 			};
 		});
 	};
-
 	const handleFileUpdatePost = (e) => {
 		const { id, files } = e.target;
 		setPostModal((prevState) => {
@@ -196,23 +103,46 @@ const PostFeatures = ({
 			};
 		});
 	};
-
-	/* useEffect(() => {
-		console.log(user.id);
-		const getAllComments = async () => {
-			const allComments = await commentService.getAllComments(user.token);
-			setComments(allComments);
-		};
-
-		getAllComments().catch(console.error);
-	}, []); */
-
-	const { isLoading, error, data } = useQuery("comments", () =>
-		commentService.getAllComments(user.token)
+	const getPostId = () => {
+		if (Object.keys(showPostModal) !== undefined) {
+			let arrKey = Object.keys(showPostModal);
+			console.log(arrKey[0]);
+			return arrKey[0];
+		}
+	};
+	const updatePostMutation = useMutation(
+		(postUpdateData) =>
+			postService.modifyPost(user.token, getPostId(), postUpdateData),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries("posts");
+			},
+		}
 	);
+	const submitUpdatePost = (e, postId) => {
+		e.preventDefault();
 
-	const comments = data || [];
+		const postUpdateSent = {};
 
+		postUpdateSent.title = postModal["updatedTitle"];
+		postUpdateSent.content = postModal["updatedMessage"]
+			? postModal["updatedMessage"]
+			: null;
+		postUpdateSent.userId = user.id;
+
+		console.log(postUpdateSent);
+
+		const postUpdateData = new FormData();
+		postUpdateData.append("updatepost", JSON.stringify(postUpdateSent));
+		postModal.hasOwnProperty("updatedFile") &&
+			postUpdateData.append("image", postModal["updatedFile"]);
+
+		updatePostMutation.mutate(postUpdateData);
+
+		setPostModal({});
+		setShowPostModal({});
+	};
+	//delete post
 	const [showSuppPostModal, setShowSuppPostModal] = useState({});
 	const handleSuppPostModal = (e, postId) => {
 		e.preventDefault();
@@ -230,19 +160,32 @@ const PostFeatures = ({
 			});
 		}
 	};
-	const liked = (post) => {
-		let listUsersLike = Object.values(post.usersLiked);
-		if (listUsersLike.includes(user.id)) {
-			return "liked-blue";
+	const deletePostMutation = useMutation(
+		(postId) => postService.deletePost(user.token, postId),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries("posts");
+			},
 		}
+	);
+	const deletePost = (e, postId) => {
+		e.preventDefault();
+
+		deletePostMutation.mutate(postId);
 	};
-	/* 
-	listUsersLike.some((element) => element === user.id)
-	useEffect(() => {
-		if (showSuppPostModal) {
-			console.log(showSuppPostModal);
-		}
-	}, [showSuppPostModal]); */
+
+	const checkCommExists = (commList, postsList) => {
+		let checkComm = [];
+		let checkCommLen = 0;
+		checkComm = commList.filter((comm) => comm.postId === postsList.id);
+		checkCommLen = checkComm.length;
+		return checkCommLen;
+	};
+	//get all comments
+	const { isLoading, error, data } = useQuery("comments", () =>
+		commentService.getAllComments(user.token)
+	);
+	const comments = data || [];
 
 	return (
 		<section className="card-section-actions d-flex justify-content-evenly align-items-center flex-wrap fw-bold">
