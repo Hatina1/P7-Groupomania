@@ -197,7 +197,7 @@ const PostFeatures = ({
 				data-bs-placement="bottom"
 				title="Répondre"
 			>
-				<FontAwesomeIcon icon={faReply} className="px-1 py-2 " />
+				<FontAwesomeIcon icon={faReply} className="px-1 py-2 icons-height " />
 			</a>
 			{enableItemToShow(post.id, showCommNum) === false && (
 				<div>
@@ -270,7 +270,7 @@ const PostFeatures = ({
 				<div className="d-flex justify-content-center align-items-center">
 					<FontAwesomeIcon
 						icon={faThumbsUp}
-						className={`px-1 py-2 ${liked(post)}`}
+						className={`px-1 py-2 ${liked(post)} icons-height`}
 					/>
 					<span className={liked(post)}>
 						{post.likes === 0 ? null : post.likes}
@@ -291,7 +291,10 @@ const PostFeatures = ({
 					data-bs-placement="bottom"
 					title="Modifier le post"
 				>
-					<FontAwesomeIcon icon={faPenToSquare} className="px-1 py-2 " />
+					<FontAwesomeIcon
+						icon={faPenToSquare}
+						className="px-1 py-2 icons-height"
+					/>
 				</a>
 			)}
 			{user.isAdmin === true && (
@@ -304,7 +307,10 @@ const PostFeatures = ({
 					data-bs-placement="bottom"
 					title="Supprimer le post"
 				>
-					<FontAwesomeIcon icon={faTrashCan} className="px-1 py-2 " />
+					<FontAwesomeIcon
+						icon={faTrashCan}
+						className="px-1 py-2 icons-height"
+					/>
 				</a>
 			)}
 

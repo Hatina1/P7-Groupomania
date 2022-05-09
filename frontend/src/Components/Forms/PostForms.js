@@ -90,23 +90,23 @@ export function NewCommentForm({
 				onChange={handleChangeInput}
 				placeholder="Ecrire un commentaire"
 			/>
-			<div className="d-flex align-items-center justify-content-evenly div-comment-responsive mt-2">
+			<div className="d-flex align-items-center justify-content-end div-comment-responsive mt-2">
 				<FontAwesomeIcon
 					icon={faFaceLaugh}
-					className="px-1 py-2"
+					className="px-1 py-2 ms-3 cursor-change icons-height text-secondary text-hover"
 					onClick={() => handleClickDisplayGifs(postId)}
 				/>
 				<label>
 					<input
 						type="file"
-						className="hidden"
+						className="hidden ms-3"
 						name={index}
 						id={index}
 						onChange={handleChangeFile}
 					/>
 					<FontAwesomeIcon
 						icon={faImage}
-						className="px-1 py-2 cursor-change "
+						className="px-1 py-2 cursor-change ms-3 icons-height text-secondary text-hover"
 					/>
 				</label>
 

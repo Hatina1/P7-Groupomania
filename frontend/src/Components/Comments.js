@@ -65,23 +65,29 @@ function Comments({ comment, post }) {
 	};
 
 	return (
-		<section key={comment.id} className="card-body-comment">
+		<section
+			key={comment.id}
+			className="card-body-comment d-flex flex-column ms-4 mb-3"
+		>
 			<article key={comment.id} className="card-article-comment">
 				<div className="card-body-header d-flex justify-content-between">
-					<p>
-						Réponse de {comment.firstname} {comment.lastname}
+					<p className="fw-bold">
+						{comment.firstname} {comment.lastname} répond :
 					</p>
-					<p>{sqlToJsDate(comment.createdAt)}</p>
+					<p className="fw-bold">{sqlToJsDate(comment.createdAt)}</p>
 				</div>
 				{comment.gifUrl && (
 					<img
-						className="img-animated-gif d-block"
+						className="img-animated-gif d-block align-self-center"
 						src={comment.gifUrl}
 						alt="gif"
 					/>
 				)}
 				{comment.imageUrl && (
-					<a href={comment.imageUrl} className="text-decoration-none">
+					<a
+						href={comment.imageUrl}
+						className="text-decoration-none align-self-center"
+					>
 						<img className="img-animated" src={comment.imageUrl} alt="random" />
 					</a>
 				)}

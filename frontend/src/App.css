@@ -13,10 +13,13 @@
 .footer-change {
 	position: absolute;
 }
-form div {
+/* form div {
 	margin-bottom: 20px;
-}
+} */
 
+.icons-height {
+	height: 1.1rem;
+}
 .input {
 	margin-left: 30px;
 }
@@ -40,17 +43,19 @@ form div {
 	color: rgb(23 122 183) !important;
 }
 
-/* .card-footer {
-	display: flex;
-	background-color: white;
-} */
+.card-footer-change {
+	padding: 0.5rem 1rem;
+	/* background-color: rgba(0,0,0,.03); */
+	border-top: 1px solid rgba(0, 0, 0, 0.125);
+	border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
 
 .form-control-change {
 	border-radius: 0.8rem !important;
 }
 
 .btn-change {
-	border-radius: 0.5rem !important;
+	border-radius: 1rem !important;
 }
 
 .img-animated {
@@ -75,7 +80,7 @@ form div {
 	color: #5d5f60;*/
 	color: rgba(17, 55, 93, 1);
 	font-weight: 500;
-	font-size: 12px;
+	font-size: 14px;
 }
 
 .h3-change {
@@ -138,7 +143,7 @@ p em {
 	margin-top: 0;
 	margin-bottom: 0;
 	padding: 0rem 1rem;
-	font-size: 0.8rem;
+	font-size: 0.9rem;
 	color: rgb(37, 40, 122);
 }
 .card-section-actions {
@@ -240,6 +245,18 @@ p em {
 .table-change {
 	width: 60%;
 }
+.icon-height {
+	height: 0.8rem;
+}
+.icon-send {
+	height: 1.1rem;
+	width: 1rem;
+	transform: rotate(58deg);
+}
+
+.text-hover:hover {
+	color: #000 !important;
+}
 
 @media screen and (max-width: 425px) {
 	.card-responsive {
@@ -250,9 +267,6 @@ p em {
 	}
 	.card-p-comment-num {
 		height: 37px;
-	}
-	.icon-height {
-		height: 0.8rem;
 	}
 
 	.div-responsive {
@@ -291,9 +305,10 @@ p em {
 	.modal-responsive {
 		width: 90% !important;
 	}
-}
-.table-change {
-	width: 100%;
+
+	.table-change {
+		width: 100%;
+	}
 }
 @media screen and (max-width: 376px) {
 	.card-responsive {

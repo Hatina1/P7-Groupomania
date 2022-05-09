@@ -1,4 +1,6 @@
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
 export function ShowPostFormButton({ handleShowPostForm, msgToShow }) {
 	return (
@@ -53,12 +55,12 @@ export function SubmitCommentButton({
 		<button
 			className={`btn btn-primary btn-sm btn-change ${changeCommentButtonStyle(
 				index
-			)}`}
+			)} ms-3`}
 			id={index}
 			disabled={enableCommentButton(index)}
 			type="submit"
 		>
-			Send
+			<FontAwesomeIcon icon={faPaperPlane} className="px-1 py-2 icon-send" />{" "}
 		</button>
 	);
 }

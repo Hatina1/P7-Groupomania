@@ -265,63 +265,60 @@ const PostsList = ({ post }) => {
 							handleDisplayCommNum={handleDisplayCommNum}
 							handleDisplayCommentForm={handleDisplayCommentForm}
 						/>
-
-						<div>
-							{enableItemToShow(post.id, showCommNum) === true &&
-								comments.length > 0 &&
-								comments
-									.filter((col) => col.postId === post.id)
-									.map((comment) => (
-										<div className="" key={comment.id}>
-											{error && (
-												<h4 className="my-3 text-white">
-													`An error has occurred:${error.message}`
-												</h4>
-											)}
-											<Comments comment={comment} post={post} />
-										</div>
-									))}
-							{enableItemToShow(post.id, showSelectedGif) === true && (
-								<img
-									alt="gif-selected"
-									className="img-animated-gif flex-nowrap"
-									src={selectedGif[post.id]}
+						{enableItemToShow(post.id, showSelectedGif) === true && (
+							<img
+								alt="gif-selected"
+								className="img-animated-gif flex-nowrap"
+								src={selectedGif[post.id]}
+							/>
+						)}
+						{selectedFileC[post.id] ? (
+							<em className="mx-3 text-success">
+								{selectedFileC[post.id].name}
+							</em>
+						) : null}
+						{showCommentForm[post.id] && (
+							<div className="card-footer-change" id={`reply-${post.id}`}>
+								<NewCommentForm
+									postId={post.id}
+									index={post.id}
+									enableCommentButton={enableCommentButton}
+									changeCommentButtonStyle={changeCommentButtonStyle}
+									handleChangeInput={handleChangeInput}
+									handleChangeFile={handleChangeFile}
+									handleClickDisplayGifs={handleClickDisplayGifs}
+									submitNewComment={submitNewComment}
 								/>
-							)}
-							{selectedFileC[post.id] ? (
-								<em className="mx-3 text-success">
-									{selectedFileC[post.id].name}
-								</em>
-							) : null}
-							{showCommentForm[post.id] && (
-								<div className="card-footer" id={`reply-${post.id}`}>
-									<NewCommentForm
-										postId={post.id}
-										index={post.id}
-										enableCommentButton={enableCommentButton}
-										changeCommentButtonStyle={changeCommentButtonStyle}
-										handleChangeInput={handleChangeInput}
-										handleChangeFile={handleChangeFile}
-										handleClickDisplayGifs={handleClickDisplayGifs}
-										submitNewComment={submitNewComment}
-									/>
-								</div>
-							)}
-							{enableItemToShow(post.id, showGifs) === true && (
-								<div className="d-flex flex-wrap flex-row justify-content-between align-items-center">
-									{gifs.map((gif, idx) => (
-										<div key={idx}>
-											<Gifs
-												postId={post.id}
-												gif={gif}
-												index={idx}
-												handleSelectGif={handleSelectGif}
-											/>
-										</div>
-									))}
-								</div>
-							)}
-						</div>
+							</div>
+						)}
+						{enableItemToShow(post.id, showGifs) === true && (
+							<div className="d-flex flex-wrap flex-row justify-content-between align-items-center">
+								{gifs.map((gif, idx) => (
+									<div key={idx}>
+										<Gifs
+											postId={post.id}
+											gif={gif}
+											index={idx}
+											handleSelectGif={handleSelectGif}
+										/>
+									</div>
+								))}
+							</div>
+						)}
+						{enableItemToShow(post.id, showCommNum) === true &&
+							comments.length > 0 &&
+							comments
+								.filter((col) => col.postId === post.id)
+								.map((comment) => (
+									<div className="" key={comment.id}>
+										{error && (
+											<h4 className="my-3 text-white">
+												`An error has occurred:${error.message}`
+											</h4>
+										)}
+										<Comments comment={comment} post={post} />
+									</div>
+								))}
 					</div>
 				</div>
 			</div>

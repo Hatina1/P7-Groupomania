@@ -10,7 +10,7 @@ function PostContent({ post }) {
 	};
 
 	return (
-		<div className="card-body-change">
+		<div className="card-body-change d-flex flex-column">
 			<div className="card-body-header d-flex justify-content-between border-bottom border-1">
 				<p className="margin-change p-change-responsive">
 					Posté par{" "}
@@ -23,7 +23,10 @@ function PostContent({ post }) {
 				</p>
 			</div>
 			{post.imageUrl ? (
-				<a href={post.imageUrl} className="text-decoration-none">
+				<a
+					href={post.imageUrl}
+					className="text-decoration-none align-self-center"
+				>
 					<img className="img-animated" src={post.imageUrl} alt="random" />
 				</a>
 			) : null}
