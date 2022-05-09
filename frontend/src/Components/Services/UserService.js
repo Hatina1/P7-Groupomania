@@ -69,12 +69,16 @@ const getAllUsers = (token) =>
 		.then((res) => res.json())
 		.catch((err) => console.log("Get users account error :", err));
 
+const logout = () => {
+	localStorage.removeItem("user");
+};
 const userService = {
 	getAllUsers,
 	getOneUser,
 	updateUser,
 	activeUser,
 	deleteUser,
+	logout,
 };
 
 export default userService;
