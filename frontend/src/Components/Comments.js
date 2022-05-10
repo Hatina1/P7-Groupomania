@@ -14,8 +14,16 @@ function Comments({ comment, post }) {
 	//get comment creation date
 	const sqlToJsDate = (sqlDate) => {
 		var sqlDateFormat = new Date(sqlDate);
+		var hour =
+			sqlDateFormat.getHours().length < 10
+				? "0" + sqlDateFormat.getHours()
+				: sqlDateFormat.getHours();
+		var minute =
+			sqlDateFormat.getMinutes() < 10
+				? "0" + sqlDateFormat.getMinutes()
+				: sqlDateFormat.getMinutes();
 		var date = new Intl.DateTimeFormat().format(sqlDateFormat);
-		return date;
+		return date + " à " + hour + ":" + minute;
 	};
 	//show delete comment modal
 	const [showSuppCommentModal, setShowSuppCommentModal] = useState({});
