@@ -105,7 +105,6 @@ const PostFeatures = ({
 	const getPostId = () => {
 		if (Object.keys(showPostModal) !== undefined) {
 			let arrKey = Object.keys(showPostModal);
-			console.log(arrKey[0]);
 			return arrKey[0];
 		}
 	};
@@ -192,6 +191,7 @@ const PostFeatures = ({
 				className="card-p-comment-num text-secondary text-decoration-none reply-hover"
 				href={`#reply-${post.id}`}
 				target="_blank"
+				rel="noreferrer"
 				onClick={(e) => handleDisplayCommentForm(e, post.id)}
 				data-bs-toggle="tooltip"
 				data-bs-placement="bottom"

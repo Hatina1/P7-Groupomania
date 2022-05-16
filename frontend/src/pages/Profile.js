@@ -64,6 +64,7 @@ const Profile = () => {
 		if (currentUser.id === user.id) {
 			userService.logout();
 			navigate("/signup");
+			window.location.reload();
 		} else {
 			navigate("/admin");
 			//window.location.reload();
@@ -191,12 +192,7 @@ const Profile = () => {
 								errors={errors}
 							/>
 						)}
-						<a
-							href="/login"
-							target="_blank"
-							className="link-dark pt-3 pb-4"
-							onClick={logOut}
-						>
+						<a href="/login" className="link-dark pt-3 pb-4" onClick={logOut}>
 							Deconnexion
 						</a>
 					</div>

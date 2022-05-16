@@ -68,6 +68,7 @@ function PostModal({
 									className="px-1 py-2 cursor-change "
 								/>
 							</label>
+							{postModal["updatedFile"] ? postModal["updatedFile"].name : null}
 						</div>
 					</form>
 				</Modal.Body>

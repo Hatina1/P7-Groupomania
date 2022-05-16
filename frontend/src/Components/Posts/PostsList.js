@@ -193,14 +193,14 @@ const PostsList = ({ post }) => {
 			return Object.keys(showCommentForm);
 		}
 	};
-
 	const addCommentMutation = useMutation(
 		(commentData) =>
 			commentService.createComment(user.token, getPostId(), commentData),
 
 		{
 			onSuccess: () => {
-				queryClient.invalidateQueries(["comments"]);
+				queryClient.invalidateQueries("comments");
+				//queryClient.refetchQueries({ active: true });
 			},
 		}
 	);
@@ -222,7 +222,7 @@ const PostsList = ({ post }) => {
 		selectedFileC.hasOwnProperty(index) &&
 			commentData.append("image", selectedFileC[index]);
 
-		addCommentMutation.mutateAsync(commentData);
+		addCommentMutation.mutate(commentData);
 
 		//commentService.createComment(user.token, postId, commentData);
 
@@ -235,16 +235,11 @@ const PostsList = ({ post }) => {
 		//refetch();
 		//e.target.reset();
 	};
-	//	get all comments {refetchInterval: 10000,} { cacheTime: 0 }
+	//	get all comments {refetchInterval: 10000,} { cacheTime: 0 }{refetchOnWindowFocus: false,staleTime: 0,cacheTime: 0,refetchInterval: 10000,}
 	const { error, data } = useQuery(
-		["comments"],
+		"comments",
 		() => commentService.getAllComments(user.token),
-		{
-			refetchOnWindowFocus: true,
-			staleTime: 0,
-			cacheTime: 0,
-			refetchInterval: 10000,
-		}
+		{ refetchInterval: 0 }
 	);
 	const comments = data || [];
 

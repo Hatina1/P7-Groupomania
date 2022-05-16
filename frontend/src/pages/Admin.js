@@ -12,7 +12,7 @@ function Admin() {
 	const { isLoading, data } = useQuery("users", () =>
 		userService.getAllUsers(user.token)
 	);
-	const users = data || [];
+	const users = data;
 	//set filtered users to all users at first
 	const [filteredUsers, setFilteredUsers] = useState([]);
 	useEffect(() => {

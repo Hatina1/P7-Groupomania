@@ -9,7 +9,7 @@ import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
 import SignupForm from "./components/Forms/SignupForm";
 import LoginForm from "./components/Forms/LoginForm";
-import AuthService from "./components/Services/AuthService";
+import authService from "./components/Services/AuthService";
 import "./styles/bootstrap.min.css";
 import "./styles/headers.css";
 //import { ErrorBoundary } from "react-error-boundary";
@@ -19,29 +19,12 @@ const queryClient = new QueryClient();
 
 function App() {
 	const [currentUser, setCurrentUser] = useState(undefined);
-
-	/* 	useEffect(() => {
-		const user = AuthService.getCurrentUser();
+	useEffect(() => {
+		const user = authService.getCurrentUser();
 		if (user) {
 			setCurrentUser(user);
 		}
-	}, []); 
-	
-	useEffect(() => {
-		function checkConnection() {
-			//const user = AuthService.getCurrentUser();
-			const user = JSON.parse(localStorage.getItem("user"));
-			if (user) {
-				setCurrentUser(user);
-			}
-		}
-		window.addEventListener("storage", checkConnection);
-
-		return () => {
-			window.removeEventListener("storage", checkConnection);
-		};
 	}, []);
-	*/
 
 	return (
 		<Router>
@@ -50,9 +33,11 @@ function App() {
 				<div className="container mt-3">
 					<QueryClientProvider client={queryClient}>
 						<Routes>
-							<Route exact path="/" element={<Home />} />
+							{currentUser && <Route exact path="/" element={<Home />} />}
 							<Route path="/login" element={<LoginForm />} />
-							<Route path="/signup" element={<SignupForm />} />
+							{!currentUser && (
+								<Route path="/signup" element={<SignupForm />} />
+							)}
 							<Route path="/profile/:profileId" element={<Profile />} />
 							<Route path="/admin" element={<Admin />} />
 						</Routes>

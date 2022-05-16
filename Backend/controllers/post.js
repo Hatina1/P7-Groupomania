@@ -133,9 +133,12 @@ exports.modifyPost = (req, res, next) => {
 							  }
 							: // if image is not changed we get directly the body of the request
 							  { ...JSON.parse(req.body.updatepost) };
-						if (req.file) {
+
+						if (post.imageUrl) {
 							// image name is first recuperated
+
 							const filename = post.imageUrl.split("/images/")[1];
+							console.log(filename);
 							// image is deleted (unlinked) from the directory images
 							fs.unlink(`images/${filename}`, () => {
 								Post.update(
