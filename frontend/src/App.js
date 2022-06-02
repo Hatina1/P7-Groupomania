@@ -1,6 +1,11 @@
 import React from "react";
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+	BrowserRouter as Router,
+	Routes,
+	Route,
+	Navigate,
+} from "react-router-dom";
 import { useState, useEffect } from "react";
 import Navbar from "./components/Layout/Navbar";
 import Footer from "./components/Layout/Footer";
@@ -17,15 +22,17 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 const queryClient = new QueryClient();
 
-function App() {
-	const [currentUser, setCurrentUser] = useState(undefined);
-	useEffect(() => {
-		const user = authService.getCurrentUser();
-		if (user) {
-			setCurrentUser(user);
-		}
-	}, []);
+export const ProtectedRoute = ({ children }) => {
+	const user = JSON.parse(localStorage.getItem("user"));
 
+	if (!user) {
+		// user is not authenticated
+		return <Navigate to="/signup" />;
+	}
+	return children;
+};
+
+function App() {
 	return (
 		<Router>
 			<div className="bg-color bg-opacity-10">
@@ -33,11 +40,16 @@ function App() {
 				<div className="container mt-3">
 					<QueryClientProvider client={queryClient}>
 						<Routes>
-							{currentUser && <Route exact path="/" element={<Home />} />}
+							<Route
+								path="/"
+								element={
+									<ProtectedRoute>
+										<Home />
+									</ProtectedRoute>
+								}
+							/>
+							<Route path="/signup" element={<SignupForm />} />
 							<Route path="/login" element={<LoginForm />} />
-							{!currentUser && (
-								<Route path="/signup" element={<SignupForm />} />
-							)}
 							<Route path="/profile/:profileId" element={<Profile />} />
 							<Route path="/admin" element={<Admin />} />
 						</Routes>
