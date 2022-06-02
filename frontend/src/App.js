@@ -37,7 +37,7 @@ function App() {
 		<Router>
 			<div className="bg-color bg-opacity-10">
 				<Navbar />
-				<div className="container mt-3">
+				<div className="container ct-height mt-3">
 					<QueryClientProvider client={queryClient}>
 						<Routes>
 							<Route
