@@ -33,10 +33,6 @@ db.users = require("./user.js")(sequelize, Sequelize);
 db.posts = require("./post.js")(sequelize, Sequelize);
 db.comments = require("./comment.js")(sequelize, Sequelize);
 
-db.sequelize.sync().then(() => {
-	console.log(`Tables created!`);
-});
-
 /* db.comments.sync({ force: true });
 db.posts.sync({ force: true }).then(() => {});
 db.users.sync({ force: true }).then(() => {});
@@ -44,13 +40,18 @@ db.users.sync({ alter: true }).then(() => {
 	db.posts.sync({ alter: true }).then(() => {
 		db.comments.sync({ alter: true });
 	});
-});*/
+});
 
+*/
+db.sequelize.sync().then(() => {
+	console.log(`Tables created!`);
+});
 // belongsTo() indicates that one Post only belongs to one User
 db.posts.belongsTo(db.users, {
 	foreignKey: {
 		name: "userId",
 		allowNull: false,
+		constraints: false,
 	},
 	onDelete: "NO ACTION",
 	onUpdate: "NO ACTION",
@@ -60,6 +61,7 @@ db.comments.belongsTo(db.users, {
 	foreignKey: {
 		name: "userId",
 		allowNull: false,
+		constraints: false,
 	},
 	onDelete: "NO ACTION",
 	onUpdate: "NO ACTION",
@@ -85,6 +87,7 @@ db.comments.belongsTo(db.posts, {
 	foreignKey: {
 		name: "postId",
 		allowNull: false,
+		constraints: false,
 	},
 	onDelete: "CASCADE",
 	onUpdate: "NO ACTION",
